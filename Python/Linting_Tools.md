@@ -1,10 +1,5 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# 
-
 ---
-
-# What is a linting tool? What is its purpose? What are the differences between pylint and flake8?
+# What is a linting tool? What is its purpose?
 
 A linting tool, or linter, is a static code analysis tool that examines source code to detect and flag programming errors, bugs, stylistic issues, and suspicious constructs. The primary purposes of a linting tool are:
 
@@ -15,7 +10,7 @@ A linting tool, or linter, is a static code analysis tool that examines source c
 
 Linting is particularly valuable for interpreted languages like Python and JavaScript, which lack a compilation phase to catch errors before runtime[^1][^3].
 
-Differences between pylint and flake8:
+## Differences between pylint and flake8:
 
 1. Scope:
     - pylint: Provides a more comprehensive and strict approach to code analysis, focusing on enforcing coding standards and detecting various code smells and errors[^2].
@@ -40,6 +35,7 @@ In summary, flake8 is generally faster, more flexible, and easier to adopt, whil
 
 <div style="text-align: center">⁂</div>
 
+[^9]: https://pypi.org/project/pytest-flake8/
 [^1]: https://www.perforce.com/blog/qac/what-is-linting
 
 [^2]: https://stackshare.io/stackups/pypi-flake8-vs-pypi-pylint
