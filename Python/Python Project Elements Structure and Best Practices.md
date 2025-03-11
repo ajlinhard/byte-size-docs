@@ -23,6 +23,9 @@ In Python projects, there quite a few elements, structures, and mechanics at pla
     - [Using an app.py](#Using-an-apppy)
     - [Running Unit Test](#Running Unit Test)
 
+## Documentation
+- [Python.org Offical Packaging Guide](https://packaging.python.org/en/latest/tutorials/packaging-projects/#a-simple-project)
+
 ---
 # Building Packages/Apps
 ## **Using a setup.py**
