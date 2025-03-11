@@ -6,6 +6,7 @@ pytest is a powerful testing framework for Python.
 
 ## Documentation
 1. [Official Documentation](https://docs.pytest.org/en/7.1.x/contents.html)
+    - [Pytest API](https://docs.pytest.org/en/stable/reference/reference.html#)
 2. Integration
     - [Pytest Official Documents](https://docs.pytest.org/en/stable/explanation/goodpractices.html)
     - [Pytest with Eric (blog)](https://pytest-with-eric.com/pytest-best-practices/pytest-ini/)
