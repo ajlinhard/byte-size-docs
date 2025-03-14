@@ -1,11 +1,19 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# 
 
 ---
+# Docker
+Docker is a containerization protocol for building lightweight services which can all run in parallel on the same computer:
+Key Benefits:
+- Lightweight and spin-up quickly
+- Packages up dependencies for each micro-service
+- Easy to share across hardware and machine types.
+
+## Key Documentation
+- [Docker Manuals](https://docs.docker.com/manuals/)
+- [Docker References](https://docs.docker.com/reference/)
+- [Dockerfile Syntax Reference](https://docs.docker.com/reference/dockerfile/#overview)
+- [Docker Build Github Actuins](https://docs.docker.com/build/ci/github-actions/)
 
 ### Location and Naming of Dockerfiles in a Project
-
 #### **Location**
 
 1. **Root of the Project**: The most common and recommended location for a `Dockerfile` is in the root directory of your project. This allows for straightforward builds without additional configuration[^1][^2][^4].
@@ -23,44 +31,3 @@
 - Use the default name (`Dockerfile`) for simplicity if there’s only one Dockerfile in the project.
 - For multi-service projects, organize Dockerfiles into subdirectories or use descriptive names to avoid confusion.
 - Ensure that the build context includes all necessary files by placing the Dockerfile appropriately relative to your source code[^5][^6].
-
-<div style="text-align: center">⁂</div>
-
-[^1]: https://www.reddit.com/r/docker/comments/ezugfp/location_of_dockerfile_and_compose_files_within/
-
-[^2]: https://www.reddit.com/r/docker/comments/15zpwv4/proper_docker_folder_structure/
-
-[^3]: https://github.com/docker/docker.github.io/issues/9245
-
-[^4]: https://docs.docker.com/build/concepts/dockerfile/
-
-[^5]: https://stackoverflow.com/questions/27387811/where-to-keep-dockerfiles-in-a-project
-
-[^6]: https://www.baeldung.com/ops/multiple-dockerfiles
-
-[^7]: https://docs.docker.com/get-started/docker-concepts/building-images/writing-a-dockerfile/
-
-[^8]: https://stackoverflow.com/questions/26077543/how-to-name-dockerfiles
-
-[^9]: https://docs.docker.com/get-started/docker-concepts/running-containers/sharing-local-files/
-
-[^10]: https://stackoverflow.com/questions/76554489/directory-structure-in-dockerfile
-
-[^11]: https://docs.docker.com/contribute/file-conventions/
-
-[^12]: https://www.xcubelabs.com/blog/best-practices-for-writing-dockerfiles/
-
-[^13]: https://docs.docker.com/build/building/best-practices/
-
-[^14]: https://docs.docker.com/reference/dockerfile/
-
-[^15]: https://forums.docker.com/t/dockerfile-and-using-to-traverse-folder-structure-outside-where-dockerfile-sits/138409
-
-[^16]: https://www.youtube.com/watch?v=ERdZKI6imuk
-
-[^17]: https://docker-compose.de/en/folder-structure/
-
-[^18]: https://nickjanetakis.com/blog/docker-tip-10-project-structure-with-multiple-dockerfiles-and-docker-compose
-
-[^19]: https://www.reddit.com/r/docker/comments/rbabzg/q_what_do_you_call_the_folder_that_docker_files/
-

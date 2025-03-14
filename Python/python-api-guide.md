@@ -3,6 +3,7 @@
 ## 1. Choose a Web Framework
 For Python API development, you have several popular options:
 - Flask (Lightweight and simple)
+    - [Flask Documentation Home](https://flask.palletsprojects.com/en/stable/)
 - FastAPI (Modern, fast, and type-annotated)
 - Django REST Framework (Full-featured, robust)
 

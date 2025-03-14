@@ -55,7 +55,7 @@ pytest-cov is a plugin for pytest that adds code coverage measurement capabiliti
 
 ## Structuring Test Folder in a Project
 Depending on your python project structure your unit test folder may live outside the package code folder. If this case arises, the you can use one of 3 methods.
-** Note: All 3 methods are focuesed on adjusting or adding the PYTHONPATH to the sys.path/PYTHON import mechanism.**
+** Note: All 3 methods are focuesed on adjusting or adding the PYTHONPATH to the sys.path/PYTHON import mechanism. [info here](https://docs.pytest.org/en/7.1.x/explanation/pythonpath.html)**
 
 ### 1. pytest.ini file (older but still valid approach)
 ```bash
