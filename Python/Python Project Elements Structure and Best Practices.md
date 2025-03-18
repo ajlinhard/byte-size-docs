@@ -25,7 +25,7 @@ In Python projects, there quite a few elements, structures, and mechanics at pla
 
 ## Documentation
 - [Python.org Offical Packaging Guide](https://packaging.python.org/en/latest/tutorials/packaging-projects/#a-simple-project)
-
+- [How do python scripts execute?](https://github.com/ajlinhard/byte-size-docs/blob/main/Python/Virtual%20Environments-Python.md#first-how-do-python-scripts-execute)
 ---
 # Building Packages/Apps
 ## **Using a setup.py**
