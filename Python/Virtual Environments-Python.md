@@ -1,4 +1,7 @@
 # Python Virtual Environments (Venv) vs. Anaconda Environements (Conda)
+Virutal Environments are how you handle different python package dependency builds for your projects. They can help you manage different versioning required for projects, services, or dev/test comparisons.
+## Good Documentation
+- [Basics of Each Virtual Env](https://www.pythoncheatsheet.org/cheatsheet/virtual-environments)
 
 # Venv:
     - create a Venv directly in your project folder:
