@@ -1,11 +1,15 @@
 # Byte and Bytearrays being used in the wild
 Python's byte and bytearray types are useful in several data engineering scenarios where you need to work with binary data. Here are some common use cases:
 
-Processing binary files - When you need to read or write non-text data like images, audio files, or proprietary file formats.
-Network communication - When working with protocols that transmit binary data (like socket programming or low-level HTTP/TCP).
-Data serialization/deserialization - When converting complex objects to binary representations for storage or transmission, especially if you're implementing custom serialization logic.
-Memory-efficient data processing - When dealing with very large datasets where memory efficiency is critical.
-Cryptography and hashing - When you need to perform operations on raw binary data for security purposes.
+1. Processing binary files - When you need to read or write non-text data like images, audio files, or proprietary file formats.
+
+2. Network communication - When working with protocols that transmit binary data (like socket programming or low-level HTTP/TCP).
+
+3. Data serialization/deserialization - When converting complex objects to binary representations for storage or transmission, especially if you're implementing custom serialization logic.
+
+4. Memory-efficient data processing - When dealing with very large datasets where memory efficiency is critical.
+
+5. Cryptography and hashing - When you need to perform operations on raw binary data for security purposes.
 
 A specific scenario might be:
 Let's say you're building a data pipeline that processes sensor data coming from IoT devices. The devices transmit readings in a compact binary format to save bandwidth. You'd use bytes to receive this raw data, then parse the binary structure to extract temperature, humidity, timestamps, and other readings. Using bytes/bytearray lets you efficiently manipulate this binary data - extracting specific byte ranges, converting endianness if needed, and transforming it into Python data structures for analysis.
