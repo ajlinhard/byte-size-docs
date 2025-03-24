@@ -1,8 +1,10 @@
 # Spark Date and DateTime Operations Cheatsheet
 
-I'll create a comprehensive guide for working with dates and datetimes in Apache Spark, showing common operations and conversions.
+Below is Apache Spark showing common operations and conversions.
 
-Here's a breakdown of key date and datetime operations in Spark:
+### Helpful Links:
+- [Datetime Data Formats/Best Practices](https://github.com/ajlinhard/byte-size-docs/blob/main/General_Code_Concepts/Data-Using-Date-Times.md)
+- [PySpark Datetime Functions](https://sparkbyexamples.com/pyspark/pyspark-sql-date-and-timestamp-functions/)
 
 ## Converting Strings to Date/DateTime
 
