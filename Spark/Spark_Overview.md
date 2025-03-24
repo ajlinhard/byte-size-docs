@@ -3,7 +3,9 @@
 # Overview Links:
 1. [Great Architecture Overview](https://www.youtube.com/watch?v=jDkLiqlyQaY)
 2. [In-depth Architecture](https://www.youtube.com/watch?v=iXVIPQEGZ9Y)
-
+3. [Spark By Examples Help](https://sparkbyexamples.com/)
+   a. [AWS Implementations](https://sparkbyexamples.com/apache-spark-on-amazon-web-services/)
+   b. [Kafka Streaming](https://sparkbyexamples.com/apache-spark-streaming-tutorial/)
 
 # Spark Links
 1. Loading Files Options
