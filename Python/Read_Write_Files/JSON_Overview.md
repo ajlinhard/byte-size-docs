@@ -265,6 +265,93 @@ else:
     print(f"Error: {response.status_code}")
 ```
 
+Circular references in JSON occur when an object contains a reference to itself, either directly or through a chain of references. This creates a cycle in the data structure that cannot be represented in standard JSON.
+
+## Example of a Circular Reference
+
+Here's a simple example in Python:
+
+```python
+# Create a dictionary
+person = {
+    "name": "Alice",
+    "friends": []
+}
+
+# Create circular reference by adding itself to the friends list
+person["friends"].append(person)
+
+# Now person refers to itself inside its own structure
+```
+
+In this example, `person` contains a list of friends, and one of those friends is the `person` object itself. This creates an infinite loop in the structure.
+
+## Why Circular References Are Problematic
+
+Standard JSON doesn't support circular references for several reasons:
+
+1. **Infinite Serialization**: When converting to JSON, the encoder would need to recursively process the object forever.
+
+2. **JSON Specification Limitation**: The JSON specification doesn't include any mechanism for reference identities or pointers.
+
+3. **Memory Concerns**: Processing such structures could lead to infinite memory consumption.
+
+When you try to serialize an object with circular references using the standard JSON encoder:
+
+```python
+import json
+json.dumps(person)  # This will raise: TypeError: Object of type dict is not JSON serializable
+```
+
+You'll get a `TypeError` or a recursion error.
+
+## Solutions for Handling Circular References
+
+1. **Custom Encoder with Object Tracking**:
+   ```python
+   import json
+   
+   class CircularReferenceEncoder(json.JSONEncoder):
+       def __init__(self, *args, **kwargs):
+           super().__init__(*args, **kwargs)
+           self.seen_objects = set()
+       
+       def default(self, obj):
+           # Get object ID to track it
+           obj_id = id(obj)
+           
+           # If we've seen this object already
+           if obj_id in self.seen_objects:
+               return {"$ref": "circular"}
+           
+           self.seen_objects.add(obj_id)
+           
+           if isinstance(obj, dict):
+               result = {key: self.default(value) for key, value in obj.items()}
+               self.seen_objects.remove(obj_id)
+               return result
+               
+           # Handle other types...
+           return super().default(obj)
+   ```
+
+2. **Using External Libraries**: Some libraries like `python-dill` or `jsonpickle` can handle circular references.
+
+3. **Breaking the Circle Before Serialization**: 
+   - Replace circular references with IDs or reference keys
+   - Remove circular references entirely
+   - Use a depth limit when traversing the structure
+
+## Real-World Implications
+
+Circular references commonly appear in:
+
+- **Object-Relational Mappings**: Parent-child relationships, many-to-many relationships
+- **Graph Data Structures**: Social networks, organization charts
+- **DOM Trees**: Where parent elements contain references to children and vice versa
+
+When working with systems that might contain circular references (like database ORM models), it's important to handle these cases carefully when serializing to JSON.
+
 ## Best Practices
 
 1. Always use try-except blocks when parsing external JSON
