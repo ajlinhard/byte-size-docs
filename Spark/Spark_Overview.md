@@ -2,8 +2,24 @@
 # Spark (PySpark)
 Apache Spark is a modern day large data process on OLAP and DSS systems. Systems requiring more traditional transactional update, small inserts, and logging other traditional databases like dynamo, cassandra, etc.
 
-## Table of Contents:
-- 
+## Table of Contents
+
+- [Spark (PySpark)](#spark-pyspark)
+  - [Documentation/Tutorials](#documentation-tutorials)
+  - [Spark Links](#spark-links)
+  - [To Study Spark Items](#to-study-spark-items)
+- [Key Spark Concepts](#key-spark-concepts)
+  - [Spark Context vs. Spark Sessions](#spark-context-vs-spark-sessions)
+    - [SparkContext](#sparkcontext)
+    - [SparkSession](#sparksession)
+    - [Key Differences](#key-differences)
+  - [Data Architecture Layers](#data-architecture-layers)
+  - [RDD (Resilient Distributed Dataset)](#rdd-resilient-distributed-dataset)
+  - [DataFrame](#dataframe)
+  - [Table](#table)
+  - [Key Differences](#key-differences-1)
+- [Important Error Help](#important-error-help)
+  - [Mismatch Python Versions for Driver vs. Worker](#mismatch-python-versions-for-driver-vs-worker)
 
 ## Documentation/ Tutorials:
 1. [Great Architecture Overview](https://www.youtube.com/watch?v=jDkLiqlyQaY)
