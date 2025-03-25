@@ -137,13 +137,19 @@ This layered architecture allows Spark to provide high-level, user-friendly APIs
 
 ## RDD (Resilient Distributed Dataset)
 
-RDDs are the most fundamental data structure in Spark - a distributed collection of elements that can be processed in parallel.
+RDDs are the most fundamental data structure in Spark - a distributed collection of elements that can be processed in parallel. RDDs are collections of objects similar to a list in Python; the difference is that RDD is computed on several processes scattered across multiple physical servers, also called nodes in a cluster, while a Python collection lives and processes in just one process. PySpark RDDs are immutable in nature meaning, once RDDs are created you cannot modify them. When we apply transformations on RDD, PySpark creates a new RDD and maintains the RDD Lineage.
 
 **Key characteristics:**
 - Low-level API with fine-grained control
 - No predefined schema or structure
 - Type-safe (compile-time type checking)
 - Immutable and fault-tolerant
+
+### Helpfule Links:
+- [Apache Spark: RDD Programming Guide](https://spark.apache.org/docs/latest/rdd-programming-guide.html)
+- [Apache Spark: RDD Pyspark API](https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.RDD.html#pyspark.RDD)
+- [What is an RDDs?](https://sparkbyexamples.com/pyspark-rdd/)
+- [Practice RDD Code/Notebook](https://github.com/ajlinhard/PythonExplorer/blob/main/Spark/RDD_Basics.ipynb)
 
 **Ways to create RDDs:**
 ```python
