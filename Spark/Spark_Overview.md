@@ -2,7 +2,10 @@
 # Spark (PySpark)
 Apache Spark is a modern day large data process on OLAP and DSS systems. Systems requiring more traditional transactional update, small inserts, and logging other traditional databases like dynamo, cassandra, etc.
 
-# Overview Links:
+## Table of Contents:
+- 
+
+## Documentation/ Tutorials:
 1. [Great Architecture Overview](https://www.youtube.com/watch?v=jDkLiqlyQaY)
 2. [In-depth Architecture](https://www.youtube.com/watch?v=iXVIPQEGZ9Y)
 3. [Spark By Examples Help](https://sparkbyexamples.com/)
@@ -98,6 +101,127 @@ sc = spark.sparkContext
 
 In modern Spark applications (2.0 and later), you typically create a SparkSession and access the SparkContext through it when needed for RDD operations. This gives you the best of both worlds - structured data processing with DataFrames and direct access to RDDs when necessary.
 
+## Data Architecture Layers
+These three abstractions represent different ways to organize and work with data in Apache Spark, each with increasing levels of structure and optimization.
+
+1. **RDD (Base Layer)**
+   - The foundational distributed data structure in Spark
+   - Provides fault tolerance and distributed computation model
+   - When you execute DataFrame or Table operations, they're ultimately compiled down to RDD operations
+
+2. **DataFrame (Mid Layer)**
+   - Built on top of RDDs but adds a schema and columnar format
+   - Under the hood, a DataFrame is essentially an RDD of Row objects with a schema
+   - The Catalyst optimizer works with this layer to optimize query execution
+   - When you call `df.rdd`, you're accessing the underlying RDD representation
+
+3. **Table (Top Layer)**
+   - A logical abstraction on top of DataFrames
+   - Tables register DataFrames in a catalog with metadata
+   - When you query a table with SQL, it's translated to DataFrame operations, which are then translated to RDD operations
+
+## Evidence in Implementation
+
+You can see this relationship in how data flows through the system:
+
+1. When you execute a DataFrame operation, the query planner converts it to an optimized physical plan
+2. This physical plan consists of RDD transformations
+3. You can observe this by examining the execution plan:
+
+```python
+df = spark.createDataFrame([(1, "Alice"), (2, "Bob")], ["id", "name"])
+df.filter(df.id > 1).explain(True)  # Shows the logical and physical plans
+```
+
+This layered architecture allows Spark to provide high-level, user-friendly APIs (DataFrames and SQL) while maintaining the flexibility and power of the core RDD model for distributed computation.
+
+## RDD (Resilient Distributed Dataset)
+
+RDDs are the most fundamental data structure in Spark - a distributed collection of elements that can be processed in parallel.
+
+**Key characteristics:**
+- Low-level API with fine-grained control
+- No predefined schema or structure
+- Type-safe (compile-time type checking)
+- Immutable and fault-tolerant
+
+**Ways to create RDDs:**
+```python
+# From collection
+rdd = sc.parallelize([1, 2, 3, 4, 5])
+
+# From external storage
+rdd = sc.textFile("hdfs://path/to/file.txt")
+
+# From another RDD
+filtered_rdd = rdd.filter(lambda x: x > 2)
+
+# From Hadoop InputFormat
+rdd = sc.hadoopFile("hdfs://path/to/file", "org.apache.hadoop.mapred.TextInputFormat")
+```
+
+## DataFrame
+
+DataFrames are distributed collections of data organized into named columns, similar to tables in a relational database.
+
+**Key characteristics:**
+- Higher-level API with more optimization
+- Schema-based with column names and types
+- Catalyst optimizer for query optimization
+- Better for structured/semi-structured data
+
+**Ways to create DataFrames:**
+```python
+# From RDD
+schema = StructType([StructField("id", IntegerType()), StructField("name", StringType())])
+df = spark.createDataFrame(rdd, schema)
+
+# From external data sources
+df = spark.read.csv("path/to/file.csv", header=True, inferSchema=True)
+df = spark.read.json("path/to/file.json")
+df = spark.read.parquet("path/to/file.parquet")
+
+# From Pandas DataFrame
+pandas_df = pd.DataFrame({"id": [1, 2, 3], "name": ["Alice", "Bob", "Charlie"]})
+spark_df = spark.createDataFrame(pandas_df)
+
+# From literal data
+df = spark.createDataFrame([(1, "Alice"), (2, "Bob")], ["id", "name"])
+```
+
+## Table
+
+Tables in Spark are logical abstractions on top of DataFrames, managed through the catalog for persistent data.
+
+**Key characteristics:**
+- Registered in a catalog/metastore
+- Can be queried with SQL
+- Can be temporary or permanent
+- Can have additional metadata like partitioning info
+
+**Ways to create Tables:**
+```python
+# From DataFrame
+df.write.saveAsTable("my_table")
+df.createOrReplaceTempView("temp_table")  # Temporary table
+df.createGlobalTempView("global_temp_table")  # Global temporary table
+
+# Using SQL
+spark.sql("CREATE TABLE table_name (id INT, name STRING) USING parquet")
+spark.sql("CREATE TABLE table_name AS SELECT * FROM another_table")
+
+# From external data source
+spark.sql("CREATE TABLE ext_table USING csv OPTIONS (path 'path/to/file.csv', header 'true')")
+```
+
+## Key Differences
+
+1. **Structure level**: RDD (unstructured) → DataFrame (structured) → Table (structured with metadata)
+2. **API type**: RDD (functional) → DataFrame (domain-specific) → Table (SQL)
+3. **Optimization**: More structure allows more optimization, with Tables benefiting from the most Catalyst optimization
+4. **Persistence**: RDDs and DataFrames are transient by default; Tables can be made persistent
+
+Would you like me to explain any specific aspect in more detail?
 ---
 # Important Error Help
 
