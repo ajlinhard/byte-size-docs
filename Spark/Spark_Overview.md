@@ -1,11 +1,14 @@
 
+# Spark (PySpark)
+Apache Spark is a modern day large data process on OLAP and DSS systems. Systems requiring more traditional transactional update, small inserts, and logging other traditional databases like dynamo, cassandra, etc.
 
 # Overview Links:
 1. [Great Architecture Overview](https://www.youtube.com/watch?v=jDkLiqlyQaY)
 2. [In-depth Architecture](https://www.youtube.com/watch?v=iXVIPQEGZ9Y)
 3. [Spark By Examples Help](https://sparkbyexamples.com/)
-   <br>a. [AWS Implementations](https://sparkbyexamples.com/apache-spark-on-amazon-web-services/)
-   <br>b. [Kafka Streaming](https://sparkbyexamples.com/apache-spark-streaming-tutorial/)
+   <br>b. [Spark Use/RDD]([https://sparkbyexamples.com/apache-spark-on-amazon-web-services/](https://sparkbyexamples.com/pyspark-rdd/))
+   <br>b. [AWS Implementations](https://sparkbyexamples.com/apache-spark-on-amazon-web-services/)
+   <br>c. [Kafka Streaming](https://sparkbyexamples.com/apache-spark-streaming-tutorial/)
 
 # Spark Links
 1. Loading Files Options
@@ -41,15 +44,13 @@ Next
 ---
 # Key Spark Concepts
 
-### Resilient Distributed Dataset (RDD)
-
-
 ### Spark Context vs. Spark Sessions
 A SparkContext and a SparkSession are both fundamental components in Apache Spark, but they serve different purposes and were introduced in different versions of Spark. Let me explain the key differences:
 
 ## SparkContext
-SparkContext is the older, original entry point for Spark functionality:
+SparkContext is the older original entry point for Spark functionality:
 
+- Only 1 SparkContext instance should exists per JVM. Best practices to stop() the context before creating a new one.
 - It connects your application to a Spark cluster
 - It's used primarily for creating RDDs (Resilient Distributed Datasets)
 - It was the main entry point in Spark 1.x
