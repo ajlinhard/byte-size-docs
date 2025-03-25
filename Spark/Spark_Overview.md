@@ -6,7 +6,7 @@ Apache Spark is a modern day large data process on OLAP and DSS systems. Systems
 1. [Great Architecture Overview](https://www.youtube.com/watch?v=jDkLiqlyQaY)
 2. [In-depth Architecture](https://www.youtube.com/watch?v=iXVIPQEGZ9Y)
 3. [Spark By Examples Help](https://sparkbyexamples.com/)
-   <br>b. [Spark Use/RDD]([https://sparkbyexamples.com/apache-spark-on-amazon-web-services/](https://sparkbyexamples.com/pyspark-rdd/))
+   <br>b. [Spark Use/RDD](https://sparkbyexamples.com/pyspark-rdd/))
    <br>b. [AWS Implementations](https://sparkbyexamples.com/apache-spark-on-amazon-web-services/)
    <br>c. [Kafka Streaming](https://sparkbyexamples.com/apache-spark-streaming-tutorial/)
 
