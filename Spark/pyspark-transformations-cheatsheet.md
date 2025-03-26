@@ -10,6 +10,58 @@
     - over statements for using row_number() or dense_rank()
     - Apply a python function to a spark column
 
+---
+# Important Concept of Column Objects vs. Dataframe-tied column references
+When working with Spark DataFrames, there are indeed two main ways to reference columns: the direct dot notation (`df.column_name`) and the `col()` function approach. The difference in usage comes down to the context and capabilities of each method.
+```Python
+# Both work: The first is a DataFrame-tied column references, the "col('column_name')" is a column object. The second one is more reliable.
+df_movie_corrupt.filter(df_movie_corrupt.corrupt_vals.isNotNull()).show(10, truncate=False)
+df_movie_corrupt.filter(col('corrupt_vals').isNotNull()).show(10, truncate=False)
+```
+
+### Dot Notation (`df.column_name`)
+
+The dot notation is convenient for simple operations, especially in filters and selects. For example:
+
+```python
+df_movie_corrupt.filter(df_movie_corrupt.corrupt_vals.isNotNull())
+```
+
+This approach works well because:
+- It's concise and readable for simple expressions
+- It explicitly ties the column to its parent DataFrame
+- It works well with column operations that don't require complex transformations
+
+### Column Function (`col('column_name')`)
+
+The `col()` function approach is more versatile and is required in many contexts:
+
+```python
+df_movie_fixed = df_movie_corrupt.withColumn('FullTitle', split_col_udf(col('corrupt_vals'), lit(2)))
+```
+
+This approach is necessary when:
+- You're using complex transformations or UDFs
+- Working with functions that expect column objects rather than expressions
+- Performing operations where column independence from a specific DataFrame is important
+- Building complex expressions with multiple columns and literals
+
+### Why the Difference?
+
+The main reasons for these differences are:
+
+1. **Type of operation**: Some operations in Spark's API were designed to work with column references while others work with column expressions.
+
+2. **DataFrame context**: The dot notation inherently ties the column to a specific DataFrame, which works for filtering that same DataFrame but can be problematic when applying transformations that should be DataFrame-agnostic.
+
+3. **Function composition**: When building complex expressions with multiple operations, the `col()` function provides more flexibility for combining with other functions like `lit()`, `concat()`, etc.
+
+4. **Historical API evolution**: As PySpark evolved, different approaches to column references were implemented at different times.
+
+In your example, the UDF-based transformation in `withColumn()` requires column objects rather than DataFrame-tied column references, which is why `col('corrupt_vals')` is used instead of `df_movie_corrupt.corrupt_vals`.
+
+For maximum flexibility, many Spark developers prefer consistently using the `col()` function approach, especially in complex data pipelines.
+---
 ## String Functions
 
 ### LTRIM & RTRIM
