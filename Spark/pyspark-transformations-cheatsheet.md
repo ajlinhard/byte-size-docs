@@ -15,8 +15,12 @@
 When working with Spark DataFrames, there are indeed two main ways to reference columns: the direct dot notation (`df.column_name`) and the `col()` function approach. The difference in usage comes down to the context and capabilities of each method.
 ```Python
 # Both work: The first is a DataFrame-tied column references, the "col('column_name')" is a column object. The second one is more reliable.
+# DataFrame-tied column references
 df_movie_corrupt.filter(df_movie_corrupt.corrupt_vals.isNotNull()).show(10, truncate=False)
+# Column Objects Opt 1
 df_movie_corrupt.filter(col('corrupt_vals').isNotNull()).show(10, truncate=False)
+# Column Object Opt2: a similar syntax to pandas.
+df_movie_corrupt.filter(df_movie_corrupt['corrupt_vals'].isNotNull()).show(10, truncate=False)
 ```
 
 ### Dot Notation (`df.column_name`)
