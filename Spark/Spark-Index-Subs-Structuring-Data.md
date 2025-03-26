@@ -1,4 +1,14 @@
-In Spark, there isn't a traditional explicit indexing system like you'd find in traditional relational databases. Let me explain how Spark handles data organization and optimization instead, particularly for DataFrames and tables.
+# Spark Index Subsitutions aka Structuring Data in Spark
+In Spark, **there isn't a traditional explicit indexing system** like you'd find in traditional relational databases. Let me explain how Spark handles data organization and optimization instead, particularly for DataFrames and tables.
+
+# Table of Contents
+
+- [Spark's Approach to Data Organization](#sparks-approach-to-data-organization)
+- [Index-like Features in Modern Spark](#index-like-features-in-modern-spark)
+- [Performance Optimization Without Indexes](#performance-optimization-without-indexes)
+- [Practical Example](#practical-example)
+- [Advanced Spark Optimization Concepts](#advanced-spark-optimization-concepts)
+- [Why Spark Cannot Compete with Traditional OLTP Databases](#why-spark-cannot-compete-with-traditional-oltp-databases)
 
 ## Spark's Approach to Data Organization
 
