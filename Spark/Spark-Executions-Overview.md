@@ -57,7 +57,21 @@ df_movie_corrupt.show(10, truncate=False)
 ```
 Then we try to fix the last column by parsing the "corrupt_vals" column ourselves, then replacing the "col3" with the new fixed column. Finally, we want to drop "col3" and look at the dataframe with show().
 ```python
+from pyspark.sql.functions import coalesce, split
+df_movie_fixed = df_movie_corrupt.withColumn('FullTitle', split(df_movie_corrupt['corrupt_vals'], ',', 3).getItem(2))
+# The FullTitle column is not null for these results
+df_movie_fixed.filter(df_movie_fixed.corrupt_vals.isNotNull()).show(5, truncate=False)
+df_movie_fixed.filter(df_movie_fixed.col1 == 72).show(5)
+df_movie_fixed.filter(df_movie_fixed.col1 == 264).show(5)
+df_movie_fixed = df_movie_fixed.withColumnsRenamed({'col1':'id', 'col2':'Year'}).withColumn('TitleFixed', coalesce(col('FullTitle'),col('col3')))
 
+df_movie_fixed_fnl = df_movie_fixed.drop('col3')
+# The FullTitle column is null for these results
+df_movie_fixed_fnl.show(5)
+df_movie_fixed_fnl.filter(df_movie_fixed_fnl.id == 72).show(5)
+df_movie_fixed_fnl.filter(df_movie_fixed_fnl.id == 264).show(5)
+
+df_movie_fixed_fnl.filter(df_movie_fixed_fnl.FullTitle.isNotNull()).show(5, truncate=False)
 ```
 #### **Issue:**
 In this scenario, when Spark loads data with corrupt record handling options (like `mode="PERMISSIVE"` with `columnNameOfCorruptRecord="corrupt_vals"`), it creates an internal relationship between the corrupt records column and the source data parsing.
@@ -110,7 +124,25 @@ When you subsequently modify the DataFrame structure (like dropping columns), Sp
 
 #### **Solution:**
 Use caching right after loading or the UDF to help - it forces Spark to materialize the corrupt records and all derived columns before you dropped `col3`, preserving their values regardless of any subsequent plan optimizations.
+```python
+from pyspark.sql.functions import coalesce, split
+df_movie_fixed = df_movie_corrupt.withColumn('FullTitle', split(df_movie_corrupt['corrupt_vals'], ',', 3).getItem(2))
+# The FullTitle column is not null for these results
+df_movie_fixed.filter(df_movie_fixed.corrupt_vals.isNotNull()).show(5, truncate=False)
+df_movie_fixed.filter(df_movie_fixed.col1 == 72).show(5)
+df_movie_fixed.filter(df_movie_fixed.col1 == 264).show(5)
+df_movie_fixed = df_movie_fixed.withColumnsRenamed({'col1':'id', 'col2':'Year'}).withColumn('TitleFixed', coalesce(col('FullTitle'),col('col3')))
+# Required to remove the dependency of col3 of the corrupt_vals column used in the UDF. The .drop("col3") will cause "col3" to be removed from the initial file load.
+df_movie_fixed = df_movie_fixed.cache()
 
+df_movie_fixed_fnl = df_movie_fixed.drop('col3')
+# The FullTitle column is null for these results
+df_movie_fixed_fnl.show(5)
+df_movie_fixed_fnl.filter(df_movie_fixed_fnl.id == 72).show(5)
+df_movie_fixed_fnl.filter(df_movie_fixed_fnl.id == 264).show(5)
+
+df_movie_fixed_fnl.filter(df_movie_fixed_fnl.FullTitle.isNotNull()).show(5, truncate=False)
+```
 If you're working with corrupt record handling, it's generally a good practice to:
 
 1. Cache the DataFrame after initial loading and corrupt record handling
