@@ -64,7 +64,32 @@ In this scenario, when Spark loads data with corrupt record handling options (li
 
 In more detail, here's what happens:
 ```bash
-== Parsed Logical Plan == Filter isnotnull(FullTitle#6156) +- Project [col1#977, col2#978, corrupt_vals#980, FullTitle#6156] +- Project [col1#977, col2#978, col3#979, corrupt_vals#980, split_col(corrupt_vals#980, 2)#6155 AS FullTitle#6156] +- Relation [col1#977,col2#978,col3#979,corrupt_vals#980] csv == Analyzed Logical Plan == col1: string, col2: string, corrupt_vals: string, FullTitle: string Filter isnotnull(FullTitle#6156) +- Project [col1#977, col2#978, corrupt_vals#980, FullTitle#6156] +- Project [col1#977, col2#978, col3#979, corrupt_vals#980, split_col(corrupt_vals#980, 2)#6155 AS FullTitle#6156] +- Relation [col1#977,col2#978,col3#979,corrupt_vals#980] csv == Optimized Logical Plan == Project [col1#977, col2#978, corrupt_vals#980, pythonUDF0#6308 AS FullTitle#6156] +- BatchEvalPython [split_col(corrupt_vals#980, 2)#6155], [pythonUDF0#6308] +- Project [col1#977, col2#978, corrupt_vals#980] +- Filter isnotnull(pythonUDF0#6307) +- BatchEvalPython [split_col(corrupt_vals#980, 2)#6155], [pythonUDF0#6307] +- Project [col1#977, col2#978, corrupt_vals#980] +- Relation [col1#977,col2#978,col3#979,corrupt_vals#980] csv == Physical Plan == *(2) Project [col1#977, col2#978, corrupt_vals#980, pythonUDF0#6308 AS FullTitle#6156] +- BatchEvalPython [split_col(corrupt_vals#980, 2)#6155], [pythonUDF0#6308] +- *(1) Project [col1#977, col2#978, corrupt_vals#980] +- *(1) Filter isnotnull(pythonUDF0#6307) +- BatchEvalPython [split_col(corrupt_vals#980, 2)#6155], [pythonUDF0#6307] +- FileScan csv [col1#977,col2#978,corrupt_vals#980] Batched: false, DataFilters: [], Format: CSV, Location: InMemoryFileIndex(1 paths)[file:/F:/DataSamples/ExampleFiles/Delimited/movie_titles.csv], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<col1:string,col2:string,corrupt_vals:string>
+== Parsed Logical Plan ==
+Filter isnotnull(FullTitle#6156)
++- Project [col1#977, col2#978, corrupt_vals#980, FullTitle#6156]
++- Project [col1#977, col2#978, col3#979, corrupt_vals#980, split_col(corrupt_vals#980, 2)#6155 AS FullTitle#6156]
++- Relation [col1#977,col2#978,col3#979,corrupt_vals#980] csv
+
+== Analyzed Logical Plan ==
+col1: string, col2: string, corrupt_vals: string, FullTitle: string Filter isnotnull(FullTitle#6156)
++- Project [col1#977, col2#978, corrupt_vals#980, FullTitle#6156]
++- Project [col1#977, col2#978, col3#979, corrupt_vals#980, split_col(corrupt_vals#980, 2)#6155 AS FullTitle#6156]
++- Relation [col1#977,col2#978,col3#979,corrupt_vals#980] csv
+
+== Optimized Logical Plan ==
+Project [col1#977, col2#978, corrupt_vals#980, pythonUDF0#6308 AS FullTitle#6156]
++- BatchEvalPython [split_col(corrupt_vals#980, 2)#6155], [pythonUDF0#6308]
++- Project [col1#977, col2#978, corrupt_vals#980]
++- Filter isnotnull(pythonUDF0#6307)
++- BatchEvalPython [split_col(corrupt_vals#980, 2)#6155], [pythonUDF0#6307] +- Project [col1#977, col2#978, corrupt_vals#980] +- Relation [col1#977,col2#978,col3#979,corrupt_vals#980] csv
+
+== Physical Plan ==
+*(2) Project [col1#977, col2#978, corrupt_vals#980, pythonUDF0#6308 AS FullTitle#6156]
++- BatchEvalPython [split_col(corrupt_vals#980, 2)#6155], [pythonUDF0#6308]
++- *(1) Project [col1#977, col2#978, corrupt_vals#980]
++- *(1) Filter isnotnull(pythonUDF0#6307)
++- BatchEvalPython [split_col(corrupt_vals#980, 2)#6155], [pythonUDF0#6307]
++- FileScan csv [col1#977,col2#978,corrupt_vals#980] Batched: false, DataFilters: [], Format: CSV, Location: InMemoryFileIndex(1 paths)[file:/F:/DataSamples/ExampleFiles/Delimited/movie_titles.csv], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<col1:string,col2:string,corrupt_vals:string>
 ```
 
 The execution plan clearly shows the issue that's occurring. Looking at the plan, especially the Physical Plan section, you can identify several key points that explain the problem:
