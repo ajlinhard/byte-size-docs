@@ -33,11 +33,78 @@ Columns in Spark DataFrames can indeed be "dependent" on each other in certain s
 4. **Join Key**: If the column is a key used in a previously performed join operation, dropping it might interfere with how Spark maintains the DataFrame internally.
 5. **Column Used in Filtering**: If previous operations filtered based on this column, dropping it might cause execution plan issues.
 
+### Issue 01: Bad Data Column dependency on CorruptData Column:
+**Scenario:**
+We are loading a data set into Spark with a bad csv format. The last column has commas in the data, but the delimiter is a single comma with no quoting. Therefore the decision is made to load the data using the option columnNameOfCorruptRecord into the column names "corrupt_val"
+```python
+# You can for it to read all records
+from pyspark.sql.types import StructType, StructField, StringType
+s_data_files_path = os.path.join(s_raw_root_path, r'Delimited\movie_titles.csv')
 
+schema = StructType([
+    StructField("col1", StringType(), True),
+    StructField("col2", StringType(), True),
+    StructField("col3", StringType(), True),
+    StructField("corrupt_vals", StringType(), True),
+])
+df_movie_corrupt = spark.read \
+    .option("mode", "PERMISSIVE") \
+    .option("columnNameOfCorruptRecord", "corrupt_vals") \
+    .option("delimiter", ",") \
+    .schema(schema) \
+    .csv(s_data_files_path)
+df_movie_corrupt.show(10, truncate=False)
+```
+Then we try to fix the last column by parsing the "corrupt_vals" column ourselves, then replacing the "col3" with the new fixed column. Finally, we want to drop "col3" and look at the dataframe with show().
+```python
+
+```
+**Issue:**
+In this scenario, when Spark loads data with corrupt record handling options (like `mode="PERMISSIVE"` with `columnNameOfCorruptRecord="corrupt_vals"`), it creates an internal relationship between the corrupt records column and the source data parsing.
+
+In more detail, here's what happens:
+```bash
+== Parsed Logical Plan == Filter isnotnull(FullTitle#6156) +- Project [col1#977, col2#978, corrupt_vals#980, FullTitle#6156] +- Project [col1#977, col2#978, col3#979, corrupt_vals#980, split_col(corrupt_vals#980, 2)#6155 AS FullTitle#6156] +- Relation [col1#977,col2#978,col3#979,corrupt_vals#980] csv == Analyzed Logical Plan == col1: string, col2: string, corrupt_vals: string, FullTitle: string Filter isnotnull(FullTitle#6156) +- Project [col1#977, col2#978, corrupt_vals#980, FullTitle#6156] +- Project [col1#977, col2#978, col3#979, corrupt_vals#980, split_col(corrupt_vals#980, 2)#6155 AS FullTitle#6156] +- Relation [col1#977,col2#978,col3#979,corrupt_vals#980] csv == Optimized Logical Plan == Project [col1#977, col2#978, corrupt_vals#980, pythonUDF0#6308 AS FullTitle#6156] +- BatchEvalPython [split_col(corrupt_vals#980, 2)#6155], [pythonUDF0#6308] +- Project [col1#977, col2#978, corrupt_vals#980] +- Filter isnotnull(pythonUDF0#6307) +- BatchEvalPython [split_col(corrupt_vals#980, 2)#6155], [pythonUDF0#6307] +- Project [col1#977, col2#978, corrupt_vals#980] +- Relation [col1#977,col2#978,col3#979,corrupt_vals#980] csv == Physical Plan == *(2) Project [col1#977, col2#978, corrupt_vals#980, pythonUDF0#6308 AS FullTitle#6156] +- BatchEvalPython [split_col(corrupt_vals#980, 2)#6155], [pythonUDF0#6308] +- *(1) Project [col1#977, col2#978, corrupt_vals#980] +- *(1) Filter isnotnull(pythonUDF0#6307) +- BatchEvalPython [split_col(corrupt_vals#980, 2)#6155], [pythonUDF0#6307] +- FileScan csv [col1#977,col2#978,corrupt_vals#980] Batched: false, DataFilters: [], Format: CSV, Location: InMemoryFileIndex(1 paths)[file:/F:/DataSamples/ExampleFiles/Delimited/movie_titles.csv], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<col1:string,col2:string,corrupt_vals:string>
+```
+
+The execution plan clearly shows the issue that's occurring. Looking at the plan, especially the Physical Plan section, you can identify several key points that explain the problem:
+
+1. **Column Dependency**: In the Physical Plan, notice how `FullTitle#6156` is created using a Python UDF (`pythonUDF0#6308`) which takes `corrupt_vals#980` as input. This creates a direct dependency between these columns.
+
+2. **Schema Pruning**: At the bottom of the Physical Plan, you can see:
+   ```
+   FileScan csv [col1#977,col2#978,corrupt_vals#980]
+   ```
+   Spark has already pruned `col3#979` from the read schema, even though it's in the Parsed Logical Plan.
+
+3. **UDF Evaluation**: The execution uses `BatchEvalPython` for the `split_col` function, which is operating on `corrupt_vals#980`. This UDF evaluation creates a complex dependency that might be affected when the execution plan changes.
+
+4. **Filter Operation**: There's a `Filter isnotnull(pythonUDF0#6307)` operation which suggests that the plan is filtering based on non-null UDF results, potentially complicating the dependencies further.
+
+When you subsequently modify the DataFrame structure (like dropping columns), Spark might re-optimize its execution plan. This optimization can sometimes break the chain of dependencies that track corrupt records, especially because the `corrupt_vals` column is likely linked to how Spark handles corrupted data during file reading.
+
+**Solution:**
+Use caching right after loading or the UDF to help - it forces Spark to materialize the corrupt records and all derived columns before you dropped `col3`, preserving their values regardless of any subsequent plan optimizations.
+
+If you're working with corrupt record handling, it's generally a good practice to:
+
+1. Cache the DataFrame after initial loading and corrupt record handling
+2. Perform any cleanup or extraction from corrupt records
+3. Create a new "clean" DataFrame without the corrupt record handling dependencies
+4. Unpersist the original cached DataFrame when you no longer need it
+
+This approach gives you more predictable behavior when working with corrupt data.
+
+---
 ## In-Memory Processing
 The power of the In-memory execution plans of Spark lead to the fast run times. The method saves on the disk I/O of other systems like OLTP databases or Hadoop/Hive. There is a reason for this though. Spark is designed for fast big data processing/batch workloads. So, in certain senarios the other data engines will beat spark:
-OLTP databases:
-When there are many threads/users interacting with data frequently (100s or 1000s+ of users) with small transactions, then In-memory processing is overkill. The OLTP database are optimized for these quick and frequent transactions, especially singular record seeks, updates, or inserts. The data page/storage structures and indexing features these systems have that Spark does not, allow them to better handle these interactions. Correct, spark does not have indexing, but does have partitioning, bucketing, and other structures optimize smaller data interactions: (see this article)
+**OLTP databases:**
+When there are many threads/users interacting with data frequently (100s or 1000s+ of users) with small transactions, then In-memory processing is overkill. The OLTP database are optimized for these quick and frequent transactions, especially singular record seeks, updates, or inserts. The data page/storage structures and indexing features these systems have that Spark does not, allow them to better handle these interactions. Correct, spark does not have indexing, but does have partitioning, bucketing, and other structures optimize smaller data interactions: ([more info this article](https://github.com/ajlinhard/byte-size-docs/blob/main/Spark/Spark-Index-Subs-Structuring-Data.md))
+
+---
+**Hadoop/Hive**
+Hive is also a big data processing engine as well. Some features of Hadoop and Hive are used within Spark itself. Then main difference is these system have significantly more disk I/O than Spark, but use less memory overall. This approach results in Hadoop/Hive having longer runtimes and is part of the reason the engine fell out of favor (not an expert here so I'm sure there is more). However, a team may want to use Hive over Spark if there system Hardware has less memory(RAM). Spark can choke at certain memory levels depending on your data plus processing needs. Hive can be the answer in this system which may be designed this way for lower cost (RAM/GPU cost > Disk cost) or because its a legacy system.
+
 
 ## Fault Tolerance
 The processing of data in Spark is fault tolerent, however, do not confuse this will Spark being ACID compliant. Within a job itself Spark is "ACID compliant" in a way. If you are trying to update or insert incremental data from many separate jobs at the same moment in Spark, then the data may not turn out as you expect. This can be navigated with techniques and other packages like Delta Lake, but requires care and unit testing to confirm success. Other options managed Spark platforms like Databricks or Snowflake handle more ACID like transactions for you.
