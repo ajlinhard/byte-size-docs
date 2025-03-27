@@ -4,14 +4,14 @@ When running Spark as a data processing engine you are going to hear 3 main char
 2. [In-Memory Processing](In-Memory-Processing)
 3. [Fault Tolerance](Fault-Tolerance)
 While each of these truely are wonderful characteristics of Spark, like any tool they have there issues and nuances. This article will cover some of the issues of each characteristics.
-<br>
+
 Before we begin, please not 2 high-level major helpers.
-1. You can examine the Spark execution plan at any point in a process with [explain()](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.explain.html) to see what's happening:
+1. You can examine the Spark execution plan at any point in a process with [explain](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.explain.html) to see what's happening:
 ```python
 df_new = df.drop("problem_column")
 df_new.explain(True)  # Shows the full logical and physical plan
 ```
-2. Without needing to understand exactly what is happening you can use [cache()](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.cache.html) at a point in the process you know works. This forces Spark to materialize the dataframe. Trade-off is more memory usage, but can fix execution plan finickiness or issues.
+2. Without needing to understand exactly what is happening you can use [cache](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.cache.html) at a point in the process you know works. This forces Spark to materialize the dataframe. Trade-off is more memory usage, but can fix execution plan finickiness or issues.
 ```python
 df_good_action_series = df_good_action_series.withColumnRenamed({"col1": "ID", "col2:"FullAddress"})
 df_good_action_series = df_good_action_series.cache()
