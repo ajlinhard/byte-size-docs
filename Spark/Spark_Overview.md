@@ -181,6 +181,53 @@ filtered_rdd = rdd.filter(lambda x: x > 2)
 # From Hadoop InputFormat
 rdd = sc.hadoopFile("hdfs://path/to/file", "org.apache.hadoop.mapred.TextInputFormat")
 ```
+### Types of RDDs
+There are two primary types of RDDs (Resilient Distributed Datasets) in Apache Spark:
+
+1. Regular RDDs (or Collection RDDs)
+   - These are the basic distributed collections of elements
+   - They support transformations like map, filter, flatMap, etc.
+   - They represent simple data without any key-value structure
+
+2. Pair RDDs (or Key-Value Pair RDDs)
+   - These are RDDs where each element is a key-value pair (tuple)
+   - They're created either directly from key-value data or by using operations like `map` to generate pairs
+   - They support special operations like:
+     - reduceByKey, groupByKey, join, cogroup
+     - countByKey, collectAsMap
+     - keys(), values() methods
+
+The distinction is important because Pair RDDs unlock a whole set of additional operations that make certain types of data processing much more efficient, especially when you need to perform aggregations, groupings, or joins. They're essentially Apache Spark's equivalent to the MapReduce paradigm's key-value structure.
+
+#### Specialize RDDs
+These are more specialized RDD types in the Spark ecosystem. Here's an explanation of each:
+
+1. **ShuffledRDD**
+   - Created when operations that require data redistribution across partitions occur (like `groupByKey`, `reduceByKey`, or `join`)
+   - Manages the network transfer of data between executors during shuffle operations
+   - Not typically created directly by users but rather generated internally by Spark when needed
+
+2. **DoubleRDD**
+   - A specialized RDD where each element is a double (floating-point number)
+   - Provides optimized numerical operations like mean, sum, variance, and stdev
+   - Often created when working with numerical data and using statistical operations
+
+3. **SequenceFileRDD**
+   - An RDD that reads data from Hadoop SequenceFiles
+   - SequenceFiles are a flat file format consisting of binary key-value pairs
+   - Useful for reading/writing Hadoop compatible data or for persisting RDDs in a binary format
+
+4. **HadoopRDD**
+   - A core RDD implementation that reads data from Hadoop InputFormats
+   - Serves as the foundation for reading data from HDFS or other Hadoop-compatible filesystems
+   - Provides the integration between Spark and the Hadoop ecosystem
+
+5. **ParallelCollectionRDD**
+   - Created when you initialize an RDD from an in-memory collection (using `sc.parallelize()`)
+   - Distributes a local collection (like a list or array) across the cluster
+   - Often used for testing or working with small datasets that fit in driver memory
+
+These specialized RDD types handle specific scenarios and data formats in the Spark ecosystem. Most users interact with these indirectly through higher-level APIs, but understanding them can be valuable when optimizing Spark jobs or debugging performance issues.
 
 ## DataFrame
 
