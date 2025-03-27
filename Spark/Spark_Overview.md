@@ -63,8 +63,9 @@ Next
 ---
 # Key Spark Concepts
 
-### Spark Context vs. Spark Sessions
-A SparkContext and a SparkSession are both fundamental components in Apache Spark, but they serve different purposes and were introduced in different versions of Spark. Let me explain the key differences:
+## Lazy Evaluation
+PySpark does not evaluate the transformations as they appear/encountered by Driver instead it keeps the all transformations as it encounters(DAG) and evaluates the all transformation when it sees the first action/trigger.
+[More Reading and Deatils](https://github.com/ajlinhard/byte-size-docs/blob/main/Spark/Spark-Executions-Overview.md)
 
 ## SparkContext
 SparkContext is the older original entry point for Spark functionality:
