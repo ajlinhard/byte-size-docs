@@ -34,7 +34,7 @@ Columns in Spark DataFrames can indeed be "dependent" on each other in certain s
 5. **Column Used in Filtering**: If previous operations filtered based on this column, dropping it might cause execution plan issues.
 
 ### Issue 01: Bad Data Column dependency on CorruptData Column:
-**Scenario:**
+#### **Scenario:**
 We are loading a data set into Spark with a bad csv format. The last column has commas in the data, but the delimiter is a single comma with no quoting. Therefore the decision is made to load the data using the option columnNameOfCorruptRecord into the column names "corrupt_val"
 ```python
 # You can for it to read all records
@@ -59,7 +59,7 @@ Then we try to fix the last column by parsing the "corrupt_vals" column ourselve
 ```python
 
 ```
-**Issue:**
+#### **Issue:**
 In this scenario, when Spark loads data with corrupt record handling options (like `mode="PERMISSIVE"` with `columnNameOfCorruptRecord="corrupt_vals"`), it creates an internal relationship between the corrupt records column and the source data parsing.
 
 In more detail, here's what happens:
@@ -108,7 +108,7 @@ The execution plan clearly shows the issue that's occurring. Looking at the plan
 
 When you subsequently modify the DataFrame structure (like dropping columns), Spark might re-optimize its execution plan. This optimization can sometimes break the chain of dependencies that track corrupt records, especially because the `corrupt_vals` column is likely linked to how Spark handles corrupted data during file reading.
 
-**Solution:**
+#### **Solution:**
 Use caching right after loading or the UDF to help - it forces Spark to materialize the corrupt records and all derived columns before you dropped `col3`, preserving their values regardless of any subsequent plan optimizations.
 
 If you're working with corrupt record handling, it's generally a good practice to:
