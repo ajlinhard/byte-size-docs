@@ -1,4 +1,105 @@
 # Python Design Patterns in Detail
+### Table of Contents
+
+## Abstract Class
+- [Structure of Abstract Classes](#structure-of-abstract-classes)
+- [Use Cases for Abstract Classes](#use-cases-for-abstract-classes)
+- [Behaviors and Key Points](#behaviors-and-key-points)
+- [Examples](#examples)
+
+## Singleton Pattern
+- [High-Level Explanation](#high-level-explanation)
+- [Use Cases](#use-cases)
+- [Code Example](#code-example)
+- [Common Misconceptions/Misuses](#common-misconceptionsmisuses)
+
+## Factory Pattern
+- [High-Level Explanation](#high-level-explanation-1)
+- [Use Cases](#use-cases-1)
+- [Code Examples](#code-examples)
+- [Common Misconceptions/Misuses](#common-misconceptionsmisuses-1)
+
+## Observer Pattern
+- [High-Level Explanation](#high-level-explanation-2)
+- [Use Cases](#use-cases-2)
+- [Code Examples](#code-examples-1)
+- [Common Misconceptions/Misuses](#common-misconceptionsmisuses-2)
+
+## Builder Pattern
+- [High-Level Explanation](#high-level-explanation-3)
+- [Use Cases](#use-cases-3)
+- [Code Examples](#code-examples-2)
+- [Common Misconceptions/Misuses](#common-misconceptionsmisuses-3)
+
+## Abstract Class
+Abstract classes in Python serve as blueprints for other classes, enforcing a contract that subclasses must fulfill. Let me break this down for you:
+
+## Structure of Abstract Classes
+1. **Import Requirements**:
+   ```python
+   from abc import ABC, abstractmethod
+   ```
+
+2. **Basic Structure**:
+   ```python
+   class AbstractClass(ABC):
+       @abstractmethod
+       def required_method(self):
+           pass
+           
+       def regular_method(self):
+           return "This is inherited as-is by subclasses"
+   ```
+
+3. **Key Components**:
+   - Inherit from `ABC` (Abstract Base Class)
+   - Use `@abstractmethod` decorator to define methods that must be implemented
+   - Can include concrete (implemented) methods
+   - Can include an `__init__` method (commonly implemented)
+
+## Use Cases for Abstract Classes
+
+1. **Enforcing Interfaces**: When you need to ensure certain methods exist in all derived classes
+   
+2. **Template Method Pattern**: Define the skeleton of an algorithm where specific steps are implemented by subclasses
+   
+3. **Common Behavior Sharing**: Provide common functionality while requiring specific implementations
+   
+4. **Design Patterns Implementation**:
+   - Repository pattern (data access)
+   - Factory pattern (object creation)
+   - Strategy pattern (algorithm selection)
+
+5. **Framework Development**: Creating extensible frameworks where users implement specific functionality
+
+## Behaviors and Key Points
+
+1. **Cannot Be Instantiated**: Abstract classes cannot be directly instantiated
+   ```python
+   # This will raise TypeError
+   shape = Shape()
+   ```
+
+2. **All Abstract Methods Must Be Implemented**: Subclasses must implement all abstract methods to be instantiable
+
+3. **Can Have Default Implementations**: Abstract methods can provide default behavior that subclasses can leverage with `super()`
+
+4. **Can Have Constructor**: Often includes an `__init__` method that subclasses call with `super().__init__(...)`
+
+5. **Mixing Abstract and Concrete Methods**: Allows a blend of required and provided behavior
+
+6. **Method Resolution Order**: Follow Python's MRO for method inheritance and overriding
+
+## Examples
+
+I've created an artifact with comprehensive examples that showcase:
+
+1. Basic shape hierarchy (Circle, Rectangle inheriting from Shape)
+2. Repository pattern implementation (JSON file storage)
+3. Abstract class with default implementations
+4. Abstract Factory pattern
+
+The code demonstrates different approaches to using abstract classes and how they enforce interfaces while providing shared functionality.
 
 ## Singleton Pattern
 
