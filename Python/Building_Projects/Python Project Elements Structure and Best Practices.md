@@ -2,7 +2,7 @@
 ---
 # Python Project Elements, Structure, and Best Practices
 
-In Python projects, there quite a few elements, structures, and mechanics at play. Some options are interchangable or more modern implementation of the same thing. For example, pytest.ini vs pytest configs in a project toml file. This walkthrough covers different python project mechanics.
+In Python projects, there quite a few elements, structures, and mechanics at play. Some options are interchangable or there are more modern implementation of the same thing. For example, pytest.ini vs pytest configs in a project toml file. This walkthrough covers different python project mechanics.
 
 ## Sections
 - **[Building Packages/Apps](#Building-PackagesApps)**
