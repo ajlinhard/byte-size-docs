@@ -1,36 +1,37 @@
 # Python Design Patterns in Detail
 ### Table of Contents
 
-## Abstract Class
+### Abstract Class
 - [Structure of Abstract Classes](#structure-of-abstract-classes)
 - [Use Cases for Abstract Classes](#use-cases-for-abstract-classes)
 - [Behaviors and Key Points](#behaviors-and-key-points)
 - [Examples](#examples)
 
-## Singleton Pattern
+### Singleton Pattern
 - [High-Level Explanation](#high-level-explanation)
 - [Use Cases](#use-cases)
 - [Code Example](#code-example)
 - [Common Misconceptions/Misuses](#common-misconceptionsmisuses)
 
-## Factory Pattern
+### Factory Pattern
 - [High-Level Explanation](#high-level-explanation-1)
 - [Use Cases](#use-cases-1)
 - [Code Examples](#code-examples)
 - [Common Misconceptions/Misuses](#common-misconceptionsmisuses-1)
 
-## Observer Pattern
+### Observer Pattern
 - [High-Level Explanation](#high-level-explanation-2)
 - [Use Cases](#use-cases-2)
 - [Code Examples](#code-examples-1)
 - [Common Misconceptions/Misuses](#common-misconceptionsmisuses-2)
 
-## Builder Pattern
+### Builder Pattern
 - [High-Level Explanation](#high-level-explanation-3)
 - [Use Cases](#use-cases-3)
 - [Code Examples](#code-examples-2)
 - [Common Misconceptions/Misuses](#common-misconceptionsmisuses-3)
 
+---
 ## Abstract Class
 Abstract classes in Python serve as blueprints for other classes, enforcing a contract that subclasses must fulfill. Let me break this down for you:
 
