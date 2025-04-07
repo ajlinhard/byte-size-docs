@@ -90,8 +90,40 @@ project_root/
 │       └── test_helpers.py
 └── pytest.ini
 ```
+# Pytest Fixtures
+The pytest fixture is the basis for how many mechanics in the package work. They allow you to isolate setup or repeated code sections, to be used throughout your testing code.
 
-## Managing Fixtures at Different Levels
+## Scope Options in pytest.fixture
+
+The `scope` parameter in `@pytest.fixture()` can have these values:
+
+- `"function"` (default): The fixture is created for each test function
+- `"class"`: Created once per test class
+- `"module"`: Created once per test module (file)
+- `"package"`: Created once per test package
+- `"session"`: Created once for the entire test session
+
+## Other Common pytest.fixture Parameters
+
+- `autouse=True`: Run the fixture automatically without explicit reference
+- `params=[...]`: Run the test multiple times with different fixture values
+- `ids=[...]`: Custom IDs for parametrized fixture values
+- `name="custom_name"`: Override the fixture name
+
+For example:
+
+```python
+@pytest.fixture(scope="module", autouse=True, params=["sqlite", "postgres"])
+def database(request):
+    # Set up database based on request.param
+    db = setup_db(request.param)
+    yield db
+    # Teardown after all tests using this fixture are done
+    db.close()
+```
+
+The parameters allow you to control exactly how and when your fixtures run, which is a powerful way to optimize your test suite's performance and structure.
+### Managing Fixtures at Different Levels
 
 1. **Hierarchical `conftest.py` Files**:
    - Root `tests/conftest.py`: Global fixtures used across all tests
