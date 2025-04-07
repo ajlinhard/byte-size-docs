@@ -55,7 +55,7 @@ pytest-cov is a plugin for pytest that adds code coverage measurement capabiliti
 
 ## Structuring Test Folder in a Project
 Depending on your python project structure your unit test folder may live outside the package code folder. If this case arises, the you can use one of 3 methods.
-** Note: All 3 methods are focuesed on adjusting or adding the PYTHONPATH to the sys.path/PYTHON import mechanism. [info here](https://docs.pytest.org/en/7.1.x/explanation/pythonpath.html)**
+**Note: All 3 methods are focuesed on adjusting or adding the PYTHONPATH to the sys.path/PYTHON import mechanism. [info here](https://docs.pytest.org/en/7.1.x/explanation/pythonpath.html)**
 
 ### 1. pytest.ini file (older but still valid approach)
 ```bash
@@ -66,8 +66,28 @@ python_paths = ./
 **example project uses:**
 - https://github.com/ajlinhard/DragonRegen/blob/main/pytest.ini.block
 
+#### Reason it is considered an old method
+The latest version of pytest-pythonpath is 0.7.4, which was released in March 2021. This package hasn't been updated in over 3 years, which raises some concerns about its ongoing support and maintenance.
+
+Since pytest 7.0.0+ now has built-in support for modifying the Python path through the `pythonpath` option in the pytest.ini configuration or the `tool.pytest.ini_options` section in pyproject.toml, many users have moved away from using pytest-pythonpath.
+
+If you're using a recent version of pytest (7.0.0 or newer), it's generally recommended to use the built-in functionality rather than this plugin:
+
+```toml
+[tool.pytest.ini_options]
+pythonpath = ["src", "src/Book_API"]
+```
+
+Or in pytest.ini:
+```ini
+[pytest]
+pythonpath = src src/Book_API
+```
+
+This built-in approach is more future-proof than relying on a plugin that may not be actively maintained.
+
 ### 2. pyproject.toml setting (modern method)
-This method allows for the construction and adjustments of the unit testing in the same file as other python project settings. The syntax is similar to the pytest.ini file. However, note the file host more functionalities for your project outside of unit testing. Unlike the pytest.ini. See [Python Project pyproject.toml](Python\Python Project Elements Structure and Best Practices.md) for more info, or [Pythons offical project file documentation](https://packaging.python.org/en/latest/tutorials/packaging-projects/#creating-the-package-files).
+This method allows for the construction and adjustments of the unit testing in the same file as other python project settings. The syntax is similar to the pytest.ini file. However, note the file host more functionalities for your project outside of unit testing. Unlike the pytest.ini. See [Python Project pyproject toml](Python\Python Project Elements Structure and Best Practices.md) for more info, or [Pythons offical project file documentation](https://packaging.python.org/en/latest/tutorials/packaging-projects/#creating-the-package-files).
 ```toml
 [tool.pytest.ini_options]
 python_paths = [
@@ -75,6 +95,12 @@ python_paths = [
     "src",
     "src/Book_API"
 ]
+```
+After you build your toml file, remember to install you package into your enviornment via pip:
+```bash
+conda activate Your-Env
+cd /To/Your/Project/Root
+pip install -e .
 ```
 **example project uses:**
 - https://github.com/ajlinhard/DragonRegen/blob/main/pyproject.toml
