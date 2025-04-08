@@ -47,7 +47,9 @@ Databricks SQL provides a layer that improves interactive query performance:
 
 While these improvements reduce latency, they don't address the fundamental architectural limitations that make Spark unsuitable for OLTP operations.
 
+---
 ## Snowflake Improvements
+---
 
 Snowflake takes a different approach by not using Spark directly. Instead, it built its own processing engine with some conceptual similarities:
 
