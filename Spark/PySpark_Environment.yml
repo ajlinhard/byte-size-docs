@@ -1,0 +1,13 @@
+name: PySpark
+dependencies:
+  - python==3.8
+  - jupyter==1.0.0
+  - jupyterlab
+  - matplotlib
+  - numpy
+  - pandas
+  - scipy
+  - pip
+  - pip:
+    - pyspark==3.5.*
+    - delta-spark
