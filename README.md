@@ -17,4 +17,7 @@ We all have to explore new technology and topics to keep up or catch-up. This wa
 ## Experience in Tech:
 My name is Andrew Linhard. I have been coding since high school and have experience in many areas in coding robotics, matlab, OOP, and AWS. Most of my career experience however is in data engineering: Python, SQL, Spark, Kafka, etc. While I explore programming and architecture concpets outside these areas I may not cover them in the depth an expert has. I hope those experts reach out and contribute :D 
 
-
+## Some Random Helpful Links
+- [System Design Blogs](https://bytesizeddesign.substack.com/p/the-byte-sized-design-list-of-system)
+- [Some Free Data](https://github.com/awesomedata/awesome-public-datasets?tab=readme-ov-file#datachallenges)
+- [Basics of major Machine Learning Algorithms](https://www.youtube.com/watch?v=E0Hmnixke2g)
