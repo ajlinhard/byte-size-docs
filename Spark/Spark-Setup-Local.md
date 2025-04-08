@@ -37,14 +37,15 @@ Note: This will take time to run in the background during the next steps
 8. Move the winutils.exe to the "bin" folder under the Apache Spark folder from step 7.
 9. Go to you windows environment variables by typing "environment variables" into the search bar.
 10. Change/Create the following environment variables
-  a. SPARK_HOME -> path is from step 7
-  b. HADOOP_HOME -> path is from step 7
-  c. JAVA_HOME -> path is from step 2, its usually under C:\Program Files\Java\<Version>.
-  d. PYSPARK_HOME -> path is from step 3, usually under C:\Users\<Curr User\anaconda\envs\<Env Name>\python.exe
-  e. PATH (Note: PATH will already exist and you add the values below. See Screenshots below)
+  - SPARK_HOME -> path is from step 7
+  -  HADOOP_HOME -> path is from step 7
+  - JAVA_HOME -> path is from step 2, its usually under C:\Program Files\Java\<Version>.
+  - PYSPARK_HOME -> path is from step 3, usually under C:\Users\<Curr User\anaconda\envs\<Env Name>\python.exe
+  - PATH (Note: PATH will already exist and you add the values below. See Screenshots below)
     - %SPARK_HOME%\bin
     - %HADOOP_HOME%\bin
     - %JAVA_HOME%\bin
+
 ![image](https://github.com/user-attachments/assets/4be43a23-7a22-4481-8ff6-0c4fe96d729e)
 ![image](https://github.com/user-attachments/assets/53aac671-8f98-444d-8a6e-a766e4f7523e)
 ![image](https://github.com/user-attachments/assets/699d1a4f-fe73-4cf5-90b4-2e2a821e132d)
