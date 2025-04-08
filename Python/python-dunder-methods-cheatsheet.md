@@ -12,10 +12,56 @@ These methods allow you to define how your objects behave with built-in operatio
 - Callable objects
 - Context managers
 
+I've created a comprehensive overview and cheatsheet for Python dunder methods. The cheatsheet is organized by categories and includes:
 
+- Detailed descriptions of what each method does
+- Common use cases for each method
+- Practical code examples that demonstrate implementation
+- Expected outputs where relevant
 
+# Table of Contents
+  - [Initialization and Deletion](#initialization-and-deletion)
+    - [`__init__(self, [args...])`](#__init__self-args)
+    - [`__new__(cls, [args...])`](#__new__cls-args)
+    - [`__del__(self)`](#__del__self)
+  - [String Representation](#string-representation)
+    - [`__str__(self)`](#__str__self)
+    - [`__repr__(self)`](#__repr__self)
+    - [`__format__(self, format_spec)`](#__format__self-format_spec)
+  - [Comparison Operations](#comparison-operations)
+    - [`__eq__(self, other)`](#__eq__self-other)
+    - [`__lt__(self, other)`](#__lt__self-other)
+    - [Other comparison methods](#other-comparison-methods)
+  - [Mathematical Operations](#mathematical-operations)
+    - [`__add__(self, other)`](#__add__self-other)
+    - [`__radd__(self, other)`](#__radd__self-other)
+    - [Other arithmetic methods](#other-arithmetic-methods)
+  - [Container Methods](#container-methods)
+    - [`__len__(self)`](#__len__self)
+    - [`__getitem__(self, key)`](#__getitem__self-key)
+    - [`__setitem__(self, key, value)`](#__setitem__self-key-value)
+    - [`__contains__(self, item)`](#__contains__self-item)
+    - [`__iter__(self)`](#__iter__self)
+  - [Attribute Access](#attribute-access)
+    - [`__getattr__(self, name)`](#__getattr__self-name)
+    - [`__setattr__(self, name, value)`](#__setattr__self-name-value)
+    - [`__delattr__(self, name)`](#__delattr__self-name)
+  - [Callable Objects](#callable-objects)
+    - [`__call__(self, [args...])`](#__call__self-args)
+  - [Context Managers](#context-managers)
+    - [`__enter__(self)`](#__enter__self)
+    - [`__exit__(self, exc_type, exc_val, exc_tb)`](#__exit__self-exc_type-exc_val-exc_tb)
+  - [Descriptor Methods](#descriptor-methods)
+    - [`__get__(self, instance, owner)`](#__get__self-instance-owner)
+  - [Class Customization](#class-customization)
+    - [`__new__(cls, [args...])`](#__new__cls-args-1)
+    - [`__init_subclass__(cls, **kwargs)`](#__init_subclass__cls-kwargs)
+- [MRO (Method Resolution Order)](#mro-method-resolution-order)
+
+Each example demonstrates a practical implementation of the dunder method in a way that shows its functionality.
+---
 # Python Dunder Methods Cheatsheet
-
+---
 ## Initialization and Deletion
 
 ### `__init__(self, [args...])`
@@ -498,26 +544,29 @@ class VideoPlugin(Plugin):
 
 print(Plugin.get_plugins())  # Output: {'AudioPlugin': <class 'AudioPlugin'>, 'VideoPlugin': <class 'VideoPlugin'>}
 ```
+---
+# MRO (Method Resolution Order)
+Python's MRO stands for Method Resolution Order. It's a crucial concept in Python that determines the order in which Python searches for methods and attributes in a class hierarchy, especially when dealing with multiple inheritance.
 
+The MRO defines the sequence of classes Python will look through when you call a method or access an attribute on an object. This is particularly important in complex inheritance scenarios where a class might inherit from multiple parent classes that could have methods with the same name.
 
-I've created a comprehensive overview and cheatsheet for Python dunder methods. The cheatsheet is organized by categories and includes:
+Key aspects of Python's MRO:
 
-- Detailed descriptions of what each method does
-- Common use cases for each method
-- Practical code examples that demonstrate implementation
-- Expected outputs where relevant
+1. Since Python 2.3, it uses the C3 Linearization algorithm to determine the MRO
+2. It ensures that a class always appears before its parents
+3. It preserves the order in which base classes are listed in a class definition
 
-The cheatsheet covers the most important dunder methods across these categories:
+You can view the MRO of any class using the `__mro__` attribute or the `mro()` method:
 
-1. Initialization and deletion methods
-2. String representation methods
-3. Comparison operations
-4. Mathematical operations
-5. Container methods (for sequence and mapping behaviors)
-6. Attribute access methods
-7. Callable object methods
-8. Context manager methods
-9. Descriptor methods
-10. Class customization methods
+```python
+class A: pass
+class B: pass
+class C(A, B): pass
 
-Each example demonstrates a practical implementation of the dunder method in a way that shows its functionality. Would you like me to explain any specific category or method in more detail?
+print(C.__mro__)
+# Output: (<class '__main__.C'>, <class '__main__.A'>, <class '__main__.B'>, <class 'object'>)
+```
+
+This shows that when looking for methods on a C instance, Python will first check C, then A, then B, and finally object (the base class of all classes).
+
+Understanding MRO becomes particularly important when working with diamond inheritance patterns where a class might inherit from two classes that share a common ancestor. Python's MRO ensures consistent and predictable method resolution in these scenarios.
