@@ -102,7 +102,7 @@ df_simple.printSchema()
 - Java versions matters for Spark since the Security Manager is being phased out after JDK17.
   - PySpark, which uses Py4J to communicate between Python and Java, is likely using code that relies on these deprecated security APIs.
   - More details in "Java Version Important Notes" below.
-=================================================================================================================
+
 ### Java Version Important Note
 Based on the search results, Spark does not officially support JDK 23 yet. Here's a summary of the current Spark and Java version compatibility:
 
