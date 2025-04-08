@@ -16,30 +16,77 @@ Requirements:
   - Download ALL the files!! or at least the .dll
 - Spark
   - https://spark.apache.org/downloads.html
- 
-### Commands
-- Add Environment Variables
-  - SPARK_HOME
-  - HADOOP_HOME
-  - JAVA_HOME
-  - PATH
+---
+# Setup Steps:
+---
+1. Download Java JDK17 for windows [(here)](https://www.oracle.com/java/technologies/downloads/#jdk17-windows)
+2. Kick-off Java JDK17 installation.
+3. Open the Anaconda Command Prompt and create an Anaconda environment using the yaml file in this repo [(here)](https://github.com/ajlinhard/byte-size-docs/blob/main/Spark/PySpark_Environment.yml)
+```bash
+conda deactivate
+cd \Your\Download\Location_of_the_YAML
+conda env create -f PySpark_Environment.yml
+```
+Note: This will take time to run in the background during the next steps
+4. Download Apache Spark tgz, and note the Hadoop Version. It will be used to determine the WinUtils Version.
+![image](https://github.com/user-attachments/assets/b5852cef-2435-4120-a9bb-60905e877862)
+
+5. Start the unzipping of the tgz file.
+6. Download the winutils.exe file from this repo [(here)](https://github.com/kontext-tech/winutils) under the correct Hadoop Version from earlier.
+7. Move the unzipped Apache Spark tgz to the Programs folder or folder of your choice.
+8. Move the winutils.exe to the "bin" folder under the Apache Spark folder from step 7.
+9. Go to you windows environment variables by typing "environment variables" into the search bar.
+10. Change/Create the following environment variables
+  a. SPARK_HOME -> path is from step 7
+  b. HADOOP_HOME -> path is from step 7
+  c. JAVA_HOME -> path is from step 2, its usually under C:\Program Files\Java\<Version>.
+  d. PYSPARK_HOME -> path is from step 3, usually under C:\Users\<Curr User\anaconda\envs\<Env Name>\python.exe
+  e. PATH (Note: PATH will already exist and you add the values below. See Screenshots below)
     - %SPARK_HOME%\bin
     - %HADOOP_HOME%\bin
     - %JAVA_HOME%\bin
-- Calling spark-shell for scala and pyspark for python
-- install findspark python package
+![image](https://github.com/user-attachments/assets/4be43a23-7a22-4481-8ff6-0c4fe96d729e)
+![image](https://github.com/user-attachments/assets/53aac671-8f98-444d-8a6e-a766e4f7523e)
+![image](https://github.com/user-attachments/assets/699d1a4f-fe73-4cf5-90b4-2e2a821e132d)
 
+12. Once the Anaconda environment is done installing close and reopen a new Anaconda Command Prompt.
+13. Activate the recently created environment, should be called "PySpark", then run the following:
+```bash
+conda deactivate
+conda activate PySpark
+pyspark
+```
+You should see the PySpark terminal pop-up successfully.
+![image](https://github.com/user-attachments/assets/145cb9d2-835d-4d4c-8791-587345a2cca1)
 
-## Learnings
-- With the environment variables set on the machine you can call pyspark in any anaconda environment.
-- Java versions matters for Spark since the Security Manager is being phased out after JDK17.
-  - PySpark, which uses Py4J to communicate between Python and Java, is likely using code that relies on these deprecated security APIs.
+14. You can also access the scala version of the shell from the regualar command prompt via:
+```bash
+spark-shell
+```
+The command line output will look about the same.
 
-## Outstanding Questions
-- There are spark environment variables I can set. JAVA_HOME, SPARK_HOME
-  - How do I set these in a YML or script
+15. Finally, you should now be able to create python scripts in VSCode or another IDE, then execute them on the PySpark Anaconda environment.
+```python
+from pyspark.sql import SparkSession
 
-## Links/Videos Used
+# Most basic initialization
+spark = SparkSession.builder.getOrCreate()
+
+# Common standard initialization
+spark = SparkSession.builder \
+    .appName("My Application") \
+    .master("local[*]") \
+    .getOrCreate()
+
+ls_data = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+df_simple = spark.createDataFrame(ls_data, ["a", "b", "c"])
+df_simple.show()
+df_simple.printSchema()
+```
+
+**Note: If you forget where your installation is try using the findspark python package.**
+
+## Setup Help Links/Videos Used
 - https://www.youtube.com/watch?v=rYY0LFdmI8s
   - Read my notes above because he forgot to mention a couple things like Java Version and is hitting it with Scala.
 - https://www.youtube.com/watch?v=AL6zTrlyAhc
@@ -47,8 +94,15 @@ Requirements:
 - https://sparkbyexamples.com/pyspark/how-to-install-and-run-pyspark-on-windows/#google_vignette
   - Helpful for written instructions and had helpful other options at the bottom
 
+---
+## Learnings from Setup
+---
+- With the environment variables set on the machine you can call pyspark in any anaconda environment, but the versioning of pyspark may not support all syntaxes.
+- Java versions matters for Spark since the Security Manager is being phased out after JDK17.
+  - PySpark, which uses Py4J to communicate between Python and Java, is likely using code that relies on these deprecated security APIs.
+  - More details in "Java Version Important Notes" below.
 =================================================================================================================
-## Java Version Important Note
+### Java Version Important Note
 Based on the search results, Spark does not officially support JDK 23 yet. Here's a summary of the current Spark and Java version compatibility:
 
 1. The latest stable Spark version (3.5.1) officially supports Java 8, 11, and 17[1].
