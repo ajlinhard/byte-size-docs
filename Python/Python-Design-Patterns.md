@@ -166,7 +166,14 @@ class SingletonMeta(type):
             cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
 
-class ConfigManager(metaclass=SingletonMeta):
+class BaseConfig:
+    def __init__(self):
+        self.version = "1.0"
+    
+    def get_version(self):
+        return self.version
+
+class ConfigManager(BaseConfig, metaclass=SingletonMeta):
     def __init__(self):
         self.settings = {}
         self.load_config()
