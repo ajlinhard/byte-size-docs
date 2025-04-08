@@ -1,7 +1,9 @@
+---
 # How Databricks and Snowflake Address Spark's Limitations
 ---
 
 Both Databricks and Snowflake have developed solutions that address some of Spark's native limitations, particularly around data management and processing. Here's how they're tackling these challenges:
+
 ---
 ## Databricks Improvements
 ---
