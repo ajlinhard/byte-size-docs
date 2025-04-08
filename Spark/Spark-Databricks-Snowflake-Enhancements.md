@@ -1,7 +1,7 @@
 # How Databricks and Snowflake Address Spark's Limitations
 
 Both Databricks and Snowflake have developed solutions that address some of Spark's native limitations, particularly around data management and processing. Here's how they're tackling these challenges:
-
+---
 ## Databricks Improvements
 
 ### 1. Delta Lake
@@ -131,4 +131,47 @@ The solution many organizations are adopting is Hybrid Transactional/Analytical 
 
 This architecture leverages the strengths of each technology rather than trying to force one tool to handle both workloads.
 
+---
+## Difference from Databricks SQL and SparkSQL:
+---
+Based on the search results, Databricks has indeed added some new syntax and features to SparkSQL as part of their Databricks SQL offering. Here are some key additions:
+
+1. Variant Data Type:
+Databricks introduced a new 'VARIANT' data type for handling semi-structured data. This is now available in Spark DataFrames and SQL, offering improved performance over storing data as JSON strings[2].
+
+2. SQL Variables:
+Temporary variables can now be declared in a SQL session, which can be set and referred to in queries[3].
+
+3. Star (*) Clause in WHERE:
+The star (*) clause is now supported in the WHERE clause, allowing reference to all columns from the SELECT list[3].
+
+4. AI Functions:
+Databricks added AI-related functions to SQL, including:
+   - ai_query(): Allows querying AI models (both GenAI and Classic ML) from SQL[5].
+   - Vector search function: Enables KNN searches and RAG (Retrieval-Augmented Generation) capabilities[5].
+   - AI_Forecast: A built-in function for time series forecasting directly in SQL[5].
+
+5. Lateral Column Aliases:
+This feature allows referring to and reusing an expression specified earlier in the same query, simplifying complex queries[5].
+
+6. Primary and Foreign Key Support:
+Databricks added support for primary and foreign keys, which can be used to optimize query performance[3].
+
+7. XML File Format Support:
+Native XML file format support was introduced, enabling ingestion, querying, and parsing of XML data[3].
+
+8. Python UDFs in SQL:
+Support for Python and Pandas User-Defined Functions (UDFs) in SQL was added[1].
+
+These additions extend the capabilities of SparkSQL within the Databricks environment, providing more flexibility and power to SQL users on the platform. It's important to note that some of these features may be specific to Databricks SQL and might not be available in the open-source Apache Spark SQL.
+
+Citations:
+[1] https://docs.gcp.databricks.com/en/sql/release-notes/index.html
+[2] https://learn.microsoft.com/en-us/azure/databricks/sql/release-notes/
+[3] https://docs.databricks.com/en/sql/release-notes/index.html
+[4] https://docs.databricks.com/en/sql/language-manual/index.html
+[5] https://www.databricks.com/blog/whats-new-with-databricks-sql
+
+---
+## Conclusion
 While Databricks and Snowflake have made significant improvements to Spark's limitations and analytics capabilities, they haven't fundamentally changed its unsuitability for true OLTP workloads. The most effective approach remains using specialized tools for each type of workload.
