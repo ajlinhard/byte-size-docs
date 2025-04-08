@@ -33,6 +33,7 @@
 
 ---
 ## Abstract Class
+---
 Abstract classes in Python serve as blueprints for other classes, enforcing a contract that subclasses must fulfill. Let me break this down for you:
 
 ## Structure of Abstract Classes
@@ -102,7 +103,9 @@ I've created an artifact with comprehensive examples that showcase:
 
 The code demonstrates different approaches to using abstract classes and how they enforce interfaces while providing shared functionality.
 
+---
 ## Singleton Pattern
+---
 
 ### High-Level Explanation
 The Singleton pattern ensures that a class has only one instance throughout the application's lifecycle and provides a global point of access to it. This pattern restricts instantiation of a class to a single object, which can be particularly useful for coordinating actions across your system.
@@ -213,7 +216,9 @@ class ThreadSafeSingleton:
 - **Misuse**: Using Singletons where dependency injection would be more appropriate.
   - Dependency injection often leads to more maintainable and testable code.
 
+---
 ## Factory Pattern
+---
 
 ### High-Level Explanation
 The Factory pattern provides an interface for creating objects without specifying their concrete classes. It encapsulates object creation logic, allowing you to create objects based on certain conditions without exposing the instantiation logic to the client.
@@ -403,8 +408,107 @@ print(ui_elements)  # Dictionary with rendered UI elements
 
 - **Misuse**: Not considering other creational patterns that might be more suitable.
   - Sometimes Builder, Prototype, or even just simple constructors might be more appropriate.
+ 
+### Similar to Factory Patterns
+This example is mainly focused around the precise subclass to use in an inheritance tree, where inputs determine best class to use.
+In Python, there are several patterns to determine which class in an inheritance tree to instantiate based on input parameters. Here are the most effective approaches:
 
+### Factory Method Pattern
+
+A class method that decides which subclass to instantiate:
+
+```python
+class Animal:
+    @classmethod
+    def create(cls, animal_type, *args, **kwargs):
+        if animal_type == "dog":
+            return Dog(*args, **kwargs)
+        elif animal_type == "cat":
+            return Cat(*args, **kwargs)
+        else:
+            return cls(*args, **kwargs)  # Default to base class
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        self.name = name
+        self.breed = breed
+
+class Cat(Animal):
+    def __init__(self, name, color):
+        self.name = name
+        self.color = color
+
+# Usage
+pet = Animal.create("dog", "Rex", "German Shepherd")
+```
+
+### Registry Pattern
+
+More scalable approach using class registration:
+
+```python
+class AnimalRegistry:
+    _registry = {}
+    
+    @classmethod
+    def register(cls, animal_type):
+        def decorator(subclass):
+            cls._registry[animal_type] = subclass
+            return subclass
+        return decorator
+    
+    @classmethod
+    def create(cls, animal_type, *args, **kwargs):
+        if animal_type in cls._registry:
+            return cls._registry[animal_type](*args, **kwargs)
+        raise ValueError(f"Unknown animal type: {animal_type}")
+
+@AnimalRegistry.register("dog")
+class Dog:
+    def __init__(self, name, breed):
+        self.name = name
+        self.breed = breed
+
+@AnimalRegistry.register("cat")
+class Cat:
+    def __init__(self, name, color):
+        self.name = name
+        self.color = color
+
+# Usage
+pet = AnimalRegistry.create("dog", "Rex", "German Shepherd")
+```
+
+### Class Hierarchy Inspection
+
+For more complex logic based on multiple parameters:
+
+```python
+class Shape:
+    @classmethod
+    def create(cls, dimensions, *args, **kwargs):
+        subclasses = cls.__subclasses__()
+        for subclass in subclasses:
+            if hasattr(subclass, 'supports_dimensions') and subclass.supports_dimensions(dimensions):
+                return subclass(*args, **kwargs)
+        return cls(*args, **kwargs)  # Default
+
+class TwoDimensional(Shape):
+    @classmethod
+    def supports_dimensions(cls, dimensions):
+        return dimensions == 2
+
+class ThreeDimensional(Shape):
+    @classmethod
+    def supports_dimensions(cls, dimensions):
+        return dimensions == 3
+```
+
+The registry pattern is generally the most maintainable for complex hierarchies as it decouples the factory logic from the class definitions and scales well as you add more subclasses.
+
+---
 ## Observer Pattern
+---
 
 ### High-Level Explanation
 The Observer pattern defines a one-to-many dependency between objects, where when one object (the subject) changes state, all its dependents (observers) are notified and updated automatically. This promotes loose coupling between the subject and its observers.
