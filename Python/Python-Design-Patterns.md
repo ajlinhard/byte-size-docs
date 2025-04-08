@@ -187,6 +187,22 @@ config1 = ConfigManager()
 config2 = ConfigManager()
 print(config1 is config2)  # True
 ```
+The metaclass part of this singleton implementation involves Python's metaclass machinery to control class instantiation. Let me break it down:
+
+1. **`SingletonMeta(type)`**: This defines a metaclass that inherits from `type`. In Python, `type` is itself a class and is the default metaclass for all classes. By inheriting from `type`, `SingletonMeta` becomes a metaclass.
+
+2. **`_instances = {}`**: This class variable stores the singleton instances, with class objects as keys and their unique instances as values.
+
+3. **`__call__(cls, *args, **kwargs)`**: This is where the magic happens. When you call a class to create an instance (like `ConfigManager()`), Python actually calls the `__call__` method of the class's metaclass.
+
+   - The `cls` parameter represents the class being instantiated (e.g., `ConfigManager`)
+   - If the class isn't already in `_instances`, it creates a new instance by calling `super().__call__(*args, **kwargs)`, which invokes the standard instance creation process
+   - If the class is already in `_instances`, it returns the existing instance
+   - This ensures only one instance of each class using this metaclass will ever exist
+
+4. **`class ConfigManager(metaclass=SingletonMeta)`**: This line specifies that `ConfigManager` uses `SingletonMeta` as its metaclass instead of the default `type`. As a result, whenever code tries to instantiate `ConfigManager`, the `__call__` method of `SingletonMeta` controls the instantiation process.
+
+The beauty of this approach is that the singleton behavior is completely encapsulated in the metaclass. Any class can become a singleton simply by specifying `metaclass=SingletonMeta`, without changing any of its internal implementation. This creates a clean separation between the singleton behavior and the actual functionality of the class.
 
 ### Common Misconceptions/Misuses
 
