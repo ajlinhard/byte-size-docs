@@ -1,6 +1,14 @@
 # Spark QC (Quaility Check) Options
 There are several Spark packages and tools that can help automate data quality checks and control processes. Here are some notable options:
 
+## DataFrame Function Extensions:
+   - [Chipsa](https://github.com/MrPowers/chispa)
+      - Strong extensions of DataFrame comparisons in Spark.
+   - [pytest-spark](https://github.com/malexer/pytest-spark)
+      - Useful for standing up a spark test environment.
+   - [spark-testing-base](https://github.com/holdenk/spark-testing-base)
+      - Seems useful for some random data generation and losse comparisions.
+
 ## Spark-based Data Quality Packages
 
 1. **Deequ (Amazon)**
