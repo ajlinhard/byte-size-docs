@@ -55,7 +55,8 @@ When resolving fixtures, pytest follows these steps:
 
 ## Advanced Fixture Concepts
 
-### Fixture Dependencies
+### Fixture Dependencies (Yield)
+[Backend Details of How Yield Works in Pytest](https://github.com/ajlinhard/byte-size-docs/blob/main/Python/PyTest/PyTest-Fixtures-How-Yield-Works-(Backend).md)
 
 Fixtures can depend on other fixtures:
 
@@ -87,6 +88,28 @@ def temp_file():
     
     # Teardown code runs after test completes
     os.remove(path)
+```
+
+### Mock Service with yield
+```python
+@pytest.fixture
+def mock_api():
+    with mock.patch('module.api_client') as mock_client:
+        mock_client.get_data.return_value = {"test": "data"}
+        yield mock_client
+        # Verification or additional cleanup can happen here
+```
+
+### Test Environment Variables
+```python
+@pytest.fixture
+def environment_setup():
+    original_env = os.environ.copy()
+    os.environ["TEST_MODE"] = "True"
+    yield
+    # Restore original environment
+    os.environ.clear()
+    os.environ.update(original_env)
 ```
 
 ### Parameterization
