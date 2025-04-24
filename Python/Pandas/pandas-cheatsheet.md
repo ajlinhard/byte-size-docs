@@ -1,5 +1,15 @@
 # Pandas Cheatsheet - From Basics to Advanced
 
+### Helpful Links:
+- [Pandas User Guides](https://pandas.pydata.org/docs/user_guide/10min.html#time-series)
+    - [10 Minutes to Pandas](https://pandas.pydata.org/docs/user_guide/10min.html)
+    - [Group By Overview](https://pandas.pydata.org/docs/user_guide/groupby.html)
+    - [Table Visualizations](https://pandas.pydata.org/docs/user_guide/style.html)
+- [Pandas Compared to SQL](https://pandas.pydata.org/docs/getting_started/comparison/comparison_with_sql.html#)
+- [Pandas API](https://pandas.pydata.org/docs/reference/index.html)
+- [Pandas Ecosystem](https://pandas.pydata.org/community/ecosystem.html#out-of-core)
+
+
 ## Table of Contents
 - [Installation and Setup](#installation-and-setup)
 - [Basic Data Structures](#basic-data-structures)
