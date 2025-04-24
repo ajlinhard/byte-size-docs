@@ -1,5 +1,7 @@
 # Python File Handling Cheatsheet: with open() Syntax
 
+[Python Official Open Docs](https://docs.python.org/3/library/functions.html#open)
+
 ## Basic Syntax
 
 ```python
