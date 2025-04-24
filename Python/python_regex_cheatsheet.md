@@ -1,5 +1,9 @@
 # Python Regular Expressions Cheatsheet
 
+### Helpful Links:
+- [Python Regex Official](https://docs.python.org/3/library/re.html)
+- [Python Regex HowTo](https://docs.python.org/3/howto/regex.html#regex-howto)
+
 ## Basic Regex Symbols
 
 | Symbol | Description | Example |
