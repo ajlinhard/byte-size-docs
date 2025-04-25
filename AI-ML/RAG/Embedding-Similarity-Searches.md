@@ -82,6 +82,7 @@ print("Ranked documents:", ranked_indices)
 
 ## Semantic Search
 
+Semantic search goes a step further by focusing specifically on understanding the meaning and intent behind a query, rather than just matching based on surface-level similarities. Semantic search leverages natural language processing and understanding to capture the contextual meaning of words and phrases.
 Semantic search leverages embedding models to understand the meaning behind queries rather than just matching keywords. It matches documents based on semantic similarity rather than lexical similarity.
 
 ```python
