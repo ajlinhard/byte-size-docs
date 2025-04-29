@@ -2,6 +2,9 @@
 
 Vector search methods are fundamental techniques for comparing embeddings in natural language processing. These methods enable us to retrieve and rank text based on semantic meaning rather than just keyword matching. Let me explain the different types of vector search approaches and their applications.
 
+## Documentation:
+- [Pinecone - Learn Semantic Search](https://www.pinecone.io/learn/search-with-pinecone/)
+
 ## Similarity Search
 
 Similarity search involves finding vectors (embeddings) that are most similar to a query vector using distance metrics.
