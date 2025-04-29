@@ -10,7 +10,8 @@ Many of the ideas and concepts are covered very well in these documents and link
 ## Basic Useful Embedding Models:
 - [BERT Family](https://huggingface.co/docs/transformers/en/model_doc/bert)
 - [Voyage AI (recommended by Anthropic)](https://www.voyageai.com/)
-- [Open AI Embedding Models]([https://platform.openai.com/docs/guides/embeddings/limitations-risks#what-are-embeddings](https://platform.openai.com/docs/guides/embeddings/limitations-risks#embedding-models)
+- [Open AI Embedding Models](https://platform.openai.com/docs/guides/embeddings/limitations-risks#embedding-models)
+- [Examples of Useful Models](https://www.perplexity.ai/search/create-a-list-of-different-emb-QfSxuUnKQIe.npvcv57FXg)
 
 # Embedding Models for Different Text Sizes
 
