@@ -4,6 +4,14 @@
 
 Unity Catalog system tables provide metadata and log data related to Databricks operations. System tables are organized into separate schemas containing one or more tables that are owned and updated by Databricks. The storage and cost of system tables are handled by Databricks, while customers pay for the compute used to query them.
 
+### Documentation
+- [Databricks (OG inventors)](https://docs.databricks.com/aws/en/data-governance/unity-catalog#metastores)
+- [Databricks Unity Catalog System Tables](https://docs.databricks.com/aws/en/admin/system-tables/)
+- [Unity Catalog Open Source Home](https://www.unitycatalog.io/)
+- [Unity Catalog Delta Lakes](https://docs.unitycatalog.io/usage/tables/deltalake/)
+- [Github Unity Catalog](https://github.com/unitycatalog/unitycatalog/tree/main)
+- [Databricks Open Source Blog Post](https://www.databricks.com/blog/open-sourcing-unity-catalog)
+
 ## Accessing System Tables
 
 ```sql
