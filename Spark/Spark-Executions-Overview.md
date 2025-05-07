@@ -168,7 +168,7 @@ Hive is also a big data processing engine as well. Some features of Hadoop and H
 The processing of data in Spark is fault tolerent, however, do not confuse this will Spark being ACID compliant. Within a job itself Spark is "ACID compliant" in a way. If you are trying to update or insert incremental data from many separate jobs at the same moment in Spark, then the data may not turn out as you expect. This can be navigated with techniques and other packages like Delta Lake, but requires care and unit testing to confirm success. Other options managed Spark platforms like Databricks or Snowflake handle more ACID like transactions for you.
 
 ----
-#
+# How Spark Compiles/Executed Backend
 I'll explain how Spark query executions work in both Spark SQL and Python functions, and how they're processed on the backend.
 
 When you work with Spark, whether you're using SQL queries or DataFrame/Dataset API functions in Python, both approaches ultimately get transformed into the same underlying execution plan. Here's how it works:
