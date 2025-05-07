@@ -1,8 +1,9 @@
 # Spark Executions Overview:
 When running Spark as a data processing engine you are going to hear 3 main charateristics about its execution:
-1. [Lazy Evolution/Evaluation[(#Lazy-Evolution-Evaluation)
-2. [In-Memory Processing](In-Memory-Processing)
-3. [Fault Tolerance](Fault-Tolerance)
+1. [Lazy Evolution/Evaluation](#Lazy-Evolution-Evaluation)
+2. [In-Memory Processing](#In-Memory-Processing)
+3. [Fault Tolerance](#Fault-Tolerance)
+4. [How Spark Compiles/Executed Backend](How-Spark-Compiles/Executed-Backend)
 While each of these truely are wonderful characteristics of Spark, like any tool they have there issues and nuances. This article will cover some of the issues of each characteristics.
 
 Before we begin, please not 2 high-level major helpers.
@@ -165,3 +166,70 @@ Hive is also a big data processing engine as well. Some features of Hadoop and H
 
 ## Fault Tolerance
 The processing of data in Spark is fault tolerent, however, do not confuse this will Spark being ACID compliant. Within a job itself Spark is "ACID compliant" in a way. If you are trying to update or insert incremental data from many separate jobs at the same moment in Spark, then the data may not turn out as you expect. This can be navigated with techniques and other packages like Delta Lake, but requires care and unit testing to confirm success. Other options managed Spark platforms like Databricks or Snowflake handle more ACID like transactions for you.
+
+----
+#
+I'll explain how Spark query executions work in both Spark SQL and Python functions, and how they're processed on the backend.
+
+When you work with Spark, whether you're using SQL queries or DataFrame/Dataset API functions in Python, both approaches ultimately get transformed into the same underlying execution plan. Here's how it works:
+
+## The Execution Pipeline
+
+Both SQL queries and DataFrame operations go through similar processing stages:
+
+1. **Query/API Parsing**: The entry point differs (SQL text vs Python function calls), but both get parsed into a logical plan
+
+2. **Logical Plan Creation**: Both approaches create what's called a logical plan - an abstract representation of the operations to be performed 
+
+3. **Optimization**: The logical plan undergoes optimization using Catalyst (Spark's query optimizer)
+
+4. **Physical Plan Generation**: The optimized logical plan gets converted to a physical execution plan
+
+5. **Code Generation**: Spark uses code generation (with Tungsten) to compile parts of the query to JVM bytecode
+
+6. **Execution**: The physical plan is executed on the cluster
+
+## SQL to Python or Python to SQL?
+
+It's neither exactly. Both SQL and Python DataFrame APIs are high-level interfaces that get converted to the same intermediate representation:
+
+- **SQL queries** are parsed by Spark's SQL parser into an Abstract Syntax Tree (AST), which is then converted to a logical plan
+- **Python DataFrame operations** get translated through the PySpark API into logical plan operations
+
+Both of these logical plans are then passed to the Catalyst optimizer and follow the same execution path afterward.
+
+## The Role of Java/Scala
+
+This is a key part of your question. PySpark is essentially a Python wrapper around Spark's Java/Scala core:
+
+1. When you call Python functions or write SQL in PySpark, these commands get translated to Java/Scala calls using Py4J (a bridge between Python and Java)
+
+2. The actual processing engine of Spark is written in Scala and runs on the JVM
+
+3. Python UDFs (User Defined Functions) involve serialization/deserialization between Python and JVM, which can impact performance (though Arrow-based UDFs improve this)
+
+## Example Flow
+
+Let's trace what happens with a simple query using both approaches:
+
+**SQL Approach**:
+```python
+result = spark.sql("SELECT COUNT(*) FROM my_table WHERE value > 10")
+```
+
+**DataFrame API Approach**:
+```python
+result = spark.table("my_table").filter("value > 10").count()
+```
+
+Both of these get converted to the same logical plan, which represents "count the rows in my_table where value > 10". The execution engine doesn't care whether this came from SQL or a DataFrame operation.
+
+## Real-world Implications
+
+The unified backend means:
+
+1. Performance should be similar between SQL and DataFrame APIs for the same operations
+2. Optimizations apply equally to both interfaces
+3. You can mix and match approaches based on what's more readable or maintainable
+
+According to your Hive Metastore cheat sheet, both SQL and DataFrame catalog operations (like `spark.catalog.listTables()` or `spark.sql("SHOW TABLES")`) interact with the same underlying Hive metastore client, which is written in Java.
