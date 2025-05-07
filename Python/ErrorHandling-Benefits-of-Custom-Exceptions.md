@@ -98,3 +98,44 @@ This hierarchical approach allows you to:
 4. Organize error handling by domain concept
 
 Custom exceptions are particularly valuable in libraries, frameworks, and large applications where clear error communication is essential.
+
+## Exception Object Base Variables
+The Python `Exception` object has several base attributes that provide information about the exception. Here are the main attributes:
+
+1. **args**: A tuple containing the arguments passed to the exception constructor. For most built-in exceptions, this contains the error message.
+
+2. **__cause__**: The exception that caused this exception (set when using `raise new_exception from original_exception`).
+
+3. **__context__**: The exception that was active when this exception was raised (implicit chaining).
+
+4. **__traceback__**: The traceback object associated with the exception.
+
+5. **with_traceback()**: A method that allows you to set a new traceback for the exception.
+
+Here's a practical example showing how to access these attributes:
+
+```python
+try:
+    # Cause an exception
+    x = 1 / 0
+except Exception as e:
+    # Access the basic attributes
+    print(f"Exception type: {type(e).__name__}")
+    print(f"Args: {e.args}")
+    print(f"String representation: {str(e)}")
+    
+    # Access traceback information
+    if hasattr(e, '__traceback__'):
+        import traceback
+        tb_lines = traceback.format_tb(e.__traceback__)
+        print(f"Traceback:\n{''.join(tb_lines)}")
+    
+    # Check for cause or context
+    if hasattr(e, '__cause__') and e.__cause__:
+        print(f"Caused by: {type(e.__cause__).__name__}: {e.__cause__}")
+    
+    if hasattr(e, '__context__') and e.__context__:
+        print(f"Context: {type(e.__context__).__name__}: {e.__context__}")
+```
+
+Custom exceptions can add additional attributes, but these are the core attributes available on all exception objects in Python.
