@@ -7,6 +7,7 @@ If you have heard anything about event-driven architectures or real-time data, t
 - [Kafka Core Concepts](#Kafka-Core-Concepts)
   - [Main Components](#Main-Components)
   - [Other Important Concepts](#Other-Important-Concepts)
+- [Common Issues/Questions](#Common-Issues-Questions)
 
 ## Documentation
 - [Apache Kafka](https://kafka.apache.org/)
@@ -124,3 +125,32 @@ https://kafka.apache.org/quickstart
 - Enforces compatibility between producers and consumers
 
 These concepts together form the foundation of Kafka's architecture, enabling its key characteristics: high throughput, fault tolerance, horizontal scalability, and durability.
+
+---
+# Common Issues/Questions
+There are many behaviors in Kafka when initially learning the system many users are perplexed by. Especially, before you master the complex, but useful interactions behind the scenes of kafka backend/engine. Hopefully, some of the questions and links below help.
+
+### Why does leaving a kafka consumer idle for a few minutes result in no records from its next poll, even if one new record/event was published? If you rerun it immediately one is found?
+This behavior with Kafka consumers is actually quite common and relates to how Kafka's consumer group protocol works. Let me explain what's happening.
+
+When a Kafka consumer is idle for a few minutes and then polls, it might not receive records immediately due to several factors:
+
+1. **Session timeout**: When a consumer is idle, it stops sending heartbeats to the Kafka broker. If the idle period exceeds the `session.timeout.ms` setting (typically 10-30 seconds by default), the broker assumes the consumer has failed and triggers a rebalance of partitions among remaining consumers in the group.
+
+2. **Rebalance process**: When you poll again after being idle, the consumer first needs to rejoin the consumer group and participate in a rebalance. During this first poll, it's primarily focused on group coordination rather than fetching records.
+
+3. **Offset commit/fetch**: After a rebalance, the consumer needs to determine where to start consuming from. It may need to fetch committed offsets from the __consumer_offsets topic.
+
+4. **Minimum fetch size**: If you have configured `fetch.min.bytes` to something greater than the size of your single message, Kafka will wait until that threshold is met or until `fetch.max.wait.ms` is reached.
+
+When you run the poll operation a second time immediately afterward, you get the record because:
+- The consumer has now rejoined the group
+- Partition assignments are complete
+- Offset positions are established
+- The consumer can now fetch actual records
+
+To avoid this behavior, you could:
+- Decrease your `session.timeout.ms` value
+- Adjust your `heartbeat.interval.ms` to be lower
+- Make sure your poll loop continues running, even if processing is idle
+- Use a longer `poll()` timeout value
