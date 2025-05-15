@@ -7,7 +7,7 @@ If you have heard anything about event-driven architectures or real-time data, t
 - [Kafka Core Concepts](#Kafka-Core-Concepts)
   - [Main Components](#Main-Components)
   - [Other Important Concepts](#Other-Important-Concepts)
-- [Common Issues/Questions](#Common-Issues/Questions)
+- [Common Issues/Questions](#Common-Issues-and-Questions)
 
 ## Documentation
 - [Apache Kafka](https://kafka.apache.org/)
@@ -127,7 +127,7 @@ https://kafka.apache.org/quickstart
 These concepts together form the foundation of Kafka's architecture, enabling its key characteristics: high throughput, fault tolerance, horizontal scalability, and durability.
 
 ---
-# Common Issues/Questions
+# Common Issues and Questions
 There are many behaviors in Kafka when initially learning the system many users are perplexed by. Especially, before you master the complex, but useful interactions behind the scenes of kafka backend/engine. Hopefully, some of the questions and links below help.
 
 ### Why does leaving a kafka consumer idle for a few minutes result in no records from its next poll, even if one new record/event was published? If you rerun it immediately one is found?
