@@ -8,8 +8,8 @@ I'll show you various approaches to stream data from Kafka to Microsoft SQL Serv
 |---------|------|------|
 | [PySpark](#1-using-pyspark-structured-streaming) | - Scalable processing<br>- Built-in fault tolerance<br>- Rich transformations | - Requires Spark cluster<br>- Higher resource overhead |
 | [PyFlink](#2-using-apache-flink-with-pyflink) | - Exactly-once semantics<br>- Stateful processing<br>- Low latency | - Steeper learning curve<br>- Requires Flink cluster |
-| [Kafka Connect]((#3-using-kafka-connect-with-jdbc-connector)) | - Production-ready<br>- Many pre-built connectors<br>- No coding required | - Less flexibility<br>- Requires Kafka Connect setup |
-| [Custom Solution](#4-custom-python-producer-consumer-solution)) | - Full control<br>- Lightweight<br>- Simple to understand | - Must handle failures manually<br>- Limited scalability |
+| [Kafka Connect](#3-using-kafka-connect-with-jdbc-connector) | - Production-ready<br>- Many pre-built connectors<br>- No coding required | - Less flexibility<br>- Requires Kafka Connect setup |
+| [Custom Solution](#4-custom-python-producer-consumer-solution) | - Full control<br>- Lightweight<br>- Simple to understand | - Must handle failures manually<br>- Limited scalability |
 | [SQLAlchemy](#5-using-kafka-python-and-sql-alchemy) | - Pythonic database access<br>- ORM capabilities<br>- Database independence | - Potential performance overhead<br>- Must handle concurrency |
 ** Some more below with [Best Practices](#best-practices) **
 
