@@ -2,6 +2,22 @@
 
 Enums significantly enhance code quality and prevent various types of errors. Let me explain in detail with examples how they achieve this:
 
+I'll create a markdown table of contents for this document about enums.
+
+## Table of Contents
+  - [1. Preventing Invalid Values](#1-preventing-invalid-values)
+  - [2. Type Safety and IDE Support](#2-type-safety-and-ide-support)
+  - [3. Exhaustive Switch/Match Statements](#3-exhaustive-switchmatch-statements)
+  - [4. Self-Documenting Code](#4-self-documenting-code)
+  - [5. Consistent Serialization and Deserialization](#5-consistent-serialization-and-deserialization)
+  - [6. Database Schema Alignment](#6-database-schema-alignment)
+  - [7. Preventing Business Logic Errors](#7-preventing-business-logic-errors)
+  - [8. Simplifying Testing](#8-simplifying-testing)
+  - [9. Improving API Design](#9-improving-api-design)
+  - [10. Reducing Maintenance Burden](#10-reducing-maintenance-burden)
+  - [11. Improving Error Messages](#11-improving-error-messages)
+  - [Real-world Example: State Machine with Enums](#real-world-example-state-machine-with-enums)
+
 ## 1. Preventing Invalid Values
 
 Without enums, using simple constants or strings can lead to errors where invalid values are accepted.
