@@ -7,7 +7,7 @@ If you have heard anything about event-driven architectures or real-time data, t
 - [Kafka Core Concepts](#Kafka-Core-Concepts)
   - [Main Components](#Main-Components)
   - [Other Important Concepts](#Other-Important-Concepts)
-- [Common Issues/Questions](#Common-Issues-Questions)
+- [Common Issues/Questions](#Common-Issues/Questions)
 
 ## Documentation
 - [Apache Kafka](https://kafka.apache.org/)
