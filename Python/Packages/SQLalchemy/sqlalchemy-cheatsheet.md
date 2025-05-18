@@ -1,5 +1,31 @@
 # SQLAlchemy Cheatsheet
 
+SQL Alchemy is a framework for easily allowing your system to work with different types of databases using the same schema definitions directly in python. A vary useful package which is greate out of the box and many advance techniques to learn long term.
+
+### SQLAlchemy Cheatsheet - Table of Contents
+
+- [Installation](#installation)
+- [Basic Setup](#basic-setup)
+- [Defining Models/Schemas](#defining-modelsschemas)
+  - [Basic Model](#basic-model)
+  - [Common Column Types](#common-column-types)
+  - [Column Constraints and Defaults](#column-constraints-and-defaults)
+- [Database Relationships](#database-relationships)
+  - [One-to-Many Relationship](#one-to-many-relationship)
+  - [Many-to-Many Relationship](#many-to-many-relationship)
+  - [One-to-One Relationship](#one-to-one-relationship)
+  - [Self-Referential Relationship](#self-referential-relationship)
+  - [Advanced Relationship Options](#advanced-relationship-options)
+- [Creating Tables](#creating-tables)
+- [CRUD Operations](#crud-operations)
+  - [Create (Insert)](#create-insert)
+  - [Read (Query)](#read-query)
+  - [Update](#update)
+  - [Delete](#delete)
+- [Transactions](#transactions)
+- [Alembic for Migrations](#alembic-for-migrations)
+- [Using SQLAlchemy 2.0 Style](#using-sqlalchemy-20-style)
+
 ## Installation
 
 ```python
