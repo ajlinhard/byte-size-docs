@@ -2,6 +2,10 @@
 
 SQL Alchemy is a framework for easily allowing your system to work with different types of databases using the same schema definitions directly in python. A vary useful package which is greate out of the box and many advance techniques to learn long term.
 
+### Documentation and Tutorials
+- [Offical SQL Alchemy Core](https://docs.sqlalchemy.org/en/20/core/index.html)
+- [Offical SQL Alchemy ORM (Object-Relational Mapping)](https://docs.sqlalchemy.org/en/20/orm/index.html)
+
 ### SQLAlchemy Cheatsheet - Table of Contents
 
 - [Installation](#installation)
