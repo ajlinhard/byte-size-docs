@@ -73,6 +73,58 @@ Import errors can be difficult to figure out and usually have to do with where y
     - Cons:
         - The environment only exists within the folder the Venv is made
 
+A Python virtual environment (venv) doesn't directly support YML files like Anaconda does. However, you can convert a YML file's dependencies to work with venv and pip. Here's how:
+
+1. First, extract the package information from your YML file. If it's an Anaconda YML file, you'll need to focus on the Python packages listed in the dependencies section.
+
+2. Create a new virtual environment:
+   ```
+   python -m venv myenv
+   ```
+
+3. Activate the virtual environment:
+   - On Windows: `myenv\Scripts\activate`
+   - On macOS/Linux: `source myenv/bin/activate`
+
+4. You'll need to convert the YML dependencies to a requirements.txt format or install them manually.
+
+5. If you have many packages, you can create a requirements.txt file with the package names and versions from the YML file, then run:
+   ```
+   pip install -r requirements.txt
+   ```
+
+Alternatively, if you have conda installed, you can extract the pip-installable packages from your YML file:
+
+```
+conda env export --from-history | grep -v "^prefix: " > environment.yml
+conda env create -f environment.yml
+conda list --explicit > spec-file.txt
+```
+
+Then you can install these packages in your venv using pip.
+
 # Anaconda:
     - Anaconda environments persist across projects and are accessible throughout system installed on.
     - Separate terminal for conda.
+
+To build an Anaconda environment from a YML file, follow these steps:
+
+1. First, make sure you have Anaconda or Miniconda installed on your system.
+
+2. Open your terminal or Anaconda prompt.
+
+3. Use the following command to create an environment from your YML file:
+   ```
+   conda env create -f environment.yml
+   ```
+   (Replace "environment.yml" with the actual path to your YML file if it's not in your current directory)
+
+4. Wait for the installation to complete. Conda will read the YML file and install all specified packages.
+
+5. Activate your new environment with:
+   ```
+   conda activate your_environment_name
+   ```
+   (Replace "your_environment_name" with the name specified in the YML file)
+
+The YML file should contain a name for the environment, channels to search for packages, and a list of dependencies. If you're having trouble with a specific YML file, I'd be happy to help troubleshoot.
