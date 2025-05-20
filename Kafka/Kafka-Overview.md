@@ -20,24 +20,38 @@ If you have heard anything about event-driven architectures or real-time data, t
 https://kafka.apache.org/quickstart
 
 1. Setup/download a docker image via command line:
+```bash
     docker pull apache/kafka:3.8.0
+```
     ** can also use docker hub to download **
 2. Spin up the docker image into a container via the command line:
+```bash
     docker run -p 9092:9092 apache/kafka:3.8.0
+```
     Note: the terminal will now be owned by the docker containers stdin/out
 3. Open a new command line or go to docker hub.
 4. Enter the docker containers command line
-    Command Line: docker exec -it happy_vaughan bash
+```bash
+    docker exec -it happy_vaughan bash
+```
     Docker Hub: Container -> Exec (tab)
 5. cd down to the /opt/kafka folder
+```bash
+  cd /opt/kafka
+```
     Note: The Apache Kafka quickstart leaves out this fact.
 6. Run the following command to create a topic:
+```bash
     bin/kafka-topics.sh --create --topic quickstart-events --bootstrap-server localhost:9092
+```
 7. Producer thread
+```bash
     bin/kafka-console-producer.sh --topic quickstart-events --bootstrap-server localhost:9092
+```
 8. Consumer thread
+```bash
     bin/kafka-console-consumer.sh --topic quickstart-events --from-beginning --bootstrap-server localhost:9092
-
+```
 
 ---
 # Kafka Core Concepts
