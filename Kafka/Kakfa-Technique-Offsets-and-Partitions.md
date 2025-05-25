@@ -182,6 +182,36 @@ producer = KafkaProducer(
 
 ---
 # Kafka Consumer Group Info
+Consumer groups are one of the useful and powerful tools to understand when structuring and using your Kafka environment. To structure them effectively, you need to understand how Kafka consumers in the same group work together and distribute the workload:
+
+### Kafka Consumers working as a Group (aka group_id)
+When a Kafka consumer is initialized with a group ID that's shared by other consumers, partition assignment will happen automatically through Kafka's consumer group coordination mechanism.
+
+Here's how it works:
+
+**Automatic Partition Assignment Process:**
+1. When your new consumer joins the consumer group, it triggers a "rebalance"
+2. The group coordinator (one of the Kafka brokers) orchestrates this rebalance
+3. All consumers in the group temporarily stop consuming and give up their current partition assignments
+4. Partitions are then redistributed among all active consumers in the group according to the partition assignment strategy
+
+**Default Assignment Strategy:**
+Kafka uses the RangeAssignor by default, which tries to distribute partitions evenly across consumers. For example, if you have 6 partitions and 3 consumers, each consumer gets 2 partitions.
+
+**What Triggers Assignment:**
+- A new consumer joins the group
+- An existing consumer leaves (graceful shutdown or failure)
+- New partitions are added to subscribed topics
+- Consumer group membership changes
+
+**Important Notes:**
+- The consumer must call `subscribe()` on topics and then `poll()` to actually participate in the group and receive assignments
+- During rebalancing, there's a brief period where no messages are consumed by the group
+- You can configure different assignment strategies (RoundRobin, Sticky, etc.) if needed
+
+So yes, your consumer will automatically get partition assignments just by joining the consumer group - no manual intervention required.
+
+
 Here's how to retrieve the current consumer group IDs and their offsets in Python:
 
 ## Using kafka-python
