@@ -1,6 +1,32 @@
 # Repartitioning a Kafka Topic to Add Another Consumer
 
-Unfortunately, Kafka doesn't support directly changing the number of partitions for an existing topic without data loss risk. Here are the approaches to effectively "repartition" a topic:
+Unfortunately, Kafka doesn't support directly changing the number of partitions for an existing topic without data loss risk. You may have to do this as services scale and the number of consumers needed to keep up grows. But, first a small Kafka functionality thought excercise:
+
+### What happens if you assign extra Consumers to the same partition?
+When two or more consumers with the same consumer group ID are assigned to the same Kafka topic, they **will not** be assigned to the same partition. Kafka's consumer group protocol ensures that each partition is assigned to exactly one consumer within a consumer group at any given time.
+
+Here's what actually happens:
+
+1. Kafka's group coordinator (a specialized broker role) manages partition assignment among consumers in the same group.
+
+2. When multiple consumers join the same consumer group, Kafka will distribute the partitions among them, with each partition being assigned to exactly one consumer.
+
+3. If you have more consumers in a group than partitions in the topic, some consumers will be idle and won't receive any messages. For example:
+   - If you have a topic with 3 partitions and 5 consumers in the same group
+   - Only 3 consumers will be active (one per partition)
+   - The remaining 2 consumers will be idle (no partitions assigned)
+
+4. If a consumer fails or leaves the group, Kafka will detect this and trigger a rebalance, reassigning that consumer's partitions to the remaining active consumers in the group.
+
+This one-to-one mapping between partitions and consumers (within a consumer group) is a fundamental aspect of Kafka's design and enables:
+- Guaranteed message ordering within a partition
+- Load balancing across consumers
+- Horizontal scalability up to the number of partitions
+
+This is why the number of partitions in a topic effectively sets the upper limit on how many consumers in a single consumer group can process messages from that topic in parallel.
+
+
+Here are the approaches to effectively "repartition" a topic:
 
 ## Method 1: Create a New Topic with More Partitions
 
