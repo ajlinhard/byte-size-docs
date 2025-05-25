@@ -2,6 +2,9 @@
 
 An AI agent is a software entity that can perceive its environment, make decisions, and take actions to achieve specific goals. Let me walk you through this concept from basic principles to advanced research.
 
+### Documentation / Training:
+- [AI Agent Basic Tools (post)](https://www.linkedin.com/posts/shirin-khosravi-jam_i-am-a-data-scientist-and-i-built-ai-agents-activity-7331938079835848705-ADxB?utm_source=share&utm_medium=member_android&rcm=ACoAAA1u5M4Bug9k301OIryWqnTXjYpn4_R9r9k)
+
 ## Fundamental Concepts
 
 At its core, an AI agent follows a simple loop:
