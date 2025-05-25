@@ -384,6 +384,33 @@ These improvements would make the request-reply patterns much more scalable for 
 # Kafka Starting at X Offset
 Kafka provides several ways to start a consumer at a specific offset. This is a powerful feature that gives you precise control over message consumption. We want to understand a few concepts though, before looking at the code. These will help you understand how Kafka offsets are managed during processing.
 
+### How Kafka stores Partitions and Offsets
+In Kafka, offset values are **per partition**, not global. Each partition maintains its own independent sequence of offsets.
+
+Key points about Kafka offsets:
+
+1. **Partition Specific**: Every message within a partition has a unique, sequential offset value starting from 0.
+
+2. **Independent Counters**: Offset values in one partition have no relation to offset values in another partition - even within the same topic.
+
+3. **Consumer Tracking**: When a consumer reads from a topic, it tracks its position (offset) separately for each partition it consumes from.
+
+4. **Consumer Group Offsets**: Kafka stores consumer group progress as a set of (topic, partition, offset) triplets, not as a single global value.
+
+For example, in a topic with 3 partitions, you might have:
+- Partition 0: Messages with offsets 0-1500
+- Partition 1: Messages with offsets 0-2200
+- Partition 2: Messages with offsets 0-1800
+
+These offset values are completely independent of each other. A consumer might be at offset 1000 in one partition while at offset 500 in another.
+
+This partition-level offset system is a fundamental design aspect of Kafka that enables:
+- Parallel processing across partitions
+- Independent consumption rates
+- Precise message ordering guarantees within (but not across) partitions
+
+When working with consumer groups, Kafka's group coordinator manages which consumer reads from which partition, but each consumer still tracks offsets at the partition level.
+
 ### Consumer Offsets in Kafka
 Consumer commits in Kafka are indeed tracked per `group_id`, and understanding this is key to making `auto_offset_reset='latest'` work correctly. Here's how the offset tracking and `auto_offset_reset` parameter work together.
 
@@ -401,6 +428,7 @@ The key thing to remember is that `auto_offset_reset` is only used when Kafka ca
 ### Consumer Group ID Commits (How they work):
 Kafka consumer does not automatically commit offsets when polling for new records. The offset commitment is a separate process from polling, and how it happens depends on your consumer configuration and code implementation.
 
+---
 Here's how offset management works in Kafka:
 
 1. **Manual vs. Automatic Commits**: 
