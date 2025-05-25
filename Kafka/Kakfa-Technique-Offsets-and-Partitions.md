@@ -382,11 +382,10 @@ These improvements would make the request-reply patterns much more scalable for 
 
 ---
 # Kafka Starting at X Offset
-Kafka provides several ways to start a consumer at a specific offset. This is a powerful feature that gives you precise control over message consumption.
-
-Consumer commits in Kafka are indeed tracked per `group_id`, and understanding this is key to making `auto_offset_reset='latest'` work correctly. Here's how the offset tracking and `auto_offset_reset` parameter work together:
+Kafka provides several ways to start a consumer at a specific offset. This is a powerful feature that gives you precise control over message consumption. We want to understand a few concepts though, before looking at the code. These will help you understand how Kafka offsets are managed during processing.
 
 ### Consumer Offsets in Kafka
+Consumer commits in Kafka are indeed tracked per `group_id`, and understanding this is key to making `auto_offset_reset='latest'` work correctly. Here's how the offset tracking and `auto_offset_reset` parameter work together.
 
 1. **Tracking by `group_id`**: 
    - Kafka stores consumer offsets in an internal topic called `__consumer_offsets`
@@ -398,6 +397,62 @@ Consumer commits in Kafka are indeed tracked per `group_id`, and understanding t
    - It does NOT override existing committed offsets for a consumer group
 
 The key thing to remember is that `auto_offset_reset` is only used when Kafka can't find committed offsets for your consumer group or when you explicitly reset. If there are already committed offsets for your consumer group, Kafka will use those instead of applying the `auto_offset_reset` parameter.
+
+### Consumer Group ID Commits (How they work):
+Kafka consumer does not automatically commit offsets when polling for new records. The offset commitment is a separate process from polling, and how it happens depends on your consumer configuration and code implementation.
+
+Here's how offset management works in Kafka:
+
+1. **Manual vs. Automatic Commits**: 
+   - With `enable.auto.commit=true` (default), the consumer automatically commits offsets periodically (based on `auto.commit.interval.ms`)
+   - With `enable.auto.commit=false`, you must explicitly commit offsets in your code
+
+2. **When Re-polling Occurs**:
+   - Simply calling `poll()` again does not trigger a commit of previously processed records
+   - If auto-commit is enabled, offsets are committed based on time intervals, not polling cycles
+   - If auto-commit is disabled, you need to call `consumer.commitSync()` or `consumer.commitAsync()` explicitly
+
+3. **Important Considerations**:
+   - Auto-commit happens during `poll()` calls, but based on time passed since the last commit, not because you're polling again
+   - Auto-commit commits the last offset returned by `poll()`, which might include records you haven't processed yet (if you're mid-processing when the commit timer fires)
+
+Here's a simple example to illustrate:
+
+```python
+# Auto-commit enabled (default)
+consumer = KafkaConsumer(
+    'my-topic',
+    bootstrap_servers=['localhost:9092'],
+    group_id='my-group',
+    enable_auto_commit=True,
+    auto_commit_interval_ms=5000  # Commit every 5 seconds
+)
+
+# With auto-commit, records are committed periodically during polling
+# regardless of whether you've processed them
+for message in consumer:
+    process_message(message)
+    # No explicit commit needed, but offsets are only committed 
+    # every 5 seconds during poll() calls
+```
+
+```python
+# Manual commit
+consumer = KafkaConsumer(
+    'my-topic',
+    bootstrap_servers=['localhost:9092'],
+    group_id='my-group',
+    enable_auto_commit=False
+)
+
+# With manual commit, you control exactly when offsets are committed
+for message in consumer:
+    process_message(message)
+    # Explicitly commit after processing each message
+    consumer.commit()  # or commitSync() or commitAsync()
+```
+
+The key takeaway is that re-polling itself does not trigger offset commitment - it's either time-based (auto-commit) or explicit (manual commit).
 
 **Here are the main ways to control and set offsets:**
 ## 1. Using Seek Methods
