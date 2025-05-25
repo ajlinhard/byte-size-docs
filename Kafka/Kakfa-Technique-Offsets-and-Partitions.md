@@ -382,8 +382,24 @@ These improvements would make the request-reply patterns much more scalable for 
 
 ---
 # Kafka Starting at X Offset
-Kafka provides several ways to start a consumer at a specific offset. This is a powerful feature that gives you precise control over message consumption. Here are the main approaches:
+Kafka provides several ways to start a consumer at a specific offset. This is a powerful feature that gives you precise control over message consumption.
 
+Consumer commits in Kafka are indeed tracked per `group_id`, and understanding this is key to making `auto_offset_reset='latest'` work correctly. Here's how the offset tracking and `auto_offset_reset` parameter work together:
+
+### Consumer Offsets in Kafka
+
+1. **Tracking by `group_id`**: 
+   - Kafka stores consumer offsets in an internal topic called `__consumer_offsets`
+   - These offsets are keyed by the combination of `group_id`, topic name, and partition number
+   - Different consumer groups maintain separate offset positions for the same topic-partitions
+
+2. **When `auto_offset_reset` is applied**:
+   - `auto_offset_reset` is only used when a consumer group has NO committed offset for a partition OR when an explicit reset is requested
+   - It does NOT override existing committed offsets for a consumer group
+
+The key thing to remember is that `auto_offset_reset` is only used when Kafka can't find committed offsets for your consumer group or when you explicitly reset. If there are already committed offsets for your consumer group, Kafka will use those instead of applying the `auto_offset_reset` parameter.
+
+**Here are the main ways to control and set offsets:**
 ## 1. Using Seek Methods
 
 The most direct way to start at a specific offset is using the `seek()` and related methods:
