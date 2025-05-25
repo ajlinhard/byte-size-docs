@@ -1,4 +1,149 @@
 
+---
+# Kafka Consumer Group Info
+Here's how to retrieve the current consumer group IDs and their offsets in Python:
+
+## Using kafka-python
+
+```python
+from kafka import KafkaAdminClient
+from kafka.admin.consumer_group import list_consumer_groups, describe_consumer_groups, list_consumer_group_offsets
+
+# Initialize the admin client
+admin_client = KafkaAdminClient(bootstrap_servers=['localhost:9092'])
+
+# List all consumer groups
+consumer_groups = list_consumer_groups(admin_client)
+group_ids = [group.group_id for group in consumer_groups]
+print(f"Available consumer groups: {group_ids}")
+
+# Get offsets for each consumer group
+for group_id in group_ids:
+    # Get offsets for all topics this consumer group is consuming
+    offsets = list_consumer_group_offsets(admin_client, group_id)
+    
+    print(f"\nGroup: {group_id}")
+    for tp, offset_info in offsets.items():
+        print(f"  Topic: {tp.topic}, Partition: {tp.partition}, Offset: {offset_info.offset}")
+        
+        # Optional: Get lag by comparing with end offsets
+        consumer_position = offset_info.offset
+        end_offsets = admin_client.list_consumer_group_offsets(group_id)
+        for tp_end, offset_end in end_offsets.items():
+            if tp_end == tp:
+                lag = offset_end.offset - consumer_position
+                print(f"    Lag: {lag}")
+```
+
+## Using confluent-kafka (more comprehensive)
+
+```python
+from confluent_kafka.admin import AdminClient
+from confluent_kafka import Consumer, TopicPartition, KafkaException
+
+# Initialize the admin client
+admin_client = AdminClient({'bootstrap.servers': 'localhost:9092'})
+
+# List all consumer groups
+consumer_groups = admin_client.list_consumer_groups()
+group_ids = [group.group_id for group in consumer_groups.valid]
+print(f"Available consumer groups: {group_ids}")
+
+# Function to get offsets for a specific group
+def get_group_offsets(group_id):
+    # Create a temporary consumer to get topic info
+    consumer = Consumer({
+        'bootstrap.servers': 'localhost:9092',
+        'group.id': 'offset-checker',  # Temporary group ID
+        'enable.auto.commit': 'false'
+    })
+    
+    results = {}
+    
+    try:
+        # Get group metadata from the admin client
+        group_metadata = admin_client.describe_consumer_groups([group_id])
+        
+        # The metadata contains active memberships that show topic assignments
+        for member in group_metadata[group_id].members:
+            try:
+                # Get assigned topic partitions
+                assignment = member.assignment
+                for topic, partitions in assignment.topic_partitions.items():
+                    
+                    # Get committed offsets for each partition
+                    for partition in partitions:
+                        tp = TopicPartition(topic, partition)
+                        
+                        # Get group committed offset
+                        committed = consumer.committed([tp], timeout=5.0)
+                        if committed:
+                            committed_offset = committed[0].offset
+                        else:
+                            committed_offset = -1  # No committed offset
+                            
+                        # Get partition end offset (high watermark)
+                        watermarks = consumer.get_watermark_offsets(tp)
+                        low_mark, high_mark = watermarks
+                        
+                        # Calculate lag
+                        lag = high_mark - committed_offset if committed_offset >= 0 else -1
+                        
+                        results[(topic, partition)] = {
+                            'committed_offset': committed_offset,
+                            'high_watermark': high_mark,
+                            'lag': lag,
+                            'member_id': member.id
+                        }
+            except KafkaException as e:
+                print(f"Error accessing assignment for member {member.id}: {e}")
+                
+    except Exception as e:
+        print(f"Error describing consumer group {group_id}: {e}")
+    finally:
+        consumer.close()
+        
+    return results
+
+# Get and display offsets for each group
+for group_id in group_ids:
+    print(f"\nGroup: {group_id}")
+    offsets = get_group_offsets(group_id)
+    
+    for (topic, partition), info in offsets.items():
+        print(f"  Topic: {topic}, Partition: {partition}")
+        print(f"    Committed Offset: {info['committed_offset']}")
+        print(f"    High Watermark: {info['high_watermark']}")
+        print(f"    Lag: {info['lag']}")
+        print(f"    Consumer: {info['member_id']}")
+```
+
+## Using the Kafka Command-Line Tools (Bonus)
+
+If you prefer using the command-line tools that come with Kafka, you can do:
+
+```bash
+# List all consumer groups
+kafka-consumer-groups.sh --bootstrap-server localhost:9092 --list
+
+# Describe a specific consumer group
+kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group my-group
+```
+
+The command-line output will look something like:
+
+```
+GROUP           TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                 HOST            CLIENT-ID
+my-group        my-topic        0          45              100             55              consumer-1-9fabb49c-4be9-4f27-8a23-abc123   /172.17.0.1     consumer-1
+my-group        my-topic        1          72              100             28              consumer-1-9fabb49c-4be9-4f27-8a23-abc123   /172.17.0.1     consumer-1
+my-group        my-topic        2          98              100             2               consumer-2-9fabb49c-4be9-4f27-8a23-def456   /172.17.0.1     consumer-2
+```
+
+This shows:
+- The current committed offset for each partition
+- The log-end-offset (high watermark) for each partition
+- The lag (how far behind the consumer is)
+- Which consumer is handling which partition
 
 ---
 # Kafka Scaling Many Consumer Groups
