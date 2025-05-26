@@ -1,6 +1,9 @@
 # Architecture and Systems Design
 We creating a system or applications there are some common concepts for how to design the code. There will always be uniqueness to how the code function or interacts, but the relative concept and general use cases will be the same.
 
+### Documentation and Tutorials:
+- [30 System Design Concpets in 2- minutes](https://www.youtube.com/watch?v=s9Qh9fWeOAk)
+
 Here are the major software system design structures with their functions and use cases:
 
 ## Architectural Patterns
