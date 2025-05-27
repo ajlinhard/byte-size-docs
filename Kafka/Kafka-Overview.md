@@ -12,6 +12,10 @@ If you have heard anything about event-driven architectures or real-time data, t
 ## Documentation
 - [Apache Kafka](https://kafka.apache.org/)
 - [Confluent Kafka](https://www.confluent.io/)
+  - [What is Kafka?](https://developer.confluent.io/what-is-apache-kafka/)
+  - [Developer Training Articles](https://developer.confluent.io/learn/?utm_medium=sem&utm_source=google&utm_campaign=ch.sem_br.nonbrand_tp.prs_tgt.dsa_mt.dsa_rgn.namer_lng.eng_dv.all_con.confluent-developer&utm_term=&creative=&device=c&placement=&gad_source=1&gclid=CjwKCAjwyfe4BhAWEiwAkIL8sIkJ2IYv8tJOS1vODWU2t593IBuaYb-RAIuXG65UdGXjuF2WNbqzuxoCW0MQAvD_BwE)
+  - [Developer Videos](https://developer.confluent.io/courses/apache-kafka/consumers/)
+  - [Kafka and Flink](https://docs.confluent.io/platform/current/flink/overview.html)
 - Helpful Videos
   - [Apache Kafke Summit Videos](https://kafka.apache.org/videos)
   - [Kafka Overview - TechWorld with Nana](https://www.youtube.com/watch?v=QkdkLdMBuL0&list=PLS04ayi90zF1PrKLib5PsS7zSde8LftNp)
