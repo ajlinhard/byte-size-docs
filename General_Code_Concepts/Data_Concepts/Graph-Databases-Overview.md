@@ -1,4 +1,43 @@
+# Graph Database Guide
 Graph databases like Neptune work fundamentally differently from relational databases by storing data as interconnected nodes and relationships rather than tables with rows and columns.
+
+### [Key Vocabulary and Concepts](#key-vocabulary-and-concepts)
+- [Graph Database Terms](#graph-database-terms)
+- [Query Languages](#query-languages)
+
+### [How Graph Databases Differ from Relational Databases](#how-graph-databases-differ-from-relational-databases)
+- [Relational Database Structure](#relational-database-structure)
+- [Graph Database Structure](#graph-database-structure)
+
+## [Neptune-Specific Code Examples](#neptune-specific-code-examples)
+- [NeptuneGraphDB Class](#neptunegraphdb-class)
+  - [Connection Management](#connection-management)
+  - [Adding Data](#adding-data)
+  - [Querying/Selecting Data](#queryingselecting-data)
+  - [Joining/Traversing Relationships](#joiningtraversing-relationships)
+  - [Updating Data](#updating-data)
+  - [Deleting Data](#deleting-data)
+- [Example Usage](#example-usage)
+
+### [SQL vs Gremlin Comparison](#sql-vs-gremlin-comparison)
+- [Basic Operations](#basic-operations)
+  - [Select All Records](#select-all-records)
+  - [Select with Where Condition](#select-with-where-condition)
+  - [Insert Data](#insert-data)
+  - [Update Data](#update-data)
+  - [Delete Data](#delete-data)
+- [Advanced Operations](#advanced-operations)
+  - [Join Tables vs Traverse Relationships](#join-tables-vs-traverse-relationships)
+  - [Complex Joins - Find Colleagues](#complex-joins---find-colleagues)
+  - [Aggregate Functions](#aggregate-functions)
+  - [Subqueries vs Graph Patterns](#subqueries-vs-graph-patterns)
+  - [Recursive/Multi-Hop Queries](#recursivemulti-hop-queries)
+
+### [Key Advantages of Graph Databases](#key-advantages-of-graph-databases)
+- [Performance Benefits](#performance-benefits)
+- [Flexibility Benefits](#flexibility-benefits)
+- [Query Expressiveness](#query-expressiveness)
+- [When to Use Graph Databases](#when-to-use-graph-databases)
 
 ## Key Vocabulary and Concepts
 
