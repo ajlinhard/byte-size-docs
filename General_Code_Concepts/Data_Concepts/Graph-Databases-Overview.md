@@ -9,7 +9,7 @@ Graph databases like Neptune work fundamentally differently from relational data
 - [Relational Database Structure](#relational-database-structure)
 - [Graph Database Structure](#graph-database-structure)
 
-## [Neptune-Specific Code Examples](#neptune-specific-code-examples)
+### [Neptune-Specific Code Examples](#neptune-specific-code-examples)
 - [NeptuneGraphDB Class](#neptunegraphdb-class)
   - [Connection Management](#connection-management)
   - [Adding Data](#adding-data)
