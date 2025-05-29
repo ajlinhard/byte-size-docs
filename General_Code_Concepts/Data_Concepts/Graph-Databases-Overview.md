@@ -29,8 +29,7 @@ Graph databases like Neptune work fundamentally differently from relational data
 - Performance remains consistent regardless of relationship complexity
 
 ## Neptune-Specific Code Examples
-```
-python
+```python
 import boto3
 from gremlin_python.driver import client
 from gremlin_python.driver.driver_remote_connection import DriverRemoteConnection
