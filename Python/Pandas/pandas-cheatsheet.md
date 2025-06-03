@@ -346,6 +346,48 @@ df.sort_index()  # Sort by row labels
 df.sort_index(axis=1)  # Sort by column labels
 ```
 
+### Coalesce
+Pandas doesn't have a direct `coalesce` function like SQL, but you can achieve the same functionality using several methods to return the first non-null value from a sequence of columns.
+Here are the main approaches:
+
+**Method 1: Using `combine_first()`**
+```python
+import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({
+    'A': [1, None, 3, None],
+    'B': [None, 2, None, 4],
+    'C': [10, 20, 30, 40]
+})
+
+# Coalesce A and B, then with C
+df['coalesced'] = df['A'].combine_first(df['B']).combine_first(df['C'])
+```
+
+**Method 2: Using `fillna()` chaining**
+```python
+df['coalesced'] = df['A'].fillna(df['B']).fillna(df['C'])
+```
+
+**Method 3: Using `bfill()` with axis=1 (most SQL-like)**
+```python
+df['coalesced'] = df[['A', 'B', 'C']].bfill(axis=1).iloc[:, 0]
+```
+
+**Method 4: Using `numpy.select()` for more complex conditions**
+```python
+conditions = [
+    df['A'].notna(),
+    df['B'].notna(),
+    df['C'].notna()
+]
+choices = [df['A'], df['B'], df['C']]
+df['coalesced'] = np.select(conditions, choices, default=np.nan)
+```
+
+The `bfill(axis=1)` approach is often the cleanest when you want to coalesce multiple columns, as it works across any number of columns and mimics SQL's `COALESCE` behavior most closely.
+
 ## Data Aggregation
 
 ### Basic Aggregation
