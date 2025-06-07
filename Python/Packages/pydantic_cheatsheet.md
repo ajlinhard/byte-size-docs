@@ -1,5 +1,9 @@
 # Pydantic Cheatsheet - From Basics to Advanced
 
+### Docs and Tutorials:
+- [Pydantic Home Page](https://docs.pydantic.dev/latest/)
+- [Intro Walkthrough](https://www.youtube.com/watch?v=7aBRk_JP-qY)
+
 ## Installation
 ```bash
 pip install pydantic
