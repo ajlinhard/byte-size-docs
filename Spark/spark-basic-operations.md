@@ -3,6 +3,8 @@ These are the basic spark action for working with data
 
 ### Table of Contents
 - [Selects](#Selects)
+- [Cast and Converts](#Cast-and-Converts)
+- [Array Functions](#Helpful-Array-Functions)
 
 ---
 # Selects
@@ -145,6 +147,281 @@ df.selectExpr('name', 'price * quantity as total') \
 - **Mixed teams**: Use `select()` for type safety, `selectExpr()` for simple expressions
 
 The key is consistency within your codebase and choosing the approach that makes your code most readable and maintainable for your specific use case.
+
+---
+# Cast and Converts
+Here are practical examples of using `cast` and `convert` functions in PySpark:This comprehensive example covers both `cast` and data conversion operations in PySpark:
+
+## Key Cast Operations:
+- **Basic casting**: Using `.cast(DataType())` or `.cast("string_type")`
+- **Safe casting**: With null handling using `when().otherwise()`
+- **Date/timestamp casting**: Using `to_date()` and `to_timestamp()`
+- **Decimal precision**: Specifying precision with `DecimalType(10,2)`
+
+## Key Conversion Patterns:
+- **String cleaning**: Using `regexp_replace()` before casting
+- **Conditional conversion**: Using `when().otherwise()` for complex logic
+- **Array conversion**: Using `split()` for comma-separated strings
+- **JSON parsing**: Using `from_json()` with defined schema
+- **Numeric formatting**: Using `format_number()` and `round()`
+
+## Best Practices Shown:
+1. **Always handle nulls** when casting to avoid errors
+2. **Validate data** before casting using regex patterns
+3. **Use appropriate data types** (DecimalType for money, DateType for dates)
+4. **Batch operations** for multiple column conversions
+5. **Error handling** with conditional logic
+
+The examples demonstrate real-world scenarios like cleaning messy data, converting between different formats, and safely handling edge cases that commonly occur in data processing pipelines.
+
+## Code Examples:
+```python
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, cast, when, regexp_replace, to_date, to_timestamp
+from pyspark.sql.types import *
+import pyspark.sql.functions as F
+
+# Initialize Spark session
+spark = SparkSession.builder.appName("CastConvertExamples").getOrCreate()
+
+# Sample data
+data = [
+    ("1", "John", "25.5", "2023-01-15", "true", "1000.50"),
+    ("2", "Jane", "30", "2023-02-20", "false", "2500.75"),
+    ("3", "Bob", "invalid", "2023-03-25", "1", "abc"),
+    ("4", "Alice", "28.7", "invalid-date", "0", "3500.25")
+]
+
+columns = ["id", "name", "age_str", "date_str", "is_active_str", "salary_str"]
+df = spark.createDataFrame(data, columns)
+
+print("Original DataFrame:")
+df.show()
+df.printSchema()
+
+# =============================================================================
+# CAST FUNCTION EXAMPLES
+# =============================================================================
+
+print("\n" + "="*50)
+print("CAST FUNCTION EXAMPLES")
+print("="*50)
+
+# 1. Basic casting with cast() function
+print("\n1. Basic casting examples:")
+df_cast = df.select(
+    col("id").cast(IntegerType()).alias("id_int"),
+    col("name"),
+    col("age_str").cast(DoubleType()).alias("age_double"),
+    col("salary_str").cast(DecimalType(10,2)).alias("salary_decimal"),
+    col("is_active_str").cast(BooleanType()).alias("is_active_bool")
+)
+df_cast.show()
+df_cast.printSchema()
+
+# 2. Cast using string type names (alternative syntax)
+print("\n2. Cast using string type names:")
+df_cast_str = df.select(
+    col("id").cast("int").alias("id_int"),
+    col("age_str").cast("double").alias("age_double"),
+    col("salary_str").cast("decimal(10,2)").alias("salary_decimal"),
+    col("is_active_str").cast("boolean").alias("is_active_bool")
+)
+df_cast_str.show()
+
+# 3. Safe casting with error handling
+print("\n3. Safe casting with null handling:")
+df_safe_cast = df.select(
+    col("id").cast(IntegerType()).alias("id_int"),
+    col("name"),
+    # Use when() to handle invalid values before casting
+    when(col("age_str").rlike("^[0-9]*\\.?[0-9]+$"), 
+         col("age_str").cast(DoubleType())).otherwise(None).alias("age_safe"),
+    when(col("salary_str").rlike("^[0-9]*\\.?[0-9]+$"), 
+         col("salary_str").cast(DecimalType(10,2))).otherwise(None).alias("salary_safe")
+)
+df_safe_cast.show()
+
+# 4. Date and timestamp casting
+print("\n4. Date and timestamp casting:")
+df_dates = df.select(
+    col("name"),
+    col("date_str"),
+    # Cast string to date
+    to_date(col("date_str"), "yyyy-MM-dd").alias("date_converted"),
+    # Cast string to timestamp
+    to_timestamp(col("date_str"), "yyyy-MM-dd").alias("timestamp_converted"),
+    # Alternative casting approach
+    col("date_str").cast(DateType()).alias("date_cast")
+)
+df_dates.show()
+
+# =============================================================================
+# DATA TYPE CONVERSION EXAMPLES
+# =============================================================================
+
+print("\n" + "="*50)
+print("DATA TYPE CONVERSION EXAMPLES")
+print("="*50)
+
+# 1. String manipulations and conversions
+print("\n1. String cleaning and conversion:")
+df_string_convert = df.select(
+    col("name"),
+    # Clean and convert salary
+    regexp_replace(col("salary_str"), "[^0-9.]", "").cast(DoubleType()).alias("salary_cleaned"),
+    # Convert boolean strings
+    when(col("is_active_str").isin("true", "1", "yes"), True)
+    .when(col("is_active_str").isin("false", "0", "no"), False)
+    .otherwise(None).alias("is_active_converted"),
+    # Pad ID with zeros
+    F.lpad(col("id"), 5, "0").alias("id_padded")
+)
+df_string_convert.show()
+
+# 2. Numeric conversions and formatting
+print("\n2. Numeric conversions:")
+numeric_data = [
+    (1, 1234.5678, 1000000),
+    (2, 2345.1234, 2500000),
+    (3, 0.12345, 500)
+]
+df_numeric = spark.createDataFrame(numeric_data, ["id", "decimal_val", "big_number"])
+
+df_numeric_convert = df_numeric.select(
+    col("id"),
+    # Round decimal
+    F.round(col("decimal_val"), 2).alias("rounded_decimal"),
+    # Convert to integer
+    col("decimal_val").cast(IntegerType()).alias("decimal_as_int"),
+    # Format large numbers
+    F.format_number(col("big_number"), 0).alias("formatted_number"),
+    # Convert to scientific notation (as string)
+    F.format_string("%.2e", col("big_number")).alias("scientific_notation")
+)
+df_numeric_convert.show()
+
+# 3. Array and complex type conversions
+print("\n3. Complex type conversions:")
+complex_data = [
+    (1, "apple,banana,cherry", '{"name": "John", "age": 25}'),
+    (2, "dog,cat,bird", '{"name": "Jane", "age": 30}'),
+    (3, "red,green,blue", '{"name": "Bob", "age": 35}')
+]
+df_complex = spark.createDataFrame(complex_data, ["id", "items_str", "json_str"])
+
+df_complex_convert = df_complex.select(
+    col("id"),
+    # Convert comma-separated string to array
+    F.split(col("items_str"), ",").alias("items_array"),
+    # Parse JSON string (requires from_json with schema)
+    F.from_json(col("json_str"), 
+               StructType([
+                   StructField("name", StringType(), True),
+                   StructField("age", IntegerType(), True)
+               ])).alias("parsed_json")
+)
+df_complex_convert.show(truncate=False)
+
+# Extract fields from parsed JSON
+df_json_extract = df_complex_convert.select(
+    col("id"),
+    col("items_array"),
+    col("parsed_json.name").alias("person_name"),
+    col("parsed_json.age").alias("person_age")
+)
+df_json_extract.show()
+
+# 4. Conditional conversions
+print("\n4. Conditional conversions:")
+conditional_data = [
+    (1, "ACTIVE", "2023-01-15", "PREMIUM"),
+    (2, "INACTIVE", "2022-12-01", "BASIC"),
+    (3, "PENDING", "2023-03-20", "PREMIUM"),
+    (4, "ACTIVE", "2021-06-15", "BASIC")
+]
+df_conditional = spark.createDataFrame(conditional_data, ["id", "status", "join_date", "plan"])
+
+df_conditional_convert = df_conditional.select(
+    col("id"),
+    # Convert status to numeric code
+    when(col("status") == "ACTIVE", 1)
+    .when(col("status") == "INACTIVE", 0)
+    .when(col("status") == "PENDING", 2)
+    .otherwise(-1).alias("status_code"),
+    
+    # Convert date and calculate days since joining
+    to_date(col("join_date")).alias("join_date_converted"),
+    F.datediff(F.current_date(), to_date(col("join_date"))).alias("days_since_join"),
+    
+    # Convert plan to priority level
+    when(col("plan") == "PREMIUM", "HIGH")
+    .when(col("plan") == "BASIC", "LOW")
+    .otherwise("MEDIUM").alias("priority_level")
+)
+df_conditional_convert.show()
+
+# =============================================================================
+# BEST PRACTICES AND ERROR HANDLING
+# =============================================================================
+
+print("\n" + "="*50)
+print("BEST PRACTICES AND ERROR HANDLING")
+print("="*50)
+
+# 1. Handling null values during conversion
+print("\n1. Null handling during conversion:")
+null_data = [
+    (1, "25", "1000.50"),
+    (2, None, "2500.75"),
+    (3, "invalid", None),
+    (4, "30", "3500.25")
+]
+df_nulls = spark.createDataFrame(null_data, ["id", "age_str", "salary_str"])
+
+df_null_handling = df_nulls.select(
+    col("id"),
+    # Safe conversion with null preservation
+    col("age_str").cast(IntegerType()).alias("age_direct_cast"),
+    # Conditional conversion with default values
+    when(col("age_str").isNull(), 0)
+    .otherwise(col("age_str").cast(IntegerType())).alias("age_with_default"),
+    # Try-catch equivalent using when/otherwise
+    when(col("salary_str").rlike("^[0-9]*\\.?[0-9]+$"), 
+         col("salary_str").cast(DoubleType()))
+    .otherwise(0.0).alias("salary_safe_convert")
+)
+df_null_handling.show()
+
+# 2. Batch conversion function
+def safe_cast_columns(df, cast_dict):
+    """
+    Safely cast multiple columns with error handling
+    cast_dict: {"column_name": "target_type"}
+    """
+    for col_name, target_type in cast_dict.items():
+        if col_name in df.columns:
+            df = df.withColumn(f"{col_name}_converted", 
+                             col(col_name).cast(target_type))
+    return df
+
+# Example usage
+cast_mapping = {
+    "id": "int",
+    "age_str": "double", 
+    "salary_str": "decimal(10,2)"
+}
+
+df_batch_converted = safe_cast_columns(df, cast_mapping)
+print("\n2. Batch conversion result:")
+df_batch_converted.select("id", "id_converted", "age_str", "age_str_converted", 
+                         "salary_str", "salary_str_converted").show()
+
+print("\nConversion complete! Remember to handle invalid data and null values appropriately.")
+
+# Clean up
+spark.stop()
+```
 
 ---
 # Helpful Array Functions
