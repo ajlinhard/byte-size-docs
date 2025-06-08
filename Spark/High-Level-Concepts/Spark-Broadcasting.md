@@ -192,3 +192,117 @@ sales_analysis = sales_fact \
 This pattern transforms what would be multiple expensive shuffle operations into efficient local joins, dramatically improving query performance in typical data warehouse scenarios.
 
 The key insight is that in star schemas, you're usually enriching large fact data with small descriptive information - exactly the use case broadcasting was designed to optimize.
+---
+# Altering Broadcasted Data Properly
+**You cannot and should not alter broadcast tables while a join is running.** Here's why and what happens:
+
+## Why You Can't Alter Broadcast Data
+
+**Broadcast variables are immutable by design:**
+- Once created, the broadcast variable's content cannot be modified
+- This immutability is crucial for consistency across distributed tasks
+- Tasks running on different nodes must see the same data
+
+## What Happens If You Try
+
+```python
+from pyspark import broadcast
+
+# Create broadcast variable
+lookup_dict = {"A": "Apple", "B": "Banana"}
+broadcast_lookup = sc.broadcast(lookup_dict)
+
+# This WON'T affect the broadcast variable
+lookup_dict["C"] = "Cherry"  # Only changes local dict, not broadcast
+
+# The broadcast variable still contains the original data
+print(broadcast_lookup.value)  # Still {"A": "Apple", "B": "Banana"}
+```
+
+## Race Conditions and Consistency Issues
+
+If broadcast data could be modified during execution:
+- **Inconsistent results**: Different tasks might see different versions
+- **Race conditions**: Tasks starting at different times would get different data
+- **Unpredictable behavior**: Results would depend on timing rather than logic
+
+## Proper Way to Update Broadcast Data
+
+```python
+# Step 1: Complete current operations
+current_result = large_df.join(broadcast(old_dim_table), "id").collect()
+
+# Step 2: Unpersist old broadcast variable
+old_broadcast.unpersist()
+
+# Step 3: Create new broadcast variable with updated data
+updated_dim_table = spark.table("updated_dimension_table")
+new_broadcast = broadcast(updated_dim_table)
+
+# Step 4: Use new broadcast variable in subsequent operations
+new_result = large_df.join(new_broadcast, "id")
+```
+
+## Best Practices for Dynamic Dimension Data
+
+If you need to handle changing dimension data:
+
+**1. Batch Updates:**
+```python
+# Process in batches, updating broadcast variables between batches
+for batch in data_batches:
+    # Refresh dimension data
+    current_dims = spark.table("dimensions").cache()
+    
+    # Process batch with current dimensions
+    result = batch.join(broadcast(current_dims), "key")
+    
+    # Save results
+    result.write.mode("append").saveAsTable("results")
+```
+
+**2. Version-Based Approach:**
+```python
+# Use timestamp or version in your logic
+current_time = datetime.now()
+dim_table = spark.table("dimensions").filter(f"valid_from <= '{current_time}'")
+broadcast_dims = broadcast(dim_table)
+```
+
+**3. Check and Refresh Pattern:**
+```python
+def get_fresh_broadcast_dims():
+    # Check if dimension data has changed
+    latest_version = get_dimension_version()
+    
+    if latest_version != current_version:
+        # Unpersist old broadcast
+        if 'old_broadcast' in globals():
+            old_broadcast.unpersist()
+        
+        # Create new broadcast
+        fresh_dims = spark.table("dimensions")
+        return broadcast(fresh_dims)
+    
+    return current_broadcast_dims
+```
+
+## Monitoring Long-Running Jobs
+
+For long-running streaming jobs:
+
+```python
+# In streaming applications, recreate broadcast variables periodically
+def process_batch(batch_df, batch_id):
+    # Refresh broadcast data every N batches
+    if batch_id % 100 == 0:
+        global broadcast_lookup
+        broadcast_lookup.unpersist()
+        fresh_lookup = spark.table("lookup_table")
+        broadcast_lookup = broadcast(fresh_lookup)
+    
+    # Use current broadcast variable
+    return batch_df.join(broadcast_lookup, "key")
+```
+
+The key principle is: **complete your current operations, then refresh your broadcast variables** rather than trying to modify them mid-execution.
