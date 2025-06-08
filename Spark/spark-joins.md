@@ -12,8 +12,8 @@ Here's a comprehensive example of multi-table joins in PySpark:This comprehensiv
 7. **SQL-Style Joins** - Using Spark SQL syntax for complex multi-table operations
 
 **Jump To Examples**
-[PySpark Examples](#Python-PySpark-Examples)
-[Spark SQL Examples](#Spark-SQL-Examples)
+- [PySpark Examples](#Python-PySpark-Examples)
+- [Spark SQL Examples](#Spark-SQL-Examples)
 
 **Important Join Considerations:**
 
