@@ -150,6 +150,15 @@ print(iso_string)  # 2023-12-25T15:30:45.123456+00:00
 
 # Parse ISO string back to datetime
 parsed = datetime.datetime.fromisoformat(iso_string)
+
+# Create timezone-aware datetime
+eastern = datetime.datetime(2023, 12, 25, 10, 30, 45, 
+                           tzinfo=datetime.timezone(datetime.timedelta(hours=-5)))
+print(eastern.isoformat())  # 2023-12-25T10:30:45-05:00
+
+tokyo = datetime.datetime(2023, 12, 25, 10, 30, 45,
+                         tzinfo=datetime.timezone(datetime.timedelta(hours=9)))
+print(tokyo.isoformat())    # 2023-12-25T10:30:45+09:00
 ```
 
 **Key difference:** UTC is *where* in time (the timezone), ISO 8601 is *how* you write it down (the format). You can have ISO format timestamps in any timezone, but when you see "UTC" it usually means the time is in the UTC timezone.
