@@ -113,6 +113,23 @@ ISO format in UTC timezone:
 2023-12-25T15:30:45+00:00     # +00:00 also indicates UTC
 2023-12-25T15:30:45.123Z      # With milliseconds
 ```
+ISO 8601 timezone offsets are based on + or - from UTC, and they can range from -12:00 to +14:00 (not just ±12).
+Format: ±HH:MM where:
+
+Positive (+): Hours ahead of UTC (east of Greenwich)
+Negative (-): Hours behind UTC (west of Greenwich)
+
+Examples:
+2023-12-25T15:30:45-05:00    # 5 hours BEHIND UTC (US Eastern)
+2023-12-25T15:30:45+09:00    # 9 hours AHEAD of UTC (Japan)
+2023-12-25T15:30:45+00:00    # UTC itself
+2023-12-25T15:30:45Z         # Z means UTC (same as +00:00)
+Range extends beyond ±12:
+
+Westernmost: -12:00 (Baker Island)
+Easternmost: +14:00 (Line Islands, Kiribati)
+Some half-hour offsets: +05:30 (India), +09:30 (Central Australia)
+Some 15-minute offsets: +05:45 (Nepal), +12:45 (Chatham Islands)
 
 ISO format in other timezones:
 ```
