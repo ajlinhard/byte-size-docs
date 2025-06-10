@@ -1,52 +1,5 @@
-Yes, there are several better architectural patterns for testing these anomaly detectors. Here are some improved approaches:This improved architecture provides several benefits:
-
-## Key Improvements:
-
-1. **Separation of Concerns**: Detectors are separate from exceptions, making them easier to test and more flexible.
-
-2. **Non-throwing Detection**: The `detect()` method returns a result object instead of throwing, allowing for better testing and batch processing.
-
-3. **Rich Result Objects**: `AnomalyResult` contains severity levels, context data, and structured information.
-
-4. **Flexible Exception Handling**: You can choose whether to throw exceptions or collect results.
-
-5. **Composite Pattern**: `AnomalyManager` can run multiple detectors and aggregate results.
-
-## Testing Advantages:
-
-```python
-# Easy to test without exception handling
-def test_speed_detector():
-    detector = SpeedAnomalyDetector(0.1, 0.8)
-    
-    # Test normal case
-    result = detector.detect(0.5, 1000)
-    assert not result.is_anomaly
-    
-    # Test anomaly case
-    result = detector.detect(2000, 1000)
-    assert result.is_anomaly
-    assert result.severity == "critical"
-    assert "above_maximum" in result.context["violation_type"]
-
-# Test exception behavior separately
-def test_speed_detector_exceptions():
-    detector = SpeedAnomalyDetector(0.1, 0.8)
-    
-    with pytest.raises(ImpossibleSpeedException) as exc_info:
-        detector.check(2000, 1000)
-    
-    assert exc_info.value.velocity == 2.0
-```
-
-## Alternative Patterns:
-
-- **Strategy Pattern**: Different detection algorithms for the same anomaly type
-- **Observer Pattern**: Notify multiple handlers when anomalies are detected
-- **Builder Pattern**: Construct complex anomaly detection pipelines
-- **Factory Pattern**: Create detectors based on configuration
-
-This architecture is much more testable, maintainable, and follows SOLID principles better than the original design.
+# Anomaly Dector Architecture Example:
+This code is an example of detecting issues in incoming data to a system. Then optionally, throwing an error or continuing on with the Anomaly info.
 
 # Code:
 ```python
@@ -246,3 +199,147 @@ if __name__ == "__main__":
     except ImpossibleSpeedException as e:
         print(f"Manager caught: {e}")
 ```
+
+
+## Key Features:
+
+1. **Separation of Concerns**: Detectors are separate from exceptions, making them easier to test and more flexible.
+
+2. **Non-throwing Detection**: The `detect()` method returns a result object instead of throwing, allowing for better testing and batch processing.
+
+3. **Rich Result Objects**: `AnomalyResult` contains severity levels, context data, and structured information.
+
+4. **Flexible Exception Handling**: You can choose whether to throw exceptions or collect results.
+
+5. **Composite Pattern**: `AnomalyManager` can run multiple detectors and aggregate results.
+
+## Testing Advantages:
+
+```python
+# Easy to test without exception handling
+def test_speed_detector():
+    detector = SpeedAnomalyDetector(0.1, 0.8)
+    
+    # Test normal case
+    result = detector.detect(0.5, 1000)
+    assert not result.is_anomaly
+    
+    # Test anomaly case
+    result = detector.detect(2000, 1000)
+    assert result.is_anomaly
+    assert result.severity == "critical"
+    assert "above_maximum" in result.context["violation_type"]
+
+# Test exception behavior separately
+def test_speed_detector_exceptions():
+    detector = SpeedAnomalyDetector(0.1, 0.8)
+    
+    with pytest.raises(ImpossibleSpeedException) as exc_info:
+        detector.check(2000, 1000)
+    
+    assert exc_info.value.velocity == 2.0
+```
+
+## Alternative Patterns:
+
+- **Strategy Pattern**: Different detection algorithms for the same anomaly type
+- **Observer Pattern**: Notify multiple handlers when anomalies are detected
+- **Builder Pattern**: Construct complex anomaly detection pipelines
+- **Factory Pattern**: Create detectors based on configuration
+
+This architecture is much more testable, maintainable, and follows SOLID principles better than the original design.
+
+Here's a high-level explanation of each pattern in the context of anomaly detection:
+
+## Composite Pattern
+**What it does**: Treats a group of detectors as if they were a single detector.
+
+**Key idea**: You have one "manager" that contains multiple individual detectors. When you ask the manager to detect anomalies, it runs all its child detectors and combines their results into one response.
+
+**Example**: Your `AnomalyManager` runs a speed detector, temperature detector, and pressure detector all at once, then gives you back a single list of all anomalies found.
+
+**Why useful**: You can add/remove detectors without changing how the rest of your code works. The manager handles the complexity of coordinating multiple detectors.
+
+---
+
+## Strategy Pattern
+**What it does**: Lets you swap out different algorithms for the same task at runtime.
+
+**Key idea**: You have multiple ways to detect the same type of anomaly, and you can choose which algorithm to use without changing your main code.
+
+**Example**: For speed anomalies, you might have:
+- Simple threshold strategy (speed < min or > max)
+- Statistical outlier strategy (speed is 3+ standard deviations from mean)
+- Machine learning strategy (neural network predicts if speed is anomalous)
+
+**Why useful**: You can experiment with different detection algorithms, or choose the best one based on your data characteristics, without rewriting your entire system.
+
+---
+
+## Observer Pattern
+**What it does**: Automatically notifies multiple interested parties when something happens.
+
+**Key idea**: When an anomaly is detected, multiple "observers" (handlers) are automatically notified so they can each do their own thing.
+
+**Example**: When a speed anomaly is detected:
+- Logger observer writes to a log file
+- Email observer sends an alert to operators
+- Database observer stores the anomaly record
+- Dashboard observer updates a real-time display
+
+**Why useful**: You can add new response behaviors without modifying the detector code. Each observer handles one specific response independently.
+
+---
+
+## Builder Pattern
+**What it does**: Constructs complex objects step-by-step using a fluent, readable interface.
+
+**Key idea**: Instead of having one massive constructor with tons of parameters, you build your detection pipeline piece by piece.
+
+**Example**:
+```python
+pipeline = (AnomalyPipelineBuilder()
+    .add_speed_detector(min=0.1, max=0.8)
+    .add_temperature_detector(threshold=100)
+    .add_outlier_detector(sensitivity=2.5)
+    .with_email_alerts("admin@company.com")
+    .with_database_logging()
+    .build())
+```
+
+**Why useful**: Makes complex configurations readable and prevents errors from passing parameters in the wrong order. You can also create partial configurations and reuse them.
+
+---
+
+## Factory Pattern
+**What it does**: Creates objects without you having to specify the exact class, based on some input criteria.
+
+**Key idea**: You give the factory some configuration or parameters, and it figures out which type of detector to create and how to set it up.
+
+**Example**:
+```python
+# Instead of manually creating detectors:
+detector = DetectorFactory.create({
+    "type": "speed",
+    "algorithm": "statistical",
+    "thresholds": {"min": 0.1, "max": 0.8}
+})
+
+# Factory decides to create StatisticalSpeedDetector instead of SimpleSpeedDetector
+```
+
+**Why useful**: Your main code doesn't need to know about all the different detector types. You can add new detector types without changing existing code. Great for loading configurations from files or databases.
+
+---
+
+## How They Work Together
+
+These patterns often combine beautifully:
+
+1. **Factory** creates the right detectors based on config
+2. **Builder** assembles them into a complex pipeline
+3. **Strategy** lets each detector use different algorithms
+4. **Composite** manages multiple detectors as one unit
+5. **Observer** handles the results from any anomaly detection
+
+This creates a flexible, maintainable system where you can easily add new detection methods, response handlers, and configuration options without breaking existing code.
