@@ -1,4 +1,34 @@
 # PySpark Math Functions Cheatsheet
+PySpark math functions cheatsheet following the same format as the previous cheatsheets! It includes:
+Quick Reference Tables covering:
+
+Basic math functions (abs, round, sqrt, log, etc.)
+Trigonometric functions (sin, cos, tan, and their inverses)
+Aggregate functions (sum, avg, stddev, etc.)
+Window functions (row_number, rank, lag, lead, etc.)
+
+Detailed Code Examples organized into sections:
+
+Basic setup and DataFrame creation
+Basic and advanced math functions
+Trigonometric operations
+Aggregate functions and GroupBy operations
+Window functions (ranking, lag/lead, rolling calculations)
+Advanced mathematical operations and financial calculations
+Statistical analysis and correlation
+Time series analysis with moving averages and volatility
+Performance optimization tips
+
+Key Features of the PySpark Cheatsheet:
+
+Shows the distributed computing approach vs pandas/NumPy
+Covers lazy evaluation and immutable DataFrames
+Includes window functions which are crucial in PySpark
+Demonstrates GroupBy aggregations for big data scenarios
+Shows time series analysis patterns common in big data
+Includes performance optimization techniques specific to Spark
+
+The cheatsheet covers both basic operations for beginners and advanced techniques for experienced users working with large-scale data processing. It's designed to be a practical reference for data engineers and analysts working with PySpark!
 
 ## Quick Reference Table - Basic Math Functions
 
