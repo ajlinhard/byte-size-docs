@@ -44,7 +44,40 @@ Both formats are functionally identical to AWS CloudFormation - the choice betwe
     2. system read, write, and executor
     3. system reader and monitoring
     ```
-### Options for Existing Infrastructure
+### How AWS Console-to-Code Works
+
+- **Recording Actions:** AWS Console-to-Code allows you to record your actions in the AWS Management Console, such as launching an EC2 instance.
+- **Code Generation:** After you perform the desired actions, you can stop the recording and generate code in your preferred IaC format. Supported formats include AWS CloudFormation (YAML or JSON) and AWS Cloud Development Kit (CDK) in Java, Python, or TypeScript[1][2][4].
+- **Preview and Export:** You can preview the generated code and copy or download it for use in automation, pipelines, or further customization[1][2][4].
+- **No Need to Create Resources:** The "Preview code" feature lets you generate the IaC code for resources like EC2 instances or Auto Scaling groups without actually creating them in your account[1].
+
+### Step-by-Step Process
+
+1. **Access the EC2 Console:** Open the Amazon EC2 console.
+2. **Start Recording:** Locate the AWS Console-to-Code widget and click **Start recording**.
+3. **Perform Actions:** Launch an EC2 instance or perform other desired actions.
+4. **Stop Recording:** Click **Stop** to end the recording session.
+5. **Review and Export Code:** In the "Recorded actions" table, select the relevant actions and choose to generate code in AWS CLI, CloudFormation, or CDK formats. You can then copy or download the code[1][2][4].
+
+### Supported Services
+
+As of the latest updates, AWS Console-to-Code supports exporting actions for:
+- Amazon EC2
+- Amazon RDS
+- Amazon VPC[1][2][4]
+
+### Additional Notes
+
+- **Quota:** There is a free quota for code generations in CDK and CloudFormation formats (25 per month). Beyond that, an Amazon Q Developer subscription is required[1].
+- **Session Scope:** Recorded actions are only retained within the current browser tab and session. Refreshing the tab will lose the recorded actions[1].
+- **Customization:** The generated code serves as a starting point and should be reviewed and customized before use in production[1][2][4].
+
+### Alternative Approaches
+
+For resources created outside of Console-to-Code, tools like the CloudFormation IaC Generator or third-party utilities (e.g., Terraforming) can help generate IaC definitions from existing AWS resources, but these are separate from the native AWS Management Console experience[3][5].
+
+---
+## Options for Existing Infrastructure
 There are several ways to extract Infrastructure as Code (IaC) from existing AWS resources in the console. Here are the main methods:
 
 ### **1. CloudFormation Designer**
