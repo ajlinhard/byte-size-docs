@@ -16,6 +16,7 @@ The reference table categorizes all window functions into three main types:
 2. **Aggregate Functions** - sum(), avg(), count(), min(), max(), etc.  
 3. **Analytic Functions** - lead(), lag(), first(), last(), nth_value()
 
+- [Spark SQL Windows Functions](#Spark-SQL-Windows-Functions)
 - [Common Issues](#Common-Issues)
 
 Each function includes practical examples showing the syntax and common use cases. The cheat sheet also covers important concepts like frame specifications (rows vs range) and performance optimization techniques.
@@ -263,6 +264,340 @@ df.withColumn("avg_price", avg("price").over(stats_window)) \
   .withColumn("is_outlier", 
               abs(col("price") - col("avg_price")) > 2 * col("stddev_price"))
 ```
+
+---
+# Spark SQL Windows Functions
+Here are simple Spark SQL window function examples with explanations:
+
+## Basic Setup Data
+```sql
+-- Sample sales data
+CREATE OR REPLACE TEMPORARY VIEW sales AS
+SELECT * FROM VALUES
+  ('Alice', 'Q1', 1000),
+  ('Alice', 'Q2', 1200),
+  ('Alice', 'Q3', 900),
+  ('Alice', 'Q4', 1500),
+  ('Bob', 'Q1', 800),
+  ('Bob', 'Q2', 1100),
+  ('Bob', 'Q3', 1300),
+  ('Bob', 'Q4', 1000)
+AS sales(salesperson, quarter, amount);
+```
+
+## 1. ROW_NUMBER() - Ranking within partitions
+```sql
+SELECT 
+    salesperson,
+    quarter,
+    amount,
+    ROW_NUMBER() OVER (PARTITION BY salesperson ORDER BY amount DESC) as rank_by_amount
+FROM sales;
+
+-- Output:
+-- Alice  Q4  1500  1
+-- Alice  Q2  1200  2  
+-- Alice  Q1  1000  3
+-- Alice  Q3   900  4
+-- Bob    Q3  1300  1
+-- Bob    Q2  1100  2
+-- Bob    Q4  1000  3
+-- Bob    Q1   800  4
+```
+
+## 2. SUM() with ROWS BETWEEN - Running totals
+```sql
+SELECT 
+    salesperson,
+    quarter,
+    amount,
+    SUM(amount) OVER (
+        PARTITION BY salesperson 
+        ORDER BY quarter 
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) as running_total
+FROM sales;
+
+-- Output:
+-- Alice  Q1  1000  1000  (1000)
+-- Alice  Q2  1200  2200  (1000+1200)  
+-- Alice  Q3   900  3100  (1000+1200+900)
+-- Alice  Q4  1500  4600  (1000+1200+900+1500)
+-- Bob    Q1   800   800
+-- Bob    Q2  1100  1900
+-- Bob    Q3  1300  3200
+-- Bob    Q4  1000  4200
+```
+
+## 3. AVG() with ROWS BETWEEN - Rolling average (3-period)
+```sql
+SELECT 
+    salesperson,
+    quarter,
+    amount,
+    AVG(amount) OVER (
+        PARTITION BY salesperson 
+        ORDER BY quarter 
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ) as rolling_avg_3
+FROM sales;
+
+-- Output:
+-- Alice  Q1  1000  1000.0     (just Q1)
+-- Alice  Q2  1200  1100.0     (Q1+Q2)/2
+-- Alice  Q3   900  1033.33    (Q1+Q2+Q3)/3
+-- Alice  Q4  1500  1200.0     (Q2+Q3+Q4)/3  <-- rolling window
+-- Bob    Q1   800   800.0
+-- Bob    Q2  1100   950.0
+-- Bob    Q3  1300  1066.67
+-- Bob    Q4  1000  1133.33
+```
+
+## 4. LAG() and LEAD() - Previous/Next values
+```sql
+SELECT 
+    salesperson,
+    quarter,
+    amount,
+    LAG(amount, 1) OVER (PARTITION BY salesperson ORDER BY quarter) as prev_quarter,
+    LEAD(amount, 1) OVER (PARTITION BY salesperson ORDER BY quarter) as next_quarter,
+    amount - LAG(amount, 1) OVER (PARTITION BY salesperson ORDER BY quarter) as change_from_prev
+FROM sales;
+
+-- Output:
+-- Alice  Q1  1000  NULL   1200   NULL
+-- Alice  Q2  1200  1000    900    200
+-- Alice  Q3   900  1200   1500   -300
+-- Alice  Q4  1500   900   NULL    600
+-- Bob    Q1   800  NULL   1100   NULL
+-- Bob    Q2  1100   800   1300    300
+-- Bob    Q3  1300  1100   1000    200
+-- Bob    Q4  1000  1300   NULL   -300
+```
+
+## 5. ROWS BETWEEN Examples - Different frame specifications
+
+### 5a. Fixed window size (last 2 rows + current)
+```sql
+SELECT 
+    salesperson,
+    quarter,
+    amount,
+    MAX(amount) OVER (
+        PARTITION BY salesperson 
+        ORDER BY quarter 
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ) as max_last_3_quarters
+FROM sales;
+```
+
+### 5b. Centered window (1 before + current + 1 after)
+```sql
+SELECT 
+    salesperson,
+    quarter,
+    amount,
+    AVG(amount) OVER (
+        PARTITION BY salesperson 
+        ORDER BY quarter 
+        ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
+    ) as centered_avg
+FROM sales;
+```
+
+### 5c. Future-looking window (current + next 2)
+```sql
+SELECT 
+    salesperson,
+    quarter,
+    amount,
+    MIN(amount) OVER (
+        PARTITION BY salesperson 
+        ORDER BY quarter 
+        ROWS BETWEEN CURRENT ROW AND 2 FOLLOWING
+    ) as min_next_3_quarters
+FROM sales;
+```
+
+## 6. RANGE BETWEEN - Value-based windows
+```sql
+-- For time-series data with dates
+CREATE OR REPLACE TEMPORARY VIEW daily_sales AS
+SELECT * FROM VALUES
+  ('2024-01-01', 100),
+  ('2024-01-02', 150),
+  ('2024-01-03', 120),
+  ('2024-01-04', 180),
+  ('2024-01-05', 200)
+AS daily_sales(date, amount);
+
+SELECT 
+    date,
+    amount,
+    SUM(amount) OVER (
+        ORDER BY date 
+        RANGE BETWEEN INTERVAL 2 DAYS PRECEDING AND CURRENT ROW
+    ) as sum_last_3_days
+FROM daily_sales;
+```
+
+## 7. Complex Example - Multiple window functions with WINDOW clause
+```sql
+SELECT 
+    salesperson,
+    quarter,
+    amount,
+    -- Ranking functions
+    ROW_NUMBER() OVER w_amount as row_num,
+    RANK() OVER w_amount as rank_amount,
+    DENSE_RANK() OVER w_amount as dense_rank,
+    
+    -- Aggregate functions with frames
+    SUM(amount) OVER w_running as running_total,
+    AVG(amount) OVER w_rolling as rolling_avg,
+    MAX(amount) OVER w_rolling as rolling_max,
+    
+    -- Offset functions
+    LAG(amount, 1) OVER w_time as prev_amount,
+    LEAD(amount, 1) OVER w_time as next_amount
+    
+FROM sales
+WINDOW 
+    w_amount AS (PARTITION BY salesperson ORDER BY amount DESC),
+    w_running AS (PARTITION BY salesperson ORDER BY quarter ROWS UNBOUNDED PRECEDING),
+    w_rolling AS (PARTITION BY salesperson ORDER BY quarter ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING),
+    w_time AS (PARTITION BY salesperson ORDER BY quarter);
+```
+
+## Key ROWS BETWEEN Syntax Options:
+- `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` - From start to current
+- `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` - Last 3 rows (including current)
+- `ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING` - 3-row centered window
+- `ROWS BETWEEN CURRENT ROW AND 2 FOLLOWING` - Current + next 2 rows
+- `ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING` - Current to end
+
+The `ROWS BETWEEN` clause is essential for creating rolling calculations, moving averages, and other sliding window analytics in Spark SQL.
+
+
+You **can** use multiple window functions in Spark SQL queries, but there are important rules and best practices to follow:
+
+## What's Allowed
+
+**1. Multiple window functions in the same SELECT statement:**
+```sql
+SELECT 
+    sensor_id,
+    timestamp,
+    temperature,
+    -- Multiple window functions are fine
+    AVG(temperature) OVER (PARTITION BY sensor_id ORDER BY timestamp ROWS BETWEEN 5 PRECEDING AND CURRENT ROW) as rolling_avg,
+    LAG(temperature, 1) OVER (PARTITION BY sensor_id ORDER BY timestamp) as prev_temp,
+    ROW_NUMBER() OVER (PARTITION BY sensor_id ORDER BY timestamp DESC) as rn
+FROM sensor_data
+```
+
+**2. Different window specifications:**
+```sql
+SELECT 
+    sensor_id,
+    temperature,
+    AVG(temperature) OVER (PARTITION BY sensor_id ORDER BY timestamp) as cumulative_avg,
+    MAX(temperature) OVER (PARTITION BY location ORDER BY timestamp) as location_max
+FROM sensor_data
+```
+
+## What's NOT Allowed
+
+**You cannot use the result of one window function as input to another window function in the same query level:**
+
+```sql
+-- This will fail
+SELECT 
+    sensor_id,
+    temperature,
+    LAG(temperature) OVER (PARTITION BY sensor_id ORDER BY timestamp) as prev_temp,
+    AVG(prev_temp) OVER (PARTITION BY sensor_id ORDER BY timestamp) as avg_of_prev  -- ERROR!
+FROM sensor_data
+```
+
+## Solutions for Nested Window Operations
+
+**1. Use CTEs (Common Table Expressions):**
+```sql
+WITH step1 AS (
+    SELECT 
+        sensor_id,
+        timestamp,
+        temperature,
+        LAG(temperature, 1) OVER (PARTITION BY sensor_id ORDER BY timestamp) as prev_temp
+    FROM sensor_data
+)
+SELECT 
+    sensor_id,
+    timestamp,
+    temperature,
+    prev_temp,
+    AVG(prev_temp) OVER (PARTITION BY sensor_id ORDER BY timestamp) as rolling_avg_prev
+FROM step1
+```
+
+**2. Use subqueries:**
+```sql
+SELECT 
+    sensor_id,
+    timestamp,
+    temperature,
+    prev_temp,
+    AVG(prev_temp) OVER (PARTITION BY sensor_id ORDER BY timestamp) as rolling_avg_prev
+FROM (
+    SELECT 
+        sensor_id,
+        timestamp,
+        temperature,
+        LAG(temperature, 1) OVER (PARTITION BY sensor_id ORDER BY timestamp) as prev_temp
+    FROM sensor_data
+) t
+```
+
+## Performance Considerations
+
+**1. Window function optimization:**
+Spark can optimize multiple window functions that use the same partitioning and ordering:
+```sql
+-- These will be optimized together
+SELECT 
+    sensor_id,
+    AVG(temperature) OVER w as avg_temp,
+    MAX(temperature) OVER w as max_temp,
+    MIN(temperature) OVER w as min_temp
+FROM sensor_data
+WINDOW w AS (PARTITION BY sensor_id ORDER BY timestamp ROWS BETWEEN 10 PRECEDING AND CURRENT ROW)
+```
+
+**2. Use WINDOW clause for reusability:**
+```sql
+SELECT 
+    sensor_id,
+    timestamp,
+    temperature,
+    AVG(temperature) OVER sensor_window as rolling_avg,
+    LAG(temperature, 1) OVER time_window as prev_temp,
+    LEAD(temperature, 1) OVER time_window as next_temp
+FROM sensor_data
+WINDOW 
+    sensor_window AS (PARTITION BY sensor_id ORDER BY timestamp ROWS BETWEEN 5 PRECEDING AND CURRENT ROW),
+    time_window AS (PARTITION BY sensor_id ORDER BY timestamp)
+```
+
+## Summary
+
+- **Multiple window functions in one query**: ✅ Allowed
+- **Different window specifications**: ✅ Allowed  
+- **Nested window functions**: ❌ Not allowed directly
+- **Solution**: Use CTEs or subqueries to break into multiple steps
+- **Optimization**: Use WINDOW clause and similar partitioning for better performance
+
+The key is that each window function operates on the base table columns or computed non-window columns, not on the results of other window functions in the same query level.
 
 ---
 # Common Issues
