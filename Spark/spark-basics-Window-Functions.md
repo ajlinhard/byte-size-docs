@@ -16,7 +16,10 @@ The reference table categorizes all window functions into three main types:
 2. **Aggregate Functions** - sum(), avg(), count(), min(), max(), etc.  
 3. **Analytic Functions** - lead(), lag(), first(), last(), nth_value()
 
+- [Common Issues](#Common-Issues)
+
 Each function includes practical examples showing the syntax and common use cases. The cheat sheet also covers important concepts like frame specifications (rows vs range) and performance optimization techniques.
+
 ---
 # PySpark Window Functions Cheat Sheet
 
@@ -259,4 +262,49 @@ df.withColumn("avg_price", avg("price").over(stats_window)) \
   .withColumn("stddev_price", stddev("price").over(stats_window)) \
   .withColumn("is_outlier", 
               abs(col("price") - col("avg_price")) > 2 * col("stddev_price"))
+```
+
+---
+# Common Issues
+## Using Multiple Windows Functions in Same withColumn Chain
+When working with a set of windows functions and you want to chain a column created by a windows function into another windows function (Common in time-series data), you cannot create both columns in the same withColumn chain. This is different from stacking column hygiene operations for pyspark withColumn chains
+**Example Hygiene withColumn Stack**
+```python
+df_coast = df.withColumn("latitude_block", round(col("location.latitude"), 4)) \
+    .withColumn("region", when(col("latitude_block").between(40.7, 40.8), "East Coast") \
+        .when(col("latitude_block").between(40.6, 40.7), "Central") \
+        .when(col("latitude_block").between(40.5, 40.6), "West Coast") \
+        .otherwise("Out-of-Bounds")) 
+
+df_coast.show(truncate=False)
+```
+
+**Bad Code:**
+```python
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+time_window = Window.partitionBy("sensor_id").orderBy("timestamp").rowsBetween(-11,0) # a rolling hours
+
+df_timestats = df.withColumn("rolliing_avg_temp", avg(col("readings.temperature")).over(time_window)) \
+    .withColumn("lat_change", col("location.latitude") - lag("location.latitude").over(Window.partitionBy("sensor_id").orderBy("timestamp"))) \
+    .withColumn("lat_change_hr", col("lat_change").over(time_window))
+```
+**Error (First Line is Most Important**
+```
+AnalysisException: [UNSUPPORTED_EXPR_FOR_WINDOW] Expression "lat_change" not supported within a window function.;
+Project [sensor_id#31, timestamp#32, location#33, readings#34, status#35, minute_15_bucket#211, rolliing_avg_temp#285, lat_change#295, lat_change_hr#308]
++- Project [sensor_id#31, timestamp#32, location#33, readings#34, status#35, minute_15_bucket#211, rolliing_avg_temp#285, lat_change#295, lat_change_hr#308, lat_change_hr#308]
+   +- Window [lat_change#295 windowspecdefinition(sensor_id#31, timestamp#32 ASC NULLS FIRST, specifiedwindowframe(RowFrame, -11, currentrow$())) AS lat_change_hr#308], [sensor_id#31], [timestamp#32 ASC NULLS FIRST]
+      +- Project [sensor_id#31, timestamp#32, location#33, readings#34, status#35, minute_15_bucket#211, rolliing_avg_temp#285, lat_change#295]
+         +- Project [sensor_id#31, timestamp#32, location#33, readings#34, status#35, minute_15_bucket#211, rolliing_avg_temp#285, lat_change#295]
+            +- Project [sensor_id#31, timestamp#32, location#33, readings#34, status#35, minute_15_bucket#211, rolliing_avg_temp#285, _w0#298, _we0#299, (location#33.latitude - _we0#299) AS lat_change#295]
+               +- Window [lag(_w0#298, -1, null) windowspecdefinition(sensor_id#31, timestamp#32 ASC NULLS FIRST, specifiedwindowframe(RowFrame, -1, -1)) AS _we0#299], [sensor_id#31], [timestamp#32 ASC NULLS FIRST]
+                  +- Project [sensor_id#31, timestamp#32, location#33, readings#34, status#35, minute_15_bucket#211, rolliing_avg_temp#285, location#33.latitude AS _w0#298]
+                     +- Project [sensor_id#31, timestamp#32, location#33, readings#34, status#35, minute_15_bucket#211, rolliing_avg_temp#285]
+                        +- Project [sensor_id#31, timestamp#32, location#33, readings#34, status#35, minute_15_bucket#211, _w0#287, rolliing_avg_temp#285, rolliing_avg_temp#285]
+                           +- Window [avg(_w0#287) windowspecdefinition(sensor_id#31, timestamp#32 ASC NULLS FIRST, specifiedwindowframe(RowFrame, -11, currentrow$())) AS rolliing_avg_temp#285], [sensor_id#31], [timestamp#32 ASC NULLS FIRST]
+                              +- Project [sensor_id#31, timestamp#32, location#33, readings#34, status#35, minute_15_bucket#211, readings#34[temperature] AS _w0#287]
+                                 +- Project [sensor_id#31, timestamp#32, location#33, readings#34, status#35, cast(from_unixtime((FLOOR((cast(unix_timestamp(timestamp#32, yyyy-MM-dd HH:mm:ss, Some(America/New_York), false) as double) / cast(900 as double))) * cast(900 as bigint)), yyyy-MM-dd HH:mm:ss, Some(America/New_York)) as timestamp) AS minute_15_bucket#211]
+                                    +- LogicalRDD [sensor_id#31, timestamp#32, location#33, readings#34, status#35], false
 ```
