@@ -99,6 +99,7 @@ aws lambda update-function-configuration --function-name myapp --environment Var
 - Combine with **jq** for powerful JSON processing
 
 The AWS CLI transforms AWS from a point-and-click service into a scriptable, automatable platform that integrates seamlessly into modern development workflows.
+
 ---
 # AWS CloudShell
 AWS provides **AWS CloudShell**, which is a browser-based shell environment accessible directly from the AWS Management Console that comes with the AWS CLI pre-installed.
@@ -159,9 +160,11 @@ npm install -g serverless
 AWS CloudShell is **free** - no additional charges beyond the AWS services you interact with.
 
 This is perfect for quick AWS operations when you don't want to set up CLI locally, need to run commands from anywhere, or want to avoid credential management hassles!
+
 ---
 # Setup AWS CLI Access for a User
 To create AWS CLI access for your admin IAM user, you'll need to configure programmatic access. Here's how:
+**[Best Practices for Access Keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html?icmpid=docs_iam_console#Using_CreateAccessKey)**
 
 ## Step 1: Create Access Keys (if not done during user creation)
 
