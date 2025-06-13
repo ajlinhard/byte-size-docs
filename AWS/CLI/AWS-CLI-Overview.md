@@ -164,7 +164,7 @@ This is perfect for quick AWS operations when you don't want to set up CLI local
 ---
 # Setup AWS CLI Access for a User
 To create AWS CLI access for your admin IAM user, you'll need to configure programmatic access. Here's how:
-**[Best Practices for Access Keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html?icmpid=docs_iam_console#Using_CreateAccessKey)**
+<br>**Side Note [Best Practices for Access Keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html?icmpid=docs_iam_console#Using_CreateAccessKey)**
 
 ## Step 1: Create Access Keys (if not done during user creation)
 
