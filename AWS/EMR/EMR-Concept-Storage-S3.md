@@ -157,3 +157,89 @@ javax.jdo.option.ConnectionURL=jdbc:mysql://glue-catalog-endpoint
 ```
 
 The key insight is that Glue Catalog serves as the "phone book" - it tells Spark where to find data and how to interpret it, while the actual data access still goes through S3. This separation of metadata management from data storage is what makes the modern data lake architecture so powerful and flexible.
+
+## Google Cloud Platform: Dataproc + Dataproc Metastore + Dataplex Universal Catalog
+
+**Google's EMR Equivalent: Dataproc**
+Google Cloud Dataproc is their managed Spark and Hadoop service, similar to EMR, that lets you run MapReduce, Hive, Pig, and Spark jobs on data in Cloud Storage.
+
+**Google's Glue Catalog Equivalent: Multiple Services**
+Google takes a more distributed approach with several catalog services:
+
+1. **Dataproc Metastore**: A fully managed Hive Metastore service that can be attached to Dataproc clusters, similar to how EMR integrates with Glue Catalog.
+
+2. **Dataplex Universal Catalog**: A unified discovery, lineage, and governance solution across lakehouse assets that provides broader data governance capabilities.
+
+**Integration Walkthrough:**
+```python
+# Create Dataproc cluster with metastore integration
+gcloud dataproc clusters create my-cluster \
+  --dataproc-metastore=projects/PROJECT/locations/REGION/services/METASTORE
+
+# In Spark, tables are automatically available
+spark.sql("show databases").show()
+spark.sql("select * from my_database.my_table").show()
+```
+
+Metadata managed within Dataplex Universal Catalog can be accessed using standard interfaces, such as Hive Metastore, to power Spark queries running on the Dataproc cluster.
+
+**Key Differences from AWS:**
+- Google uses Cloud Storage (not S3) as the underlying storage layer
+- Dataproc integrates with Cloud Data Catalog for unified discovery and governance
+- The integration requires connecting Dataproc clusters to metastore services via configuration
+
+## Microsoft Azure: HDInsight/Synapse + External Hive Metastore + Microsoft Purview
+Helpful Databricks Link: [Databricks Unity Catalog + Azure](https://www.linkedin.com/pulse/how-use-databricks-unity-catalog-microsoft-purview-data-governance-xefvf/)
+
+**Azure's EMR Equivalent: HDInsight and Synapse Analytics**
+Azure HDInsight is a customizable, enterprise-grade service for open-source analytics that runs popular frameworks including Apache Hadoop, Spark, Hive, and Kafka.
+
+**Azure's Glue Catalog Equivalent: Microsoft Purview + Hive Metastore**
+Microsoft Purview provides a unified data governance solution to help manage and govern on-premises, multicloud, and SaaS data.
+
+**Integration Approach:**
+Azure's integration is more complex and less seamless than AWS:
+
+1. **HDInsight with External Metastore**: Azure Synapse Analytics allows Apache Spark pools to connect to an external Apache Hive Metastore when customers want to share catalog objects with other computational engines.
+
+2. **Purview Integration**: Once you connect the Synapse workspace to a Microsoft Purview account, when you execute pipelines, Synapse reports lineage information to the Microsoft Purview account.
+
+**Integration Walkthrough:**
+```bash
+# Create HDInsight cluster with external metastore
+az hdinsight create \
+  --name mycluster \
+  --resource-group mygroup \
+  --type spark \
+  --component-version spark=2.4 \
+  --http-user admin \
+  --ssh-user sshuser \
+  --storage-account mystorageaccount \
+  --storage-default-container mycontainer
+```
+
+**Key Limitations:**
+Azure Synapse Analytics does not natively support Unity Catalog and primarily integrates with the Hive Metastore and Azure Data Lake Storage for metadata.
+
+External hive metastores will no longer be supported in Azure Synapse Runtime for Apache Spark 3.4 and subsequent versions, indicating Microsoft is moving toward different approaches.
+
+## Unity Catalog Considerations
+
+**Cross-Platform Availability:**
+Unity Catalog is available as an open-source implementation, but using Unity Catalog outside of the Databricks platform (especially in Synapse Spark) is not a standard feature yet.
+
+**Integration Status:**
+As of right now there is no official integration between Unity Catalog and Purview yet, but it may come in the future.
+
+## Summary Comparison
+
+| Feature | AWS (EMR + Glue) | Google Cloud (Dataproc + Metastore) | Azure (HDInsight + Purview) |
+|---------|------------------|-------------------------------------|------------------------------|
+| **Compute Service** | EMR | Dataproc | HDInsight/Synapse |
+| **Catalog Service** | Glue Data Catalog | Dataproc Metastore + Dataplex | Microsoft Purview + Hive Metastore |
+| **Storage Integration** | S3 (EMRFS) | Cloud Storage | Azure Data Lake Storage |
+| **Seamless Integration** | ✅ Built-in | ✅ Native | ⚠️ Requires configuration |
+| **Auto-discovery** | ✅ Glue Crawlers | ✅ Dataplex discovery | ✅ Purview scanning |
+| **Cross-service catalog access** | ✅ Multiple services | ✅ Multiple services | ⚠️ Limited |
+
+**Bottom Line:** While Google Cloud and Azure offer similar capabilities, AWS still provides the most seamless integration between compute (EMR), catalog (Glue), and storage (S3). Google Cloud comes closest with native integrations, while Azure's approach requires more manual configuration and has some limitations in cross-service catalog sharing.
