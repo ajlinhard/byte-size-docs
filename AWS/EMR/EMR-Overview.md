@@ -15,6 +15,7 @@
 ### Documentation/Tutorials:
 - [Zero to Hero Walkthrough (Johnny Chivers)](https://www.youtube.com/watch?v=v9nk6mVxJDU)
 - [AWS Skillbuilder Lab](https://catalog.us-east-1.prod.workshops.aws/workshops/c86bd131-f6bf-4e8f-b798-58fd450d3c44/en-US/setup/workspace)
+- [AWS Github EMR Examples](https://github.com/aws-samples/emr-studio-notebook-examples)
 
 ## Introduction to AWS EMR
 
