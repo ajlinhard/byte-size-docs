@@ -6,22 +6,22 @@ The storage of a data lake or large data processing with EMR clusters are common
 ## Why S3 works well with EMR
 Amazon EMR moved to using EMRFS (EMR File System) with S3 as the default storage layer instead of HDFS for several compelling technical and operational reasons, particularly beneficial for Spark workloads:
 
-**Decoupling Storage from Compute**
+**Decoupling Storage from Compute:**
 The fundamental shift was moving from tightly coupled storage-compute clusters (HDFS) to a decoupled architecture. With HDFS, you needed to keep clusters running to maintain data availability, even when not processing. EMRFS allows you to spin up clusters on-demand, process data stored persistently in S3, then terminate clusters - dramatically reducing costs.
 
-**Cost Economics**
+**Cost Economics:**
 S3 storage costs significantly less than keeping HDFS clusters running 24/7. For Spark jobs that don't run continuously, paying for persistent compute just to maintain data storage became economically inefficient. S3 provides durable storage at a fraction of the cost.
 
-**Elasticity and Auto-scaling**
+**Elasticity and Auto-scaling:**
 Spark workloads often have variable resource requirements. With EMRFS/S3, you can launch clusters with exactly the compute resources needed for each job, then scale down or terminate. HDFS required maintaining minimum cluster sizes for data replication, limiting elasticity.
 
-**Fault Tolerance and Durability**
+**Fault Tolerance and Durability:**
 S3 provides 11 9's of durability through automatic replication across availability zones. HDFS required manual management of replication factors and dealing with node failures. For Spark applications, this means less operational overhead and better reliability.
 
-**Multi-cluster Access**
+**Multi-cluster Access:**
 Multiple EMR clusters can simultaneously read from the same S3 datasets, enabling better resource utilization and parallel processing scenarios that would be complex with HDFS.
 
-**Spark-Specific Benefits**
+**Spark-Specific Benefits:**
 Spark's architecture actually works well with S3's eventual consistency model (now strong consistency). Spark's lazy evaluation and immutable RDDs align with S3's object storage paradigm. The Spark catalyst optimizer can also push down predicates effectively when reading Parquet files from S3.
 
 The trade-off is network latency - S3 access is slower than local HDFS reads. However, for most analytical workloads, the cost savings and operational simplicity outweigh the performance impact, especially when using columnar formats like Parquet that minimize data transfer.
