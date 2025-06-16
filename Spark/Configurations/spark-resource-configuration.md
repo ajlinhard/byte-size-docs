@@ -214,6 +214,56 @@ The method for configuring resources varies based on how you're running Spark:
 - **Mesos**: Another cluster manager option
 - **Local mode**: For testing, runs everything on one machine
 
+When running Spark locally, the base resource negotiator (also known as the cluster manager) is the **Standalone mode** or more specifically, the **local mode**.
+
+  ### 0. Local Mode (Default for Local Execution)
+  
+  In local mode, Spark runs in a single JVM process and doesn't need an external cluster manager. You specify local mode with configurations like:
+  - `local` - runs with 1 thread
+  - `local[*]` - runs with as many threads as logical cores
+  - `local[n]` - runs with n threads
+  
+  ```python
+  spark = SparkSession.builder \
+      .appName("Local App") \
+      .master("local[*]") \
+      .getOrCreate()
+  ```
+  
+  Spark supports several other cluster managers beyond local mode:
+  
+  ### 1. **Spark Standalone**
+  Spark's own built-in cluster manager for dedicated Spark clusters.
+  ```python
+  .master("spark://master-host:7077")
+  ```
+  
+  ### 2. **Apache Mesos**
+  A general-purpose cluster manager that can run Spark alongside other frameworks.
+  ```python
+  .master("mesos://mesos-master:5050")
+  ```
+  
+  ### 3. **Hadoop YARN**
+  Hadoop's resource manager, commonly used in Hadoop ecosystems.
+  ```python
+  .master("yarn")
+  ```
+  
+  ### 4. **Kubernetes**
+  For containerized Spark applications.
+  ```python
+  .master("k8s://https://kubernetes-api-server:443")
+  ```
+  
+  ### 5. **Local Cluster Mode**
+  Simulates a cluster on a single machine (useful for testing cluster behavior locally).
+  ```python
+  .master("local-cluster[2,1,1024]")  # 2 workers, 1 core each, 1GB memory each
+  ```
+  
+  For truly local development and testing, most developers use `local[*]` which automatically uses all available CPU cores on the machine.
+
 ### 2. Number of Workers/Executors
 
 You can control how many executors (workers) run your tasks:
