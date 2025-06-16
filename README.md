@@ -20,4 +20,5 @@ My name is Andrew Linhard. I have been coding since high school and have experie
 ## Some Random Helpful Links
 - [System Design Blogs](https://bytesizeddesign.substack.com/p/the-byte-sized-design-list-of-system)
 - [Some Free Data](https://github.com/awesomedata/awesome-public-datasets?tab=readme-ov-file#datachallenges)
+- [Free Real-Time Data](https://github.com/bytewax/awesome-public-real-time-datasets)
 - [Basics of major Machine Learning Algorithms](https://www.youtube.com/watch?v=E0Hmnixke2g)
