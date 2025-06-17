@@ -1,0 +1,54 @@
+# Databricks Certifications
+At the time of making this page Databricks did not have the free classes they offer well organized into groups for the certifications they offer. To avoid the fee of the expert led classes I have the videos organized below. These classes are helpful, but the more background in Spark, SQL, and Data Engineering the easier studying for these exams will be. 
+
+Related Certifications:
+- [AWS Cloud Certs for Data Engineers](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/AWS-Certifications.md)
+= [Snowflake Certs](https://github.com/ajlinhard/byte-size-docs/blob/main/Snowflake/Snowflake-Certifications.md)
+
+## Table of Contents:
+- 
+
+I'll search for the current certification offerings and requirements for data engineering roles at Databricks, Snowflake, and AWS to give you the most up-to-date information.Now let me search for Snowflake data engineering certifications:Now let me search for AWS data engineering certifications:Let me get more detailed information about the AWS Data Engineer Associate certification exam topics:Let me search for more specific details about the exam domains and topics:Based on my research, I can provide you with a comprehensive overview of the current data engineering certifications from Databricks, Snowflake, and AWS. Here's a detailed breakdown:
+
+## **Databricks Data Engineering Certifications**
+
+### **Databricks Certified Data Engineer Associate**
+This certification assesses the ability to use the Databricks Lakehouse Platform to complete introductory data engineering tasks, including understanding the platform's workspace, architecture, and capabilities. It evaluates skills in performing multi-hop architecture ETL tasks using Apache Spark SQL and Python in both batch and incrementally processed paradigms.
+
+**Topics & Tools Covered:**
+- **Core Platform Knowledge:** Understanding of the Lakehouse Platform and its workspace, its architecture, and its capabilities
+- **Data Processing:** Apache Spark SQL and Python for ETL pipelines
+- **Delta Lake:** Table management, manipulation, and optimizations
+- **Multi-hop Architecture:** Building production-ready ETL pipelines
+- **Databricks SQL:** Queries and dashboards in production
+- **Security:** Entity permissions and access control
+
+**Prerequisites:** 6+ months of hands-on experience performing the data engineering tasks outlined in the exam guide
+
+### **Databricks Certified Data Engineer Professional**
+This certification assesses an individual's ability to use Databricks to perform advanced data engineering tasks, including understanding of the Databricks platform and developer tools like Apache Spark, Delta Lake, MLflow, and the Databricks CLI and REST API.
+
+**Topics & Tools Covered:**
+- **Advanced Platform Tools:** Apache Spark™, Delta Lake, MLflow, and the Databricks CLI and REST API
+- **Pipeline Optimization:** Building optimized and cleaned ETL pipelines
+- **Data Modeling:** Ability to model data into a lakehouse using knowledge of general data modeling concepts
+- **Production Best Practices:** Ensuring that data pipelines are secure, reliable, monitored and tested before deployment
+- **Programming Languages:** Code examples in this exam will primarily be in Python. However, any and all references to Delta Lake functionality will be made in SQL
+
+**Prerequisites:** 1+ years of hands-on experience performing the data engineering tasks outlined in the exam guide
+
+**Recertification:** Recertification is required every two years to maintain your certified status
+
+---
+## **Summary & Recommendations**
+
+**For Beginners:**
+- Start with **Databricks Associate** (6+ months experience) or **SnowPro Core** 
+- AWS requires more experience (2-3 years) for their Data Engineer certification
+
+**For Experienced Engineers:**
+- **Databricks Professional** for advanced lakehouse architecture
+- **Snowflake Advanced Data Engineer** for cloud data warehousing expertise
+- **AWS Data Engineer Associate** for comprehensive cloud data engineering skills
+
+Each certification focuses on different aspects of the modern data stack, with Databricks emphasizing lakehouse architecture and ML integration, Snowflake focusing on cloud data warehousing and sharing, and AWS covering the full spectrum of cloud-native data engineering services.
