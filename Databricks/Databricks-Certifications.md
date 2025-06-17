@@ -8,10 +8,25 @@ Related Certifications:
 
 ## Table of Contents:
 - [Apache Spark Course](https://www.databricks.com/training/catalog?roles=apache-spark-developer)
+- [Summary and Recommendations](#Summary-and-Recommendations)
 - [Databricks Certified Data Engineer Associate](#Databricks-Certified-Data-Engineer-Associate)
 - [Databricks Certified Data Engineer Professional](#Databricks-Certified-Data-Engineer-Professional)
-- [Summary & Recommendations](#Summary-&-Recommendations)
 
+---
+## **Summary and Recommendations**
+
+**For Beginners:**
+- Start with **Databricks Associate** (6+ months experience) or **SnowPro Core** 
+- AWS requires more experience (2-3 years) for their Data Engineer certification
+
+**For Experienced Engineers:**
+- **Databricks Professional** for advanced lakehouse architecture
+- **Snowflake Advanced Data Engineer** for cloud data warehousing expertise
+- **AWS Data Engineer Associate** for comprehensive cloud data engineering skills
+
+Each certification focuses on different aspects of the modern data stack, with Databricks emphasizing lakehouse architecture and ML integration, Snowflake focusing on cloud data warehousing and sharing, and AWS covering the full spectrum of cloud-native data engineering services.
+
+---
 ## **Databricks Certified Data Engineer Associate**
 This certification assesses the ability to use the Databricks Lakehouse Platform to complete introductory data engineering tasks, including understanding the platform's workspace, architecture, and capabilities. It evaluates skills in performing multi-hop architecture ETL tasks using Apache Spark SQL and Python in both batch and incrementally processed paradigms.
 <br>**[PDF of Certification Details](https://github.com/ajlinhard/byte-size-docs/blob/main/Databricks/docs/databricks-certified-data-engineer-associate-exam-guide-1-mar-2025.pdf)**
@@ -27,10 +42,10 @@ This certification assesses the ability to use the Databricks Lakehouse Platform
 **Prerequisites:** 6+ months of hands-on experience performing the data engineering tasks outlined in the exam guide
 
 ### Courses:
-○ [Data Ingestion with Delta Lake](https://customer-academy.databricks.com/learn/courses/2963/data-ingestion-with-delta-lake/lessons)
-○ [Deploy Workloads with Databricks Workflows](https://customer-academy.databricks.com/learn/courses/1365/deploy-workloads-with-databricks-workflows)
-○ [Build Data Pipelines with Delta Live Tables](https://customer-academy.databricks.com/learn/courses/2971/build-data-pipelines-with-delta-live-tables/lessons)
-○ [Data Management and Governance with Unity Catalog](https://customer-academy.databricks.com/learn/courses/3144/data-management-and-governance-with-unity-catalog)
+- [Data Ingestion with Delta Lake](https://customer-academy.databricks.com/learn/courses/2963/data-ingestion-with-delta-lake/lessons)
+- [Deploy Workloads with Databricks Workflows](https://customer-academy.databricks.com/learn/courses/1365/deploy-workloads-with-databricks-workflows)
+- [Build Data Pipelines with Delta Live Tables](https://customer-academy.databricks.com/learn/courses/2971/build-data-pipelines-with-delta-live-tables/lessons)
+- [Data Management and Governance with Unity Catalog](https://customer-academy.databricks.com/learn/courses/3144/data-management-and-governance-with-unity-catalog)
 
 ## **Databricks Certified Data Engineer Professional**
 This certification assesses an individual's ability to use Databricks to perform advanced data engineering tasks, including understanding of the Databricks platform and developer tools like Apache Spark, Delta Lake, MLflow, and the Databricks CLI and REST API.
@@ -46,13 +61,13 @@ This certification assesses an individual's ability to use Databricks to perform
 **Prerequisites:** 1+ years of hands-on experience performing the data engineering tasks outlined in the exam guide
 
 ### Courses:
-○ [Databricks Streaming and Delta Live Tables - Delta Dawn](https://www.databricks.com/training/catalog/databricks-streaming-and-delta-live-tables-2972)
-○ [Databricks Data Privacy](https://customer-academy.databricks.com/learn/courses/3767/databricks-data-privacy)
-○ [Databricks Performance Optimization Delta Dawn](https://customer-academy.databricks.com/learn/courses/2967/databricks-performance-optimization/lessons)
-○ [Automated Testing and Deployment with Databricks Asset Bundle](https://customer-academy.databricks.com/learn/courses/3489/automated-deployment-with-databricks-asset-bundles)
+- [Databricks Streaming and Delta Live Tables - Delta Dawn](https://www.databricks.com/training/catalog/databricks-streaming-and-delta-live-tables-2972)
+- [Databricks Data Privacy](https://customer-academy.databricks.com/learn/courses/3767/databricks-data-privacy)
+- [Databricks Performance Optimization Delta Dawn](https://customer-academy.databricks.com/learn/courses/2967/databricks-performance-optimization/lessons)
+- [Automated Testing and Deployment with Databricks Asset Bundle](https://customer-academy.databricks.com/learn/courses/3489/automated-deployment-with-databricks-asset-bundles)
 Not Officially Recommended
-○ [Building Data Pipelines with Delta Live Tables](https://customer-academy.databricks.com/learn/courses/2971/build-data-pipelines-with-delta-live-tables/lessons)
-○ [DevOps Essentials for Data Engineers](https://www.databricks.com/training/catalog/devops-essentials-for-data-engineering-3640)
+- [Building Data Pipelines with Delta Live Tables](https://customer-academy.databricks.com/learn/courses/2971/build-data-pipelines-with-delta-live-tables/lessons)
+- [DevOps Essentials for Data Engineers](https://www.databricks.com/training/catalog/devops-essentials-for-data-engineering-3640)
 
 ### Extra Courses:
 - [Data Ingestion with Delta Lake](https://customer-academy.databricks.com/learn/courses/2963/data-ingestion-with-delta-lake/lessons/)
@@ -62,16 +77,4 @@ Not Officially Recommended
 - [Automate Production Workdlows](https://customer-academy.databricks.com/learn/courses/2143/automate-production-workflows)
 - [AWS Platform Architect - Learning Plan](https://customer-academy.databricks.com/learn/learning-plans/262/aws-databricks-platform-architect-learning-plan-public)
 
----
-## **Summary & Recommendations**
 
-**For Beginners:**
-- Start with **Databricks Associate** (6+ months experience) or **SnowPro Core** 
-- AWS requires more experience (2-3 years) for their Data Engineer certification
-
-**For Experienced Engineers:**
-- **Databricks Professional** for advanced lakehouse architecture
-- **Snowflake Advanced Data Engineer** for cloud data warehousing expertise
-- **AWS Data Engineer Associate** for comprehensive cloud data engineering skills
-
-Each certification focuses on different aspects of the modern data stack, with Databricks emphasizing lakehouse architecture and ML integration, Snowflake focusing on cloud data warehousing and sharing, and AWS covering the full spectrum of cloud-native data engineering services.
