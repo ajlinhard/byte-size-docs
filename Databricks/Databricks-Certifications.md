@@ -3,8 +3,9 @@ At the time of making this page Databricks did not have the free classes they of
 <br>**Recertification:** Recertification is required every two years to maintain your certified status
 
 Related Certifications:
-- [AWS Cloud Certs for Data Engineers](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/AWS-Certifications.md)
-= [Snowflake Certs](https://github.com/ajlinhard/byte-size-docs/blob/main/Snowflake/Snowflake-Certifications.md)
+- [AWS Cloud Certs. for Data Engineers](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/AWS-Certifications.md)
+- [Snowflake Certs.](https://github.com/ajlinhard/byte-size-docs/blob/main/Snowflake/Snowflake-Certifications.md)
+- [Databricks All Certs.](https://www.databricks.com/learn/training/home)
 
 ## Table of Contents:
 - [Apache Spark Course](https://www.databricks.com/training/catalog?roles=apache-spark-developer)
