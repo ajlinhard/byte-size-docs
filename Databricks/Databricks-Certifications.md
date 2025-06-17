@@ -65,7 +65,7 @@ This certification assesses an individual's ability to use Databricks to perform
 - [Databricks Data Privacy](https://customer-academy.databricks.com/learn/courses/3767/databricks-data-privacy)
 - [Databricks Performance Optimization Delta Dawn](https://customer-academy.databricks.com/learn/courses/2967/databricks-performance-optimization/lessons)
 - [Automated Testing and Deployment with Databricks Asset Bundle](https://customer-academy.databricks.com/learn/courses/3489/automated-deployment-with-databricks-asset-bundles)
-Not Officially Recommended
+<br>Not Officially Recommended
 - [Building Data Pipelines with Delta Live Tables](https://customer-academy.databricks.com/learn/courses/2971/build-data-pipelines-with-delta-live-tables/lessons)
 - [DevOps Essentials for Data Engineers](https://www.databricks.com/training/catalog/devops-essentials-for-data-engineering-3640)
 
