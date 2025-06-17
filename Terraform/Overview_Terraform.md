@@ -6,7 +6,9 @@ Terrafrom will take the declarative code + the infrastructure state to create th
 ## Documentation/Tutorials:
 1. [Official Documentation](https://developer.hashicorp.com/terraform?product_intent=terraform)
 2. [Officail Tutorials](https://developer.hashicorp.com/terraform/tutorials?product_intent=terraform)
-3. [Overview Tutorial](https://www.youtube.com/watch?v=l5k1ai_GBDE)
+3. [Youtube - Overview Tutorial](https://www.youtube.com/watch?v=l5k1ai_GBDE)
+4. [Youtube - Basic Use Tutorial](https://www.youtube.com/watch?v=Gmrl8WkViX0)
+5. [Terraform with AWS](https://developer.hashicorp.com/terraform/tutorials/aws-get-started)
 
 ## Concepts
 These are the high-level important parts of Terraform
@@ -28,3 +30,27 @@ These are the high-level important parts of Terraform
 2. **plan** - create a execution plan to accomplished the desired state.
 3. **apply** - execute the plan
 4. **destroy** - delete/destroy the current infrastructure in the correct order.
+
+
+## Basic Terraform File
+```yaml
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.16"
+    }
+  }
+
+  required_version = ">= 1.2.0"
+}
+
+provider "aws" {
+    region = "us-east-1"
+}
+
+resource "aws_s3_bucket" "myTestTerraform" {
+    bucket = "starbound-terraform-bucket"
+    acl = "private"
+}
+```
