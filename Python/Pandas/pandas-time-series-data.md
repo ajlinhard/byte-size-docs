@@ -93,6 +93,9 @@ df.index.dayofyear   # Day of year
 df.index.quarter     # Quarter
 df.index.hour        # Hour
 df.index.minute      # Minute
+df.index.second      # second
+df.index.microseconds     # microsecond
+df.index.nanoseconds     # nanosecond
 ```
 
 ## Filtering and Slicing
