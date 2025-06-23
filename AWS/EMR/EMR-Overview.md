@@ -65,6 +65,10 @@ An EMR cluster consists of EC2 instances configured in the following node types:
 - Can be added or removed easily for scaling
 - Ideal for Spot instances to reduce costs
 
+### Permission/Error Help
+- [EMR Permissions Help](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-plan-access-iam.html?icmpid=docs_emr_help_panel)
+- [Common EMR Errors](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-troubleshoot-errors.html)
+
 For Spark on EMR, the architecture is enhanced with:
 
 - **Spark Driver**: Runs on master node (client mode) or worker node (cluster mode)
