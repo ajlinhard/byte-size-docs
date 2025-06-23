@@ -75,6 +75,7 @@ aws configure
 # Test installation
 aws sts get-caller-identity
 ```
+**Side Note:** [CLI Permission Setup](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
 
 ## Example Commands
 ```bash
