@@ -47,3 +47,26 @@ Regular View
 
 ### Functions
 A set of operation which returns a scalar value or a set of rows. (tabular). The function exists between sessions of process, verse function used in a notebook.
+
+---
+## Liquid Clustering
+Liquid Clustering introduced around 2023 was designed to help with query efficency where traditional partitionind and z-ordering tend to start to hit limitations. Liquid clustering is helpful in the scenarios listed in the following figure. More info is available on the detailed [Liquid Clustering Page]
+### Scenarios that benefit from Liquid Clustering
+- Tables often filtered by high cardinality columns.
+- Tables with significant skew in data distribution.
+- Tables that grow quickly and require maintenance and tuning effort.
+- Tables with concurrent write requirements.
+- Tables with access patterns that change over time.
+- Tables where a typical partition key could leave the table with too many or too few partitions.
+
+## Deletion Vectors
+Deletion Vectors are used to optimize changed to your data. Before when changing data in a table using databrick/spark a full file rewrite would be required. With deletion vectors and photon now deletes, merges, and updates are write to deletion vector files. Then photon leverages deletion vector files for faster queries using predictive I/O
+
+## Predictive I/O
+- Automates Optimize and Vacuum operations
+- Based on Databricks' years of experience in building large AI/ML systems
+- Makes the lakehouse a smarter data warehouse
+- Works to have the best cost/benefit possible
+- Uses ML to determine the most efficient access pattern to read data
+- Leverages deletion vectors to accelerate updates by reducing the frequency of full file rewrites
+
