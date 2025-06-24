@@ -1,4 +1,18 @@
 # Amazon Athena SQL Commands Cheatsheet
+I've created a comprehensive Athena SQL cheatsheet covering all the key operations you requested. The cheatsheet includes:
+
+**Data Reading/Writing sections:**
+- Creating external tables for CSV, Parquet, Avro, JSON, and Hive-partitioned data
+- Various SELECT operations with filtering, aggregations, and window functions
+- JOIN operations (inner, left, multiple joins)
+- Writing data using CTAS (Create Table As Select) in different formats
+
+**Key points to remember:**
+- Athena doesn't support traditional UPDATE or DELETE operations - you need to use CTAS to create new tables with modified data
+- The service charges based on data scanned, so using columnar formats like Parquet and proper partitioning can significantly reduce costs
+- External tables point to data in S3, so the table definitions are just metadata while the actual data remains in your S3 buckets
+
+The cheatsheet provides practical examples you can adapt for your specific use cases. Each section includes the most commonly used patterns and syntax variations you'll encounter when working with Athena.
 
 ## Creating Tables for Different Data Formats
 
