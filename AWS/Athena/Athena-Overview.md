@@ -85,8 +85,25 @@ This is a central repository of metadata about data sources, tables, and schemas
 
 ### Data source connector
 A data source connector is a piece of code that runs on Lambda that translates between your target data source and Athena.
+
+## Additional Info
+#### Security and compliance
+Security in Athena starts with IAM integration for precise access control. Each user or application can have exactly the permissions they need. Workgroups help organize users and manage their query access. Your data stays protected with encryption both at rest and in transit. Compliance requirements are covered through built-in support for major standards. Every query and action can be tracked through comprehensive logging systems.
+
+#### Performance optimization
+Query performance in Athena can be significantly improved through smart data organization. Partitioning your data helps Athena scan less information during queries. Converting your files to columnar formats, such as Parquet or ORC, significantly speeds up query execution. Compressing your data reduces scan times and costs. Using the appropriate file size makes a big difference. Aim for files between 128 MB and 1 GB. Complex queries can be made less complicated by breaking them into smaller parts for better performance.
+
+#### Service limitations
+Athena has some important boundaries to consider. You cannot create stored procedures or modify data directly in source files. Each query string must stay under 262,144 bytes. The service allows up to 20 concurrent queries of each type. Your account can have up to 100 databases, with 100 tables in each one. Queries must complete within 30 minutes. Understanding these limits helps to plan your data analysis strategy.
+
+#### Cost and billing
+The cost model for Athena is straightforward and usage-based. You only pay for the data your queries scan and the queries that complete successfully. Failed queries don't incur charges. Smart data organization can significantly reduce your costs. Compressed and partitioned data means less scanning and lower bills. Workgroups can help control costs through query limits and budget controls. Regular monitoring helps optimize your spending.
+
+#### Monitoring and management
+Keeping track of Athena's performance is convenient with Amazon CloudWatch integration. You can watch query execution times and resource usage in real time. The service maintains detailed query history for troubleshooting. Error logs help identify and fix issues quickly. Usage patterns become clear through analytical tools. Data governance is streamlined through integration with AWS Glue Data Catalog. Managing metadata and data lifecycles becomes more efficient with built-in tools.
+
 ---
-# Athena in Use
+# Athena AWS Integrations
 
 ## Amazon S3
 Athena is tightly integrated with Amazon S3, so you can query data directly from S3 buckets without the need for data movement or separate data stores. This streamlines data processing architectures and reduces operational overhead.
@@ -122,3 +139,30 @@ AWS CloudTrail is a service that records AWS API calls and related events to pro
 
 ## Amazon Sagemaker
 With Amazon Athena you can write SQL statements that invoke Amazon SageMaker Artificial Intelligence (A)I models to perform complex tasks such anomaly detection or sales predictions.
+
+---
+# Use Cases
+#### Log analytics
+Query and analyze logs stored in Amazon S3 or AWS data services, such as Amazon CloudWatch Logs, to gain insights and troubleshoot issues.
+
+#### Data lake querying
+Query and analyze data stored in data lakes on Amazon S3 using open data formats, such as .csv, JSON, Parquet, and more.
+
+#### ETL processing
+Use Athena as part of an ETL pipeline to extract, transform, and load data from various sources into a centralized data store.
+
+#### One-time analysis
+Use the interactive query capabilities offered by Athena to perform one-time analysis and exploration of large datasets without provisioning resources.
+
+#### BI and reporting
+Connect Athena to popular BI tools, such as QuickSight, to create interactive dashboards and reports from data stored in Amazon S3.
+
+#### CloudTrail analysis
+Analyze CloudTrail logs stored in Amazon S3 by using Athena to gain insights into AWS account activity and resource usage.
+
+#### Security analytics
+Query and analyze security logs from services such as AWS WAF, Amazon GuardDuty, and more to detect and investigate potential threats.
+
+#### IoT
+Use Athena to query and analyze data from Internet of Things (IoT) devices stored in Amazon S3 to gain insights and optimize operations.
+
