@@ -155,6 +155,7 @@ This flexibility is one reason GraphQL has become popular for microservices arch
 
 ## Complex Example
 I'll show you Python examples of GraphQL interacting with PostgreSQL, MongoDB, and Redis cache using the popular `graphene` library for GraphQL.This example demonstrates how GraphQL can seamlessly integrate with multiple data sources:
+### [Complex Multiple Database Graphene Example](https://github.com/ajlinhard/byte-size-docs/blob/main/APIs/GraphQL/Graphene-and-Multiple-Databases.py)
 
 ## Key Features:
 
@@ -195,4 +196,3 @@ query {
 
 Hits all three data sources but returns a unified response. This shows GraphQL's power - clients don't need to know or care about your backend architecture complexity.
 
-### [Complex Multiple Database Graphene Example](https://github.com/ajlinhard/byte-size-docs/blob/main/APIs/GraphQL/Graphene-and-Multiple-Databases.py)
