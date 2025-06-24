@@ -14,9 +14,27 @@ Delta Lake is an open-source data management platform originally created by Data
   This is the foundation of the Databricks Data Lake house and aids in the performance speed increase of Databricks. The viability and usability of the data increases with the Delta Lake format.
 
 # ACID Transactions (Atomicity, Consisency, Isolation, and Durability)
-The base Apache Spark does not have ACID transactions. It has eventually, consistency which is a different concept. Typically, these are only available in traditional Relational Database Management systems.
-![image](https://github.com/user-attachments/assets/54a5a492-96bf-4cf7-81c4-c3c9f38e23a9)
+The base Apache Spark does not have ACID transactions. It has eventually, consistency which is a different concept. Typically, these are only available in traditional Relational Database Management systems. However, Databricks Runtime and Apache Spark combine with Delta Lake is ACID compliant. Delta Lake extends Apache Spark to provide ACID transaction guarantees that standard Spark lacks.
 
+Here's how Delta Lake achieves ACID compliance:
+
+**Atomicity**: Delta Lake ensures that operations either complete entirely or fail completely. Multi-part operations like complex ETL jobs are treated as single atomic units.
+
+**Consistency**: Delta Lake maintains data consistency through schema enforcement and validation. It prevents writes that would violate table schemas or constraints.
+
+**Isolation**: Multiple concurrent operations are isolated from each other using optimistic concurrency control. Delta Lake uses a transaction log to coordinate concurrent reads and writes, ensuring that concurrent operations don't interfere with each other.
+
+**Durability**: Once a transaction is committed, Delta Lake persists the changes durably to storage. The transaction log provides a reliable record of all changes.
+
+Delta Lake implements these ACID properties through several key mechanisms:
+
+- **Transaction Log**: A centralized log that records all changes to the table in order
+- **Optimistic Concurrency Control**: Allows multiple writers while detecting and resolving conflicts
+- **Versioning**: Maintains multiple versions of data files, enabling time travel and rollback capabilities
+- **Schema Evolution**: Supports safe schema changes while maintaining consistency
+
+This makes Delta Lake suitable for use cases requiring strong consistency guarantees, such as financial data processing, regulatory compliance, and scenarios where data accuracy is critical. Standard Apache Spark without Delta Lake does not provide these ACID guarantees.
+![image](https://github.com/user-attachments/assets/54a5a492-96bf-4cf7-81c4-c3c9f38e23a9)
 
 # Medallion Architecture
 Bronze is the Raw data storage which is not altered, or adjusted at all.
