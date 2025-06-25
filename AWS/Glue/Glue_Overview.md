@@ -2,8 +2,10 @@
 Glue is a AWS managed service built to assist with the ETL of your data.
 
 ## Documentation/Tutorials
-1. [Beginners Video[(https://www.youtube.com/watch?v=weWeaM5-EHc)
-2. [Course for Beginners](https://www.youtube.com/watch?v=ZvJSaioPYyo)
+
+1. [AWS Glue Data Quaility Definition Language](https://docs.aws.amazon.com/glue/latest/dg/dqdl.html)
+2. [Beginners Video](https://www.youtube.com/watch?v=weWeaM5-EHc)
+3. [Course for Beginners](https://www.youtube.com/watch?v=ZvJSaioPYyo)
 
 # AWS Glue Architecture and Technology Stack
 AWS Glue is built primarily on top of Apache Spark, which serves as its core processing engine. This foundation gives Glue its distributed data processing capabilities while adding AWS-specific integrations and abstractions.
