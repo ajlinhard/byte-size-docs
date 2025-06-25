@@ -10,7 +10,7 @@ AWS is a handy service for setting up simple task you need triggered when X occu
 ## Documentation/Tutorials
 1. [AWS Lambda Documentation](https://aws.amazon.com/pm/lambda/)
 2. [Youtube - Lambda Overview](https://www.youtube.com/watch?v=UsaiOEFdfs0)
-   a. [Full Udemy Lambda Course](https://www.udemy.com/course/aws-lambda-a-practical-guide/?referralCode=F6D1A50467E579C65372&couponCode=ST16MT230625G1) 
+   <br>a. [Full Udemy Lambda Course](https://www.udemy.com/course/aws-lambda-a-practical-guide/?referralCode=F6D1A50467E579C65372&couponCode=ST16MT230625G1) 
 3. [Youtube - Your First Lambda Function](https://www.youtube.com/watch?v=e1tkFsFOBHA)
 
 
