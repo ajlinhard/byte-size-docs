@@ -7,3 +7,4 @@ The intial release of this protocol came from Anthropic at the end of 2024. In c
 ### Documentation / Tutorials:
 - [Anthropics MCP](https://docs.anthropic.com/en/docs/agents-and-tools/mcp)
 - [MCP vs API](https://www.youtube.com/watch?v=7j1t3UZA1TY)
+- [Youtube - Confluent Dev MCP](https://www.youtube.com/watch?v=FLpS7OfD5-s)
