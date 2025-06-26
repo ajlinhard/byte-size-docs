@@ -44,6 +44,29 @@ PostgreSQL is a powerful database system that stores and manages data using SQL 
 - Inventory management
 - Financial systems
 
+## Interfacing with PostgreSQL
+When interacting with PostgreSQL, several languages are commonly used:
+
+**SQL (Structured Query Language)** is the primary language for database operations - creating tables, querying data, inserting records, and managing the database structure. PostgreSQL supports standard SQL plus many extensions.
+
+**Application programming languages** that connect to PostgreSQL include:
+- **Python** (using libraries like psycopg2, SQLAlchemy, or Django ORM)
+- **JavaScript/Node.js** (using pg, Sequelize, or Prisma)
+- **Java** (using JDBC drivers or frameworks like Hibernate)
+- **C#/.NET** (using Npgsql or Entity Framework)
+- **PHP** (using PDO or native PostgreSQL functions)
+- **Ruby** (using pg gem or Active Record)
+- **Go** (using pq or pgx drivers)
+- **Rust** (using tokio-postgres or diesel)
+
+**PL/pgSQL** is PostgreSQL's native procedural language for writing stored procedures, functions, and triggers directly within the database.
+
+**Other procedural languages** supported by PostgreSQL include PL/Python, PL/Perl, PL/Tcl, and PL/R for more specialized database programming needs.
+
+**Shell scripting** languages like Bash are often used for database administration tasks, backups, and automation through command-line tools like `psql`.
+
+The choice depends on your application stack, but SQL knowledge is essential regardless of which programming language you use to connect to PostgreSQL.
+
 ## Pros of PostgreSQL
 
 ### **Reliability & Standards**
