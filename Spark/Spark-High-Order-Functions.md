@@ -1,0 +1,154 @@
+# Spark Higher Order Functions
+Higher-order functions in PySpark are functions that can take other functions as arguments and operate on complex data types like arrays, maps, and structs. They were introduced in Spark 2.4+ and allow you to perform functional programming operations directly in SQL and DataFrame APIs.
+
+## Key Characteristics
+
+Higher-order functions:
+- Accept **lambda functions** as parameters
+- Work with **complex data types** (arrays, maps, structs)
+- Enable **functional programming** patterns in Spark
+- Are **optimized** and executed in the Spark engine (not driver)
+
+## Common Higher-Order Functions
+
+### 1. `transform` - Apply function to each array element
+
+```python
+from pyspark.sql import functions as F
+
+df = spark.createDataFrame([([1, 2, 3, 4],)], ["numbers"])
+
+# Square each element
+result = df.select(
+    F.expr("transform(numbers, x -> x * x)").alias("squared")
+)
+# Result: [1, 4, 9, 16]
+```
+
+### 2. `filter` - Filter array elements based on condition
+
+```python
+# Keep only even numbers
+result = df.select(
+    F.expr("filter(numbers, x -> x % 2 = 0)").alias("even_numbers")
+)
+# Result: [2, 4]
+```
+
+### 3. `aggregate` - Reduce array to single value
+
+```python
+# Sum all elements
+result = df.select(
+    F.expr("aggregate(numbers, 0, (acc, x) -> acc + x)").alias("sum")
+)
+# Result: 10
+
+# Find maximum
+result = df.select(
+    F.expr("aggregate(numbers, 0, (acc, x) -> CASE WHEN x > acc THEN x ELSE acc END)").alias("max")
+)
+```
+
+### 4. `exists` - Check if any element meets condition
+
+```python
+# Check if any number > 3
+result = df.select(
+    F.expr("exists(numbers, x -> x > 3)").alias("has_large_number")
+)
+# Result: true
+```
+
+### 5. `forall` - Check if all elements meet condition
+
+```python
+# Check if all numbers are positive
+result = df.select(
+    F.expr("forall(numbers, x -> x > 0)").alias("all_positive")
+)
+# Result: true
+```
+
+## Working with Complex Nested Data
+
+```python
+# Sample data with array of structs
+df = spark.createDataFrame([
+    ([{"name": "Alice", "age": 25}, {"name": "Bob", "age": 30}],),
+    ([{"name": "Charlie", "age": 35}, {"name": "Diana", "age": 28}],)
+], ["people"])
+
+# Extract names of people over 27
+result = df.select(
+    F.expr("transform(filter(people, p -> p.age > 27), p -> p.name)").alias("names_over_27")
+)
+```
+
+## Lambda Function Syntax
+
+The lambda functions use this syntax:
+```sql
+parameter -> expression
+```
+
+Examples:
+- `x -> x * 2` (multiply by 2)
+- `x -> x > 5` (check if greater than 5)
+- `(acc, x) -> acc + x` (accumulator pattern)
+- `p -> p.name` (extract field from struct)
+
+## Multiple Parameters
+
+Some functions like `aggregate` take multiple parameters:
+```python
+# aggregate(array, initial_value, merge_function, finish_function)
+F.expr("aggregate(numbers, 0, (acc, x) -> acc + x, acc -> acc / size(numbers))")
+```
+
+## Using in DataFrame API vs SQL
+
+**DataFrame API:**
+```python
+df.select(F.expr("transform(numbers, x -> x * x)"))
+```
+
+**SQL:**
+```python
+spark.sql("SELECT transform(numbers, x -> x * x) FROM table")
+```
+
+## Benefits Over UDFs
+
+Higher-order functions are preferred over UDFs because they:
+- **Execute in the Spark engine** (not Python driver)
+- **Avoid serialization overhead**
+- **Support code generation** and optimization
+- **Work with Catalyst optimizer**
+- **Are type-safe** and validate at compile time
+
+## Real-World Example
+
+```python
+# Clean and process sensor data
+sensor_df = spark.createDataFrame([
+    ([10.5, -999, 12.3, 15.7, -999, 8.9],),  # -999 = missing value
+], ["readings"])
+
+# Remove invalid readings, convert to Fahrenheit, get average
+result = sensor_df.select(
+    F.expr("""
+        aggregate(
+            transform(
+                filter(readings, x -> x != -999), 
+                x -> x * 9/5 + 32
+            ), 
+            0.0, 
+            (acc, x) -> acc + x, 
+            acc -> acc / size(filter(readings, x -> x != -999))
+        )
+    """).alias("avg_temp_fahrenheit")
+)
+```
+
+Higher-order functions make complex array and nested data processing much more elegant and efficient in PySpark!
