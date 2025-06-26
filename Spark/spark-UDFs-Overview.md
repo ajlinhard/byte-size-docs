@@ -7,6 +7,7 @@ In Spark you can create user defined functions similar to how you would in most 
 - [Basic Examples](#basic-examples)
   - [1. Basic UDF with `@udf` Decorator](#1-basic-udf-with-udf-decorator)
   - [2. Register UDF with `spark.udf.register()`](#2-register-udf-with-sparkudfregister)
+  - [More Features and Examples](#more-features-and-examples)
   - [3. Complex Return Types](#3-complex-return-types)
   - [4. UDF with Multiple Parameters](#4-udf-with-multiple-parameters)
   - [5. Using External Libraries in UDFs](#5-using-external-libraries-in-udfs)
@@ -60,6 +61,79 @@ spark.udf.register("calculate_bonus_sql", calculate_bonus, DoubleType())
 spark.sql("SELECT *, calculate_bonus_sql(salary, performance) as bonus FROM employees").show()
 ```
 
+When you use `spark.udf.register()`, you're registering the function for **SQL usage within Spark**, not general Python usage.
+
+## What `spark.udf.register()` Does:
+
+```python
+# This registers the function for Spark SQL usage
+spark.udf.register("clean_string", clean_string, StringType())
+
+# Now you can use it in:
+# 1. spark.sql() queries
+spark.sql("SELECT clean_string(name) FROM my_table")
+
+# 2. SQL expressions in DataFrame operations
+from pyspark.sql.functions import expr
+df.withColumn("clean_name", expr("clean_string(name)"))
+
+# 3. selectExpr
+df.selectExpr("clean_string(name) as clean_name")
+```
+
+## What You CANNOT Do:
+
+```python
+# This WON'T work - you can't use the registered UDF as a regular DataFrame function
+df.withColumn("clean_name", clean_string(df.name))  # ERROR!
+
+# The original Python function still works in regular Python
+result = clean_string("  HELLO  ")  # This works fine - regular Python function call
+```
+
+## Complete Example:
+
+```python
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import expr
+from pyspark.sql.types import StringType
+
+spark = SparkSession.builder.appName("Example").getOrCreate()
+
+def clean_string(text):
+    return text.strip().lower() if text else None
+
+# Register for SQL usage
+spark.udf.register("clean_string", clean_string, StringType())
+
+data = [("  HELLO  ",), ("  WORLD  ",)]
+df = spark.createDataFrame(data, ["name"])
+
+# ✅ These work - using registered UDF in SQL contexts:
+df.createOrReplaceTempView("temp_table")
+result1 = spark.sql("SELECT clean_string(name) as clean_name FROM temp_table")
+
+result2 = df.withColumn("clean_name", expr("clean_string(name)"))
+
+result3 = df.selectExpr("clean_string(name) as clean_name")
+
+# ✅ This still works - original Python function
+python_result = clean_string("  TEST  ")
+
+# ❌ This doesn't work - trying to use registered UDF in DataFrame API
+# result4 = df.withColumn("clean_name", clean_string(df.name))  # ERROR!
+```
+
+## So the correct understanding is:
+
+- **`spark.udf.register()`** → Available in **Spark SQL** (via `spark.sql()`, `expr()`, `selectExpr()`)
+- **`udf()` function call** → Available in **DataFrame API** (via `df.withColumn()`, `df.select()`)
+- **Original Python function** → Always available for regular Python usage
+
+You're essentially registering the function with **Spark's SQL engine**, not removing it from Python!
+
+---
+# More Features and Examples
 ## 3. Complex Return Types
 ```python
 from pyspark.sql.types import StructType, StructField, ArrayType
