@@ -3,9 +3,9 @@ Here are the most popular Python libraries for working with PDF files, along wit
 
 ## Quick Comparison
 
-**[PyPDF2/PyPDF4](#PyPDF2-PyPDF4)**: <br> Best for basic PDF manipulation (merging, splitting, rotating)
-**[PDFplumber](#PDFplumber)**: <br> Best for text extraction and table detection from existing PDFs
-**[ReportLab](#ReportLab)**: <br> Best for creating new PDFs with professional layouts
+- **[PyPDF2/PyPDF4](#PyPDF2-PyPDF4)**: <br> Best for basic PDF manipulation (merging, splitting, rotating)
+- **[PDFplumber](#PDFplumber)**: <br> Best for text extraction and table detection from existing PDFs
+- **[ReportLab](#ReportLab)**: <br> Best for creating new PDFs with professional layouts
 
 For most text extraction tasks, I'd recommend **PDFplumber** as it provides the best balance of functionality and ease of use. For creating new PDFs, **ReportLab** is the gold standard. Use **PyPDF2** when you need simple PDF manipulation operations.
 
