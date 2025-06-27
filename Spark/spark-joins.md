@@ -772,3 +772,71 @@ spark.sql("EXPLAIN " + broadcast_hint_sql).show(truncate=False)
 # Clean up
 spark.stop()
 ```
+
+---
+# More Examples
+```python
+# =============================================================================
+# JOIN PRACTICE EXAMPLES
+# =============================================================================
+
+print("\n" + "="*60)
+print("JOIN EXAMPLES")
+print("="*60)
+
+# 1. INNER JOIN - Customers with their orders
+print("\n1. INNER JOIN - Customers with Orders:")
+customers_orders = customers_df.join(orders_df, "customer_id", "inner")
+customers_orders.select("customer_name", "order_id", "order_date", "total_amount").show()
+
+# 2. LEFT JOIN - All customers, with or without orders
+print("\n2. LEFT JOIN - All Customers (with/without orders):")
+all_customers_orders = customers_df.join(orders_df, "customer_id", "left")
+all_customers_orders.select("customer_name", "order_id", "total_amount").show()
+
+# 3. RIGHT JOIN - All orders, even with invalid customer_id
+print("\n3. RIGHT JOIN - All Orders (even with invalid customer_id):")
+orders_customers = customers_df.join(orders_df, "customer_id", "right")
+orders_customers.select("customer_name", "order_id", "total_amount").show()
+
+# 4. FULL OUTER JOIN - All customers and all orders
+print("\n4. FULL OUTER JOIN - All Customers and Orders:")
+full_join = customers_df.join(orders_df, "customer_id", "full_outer")
+full_join.select("customer_name", "order_id", "total_amount").show()
+
+# 5. COMPLEX JOIN - Order details with customer and product info
+print("\n5. COMPLEX JOIN - Complete Order Details:")
+complete_orders = orders_df \
+    .join(customers_df, "customer_id", "inner") \
+    .join(order_items_df, "order_id", "inner") \
+    .join(products_df, "product_id", "inner")
+
+complete_orders.select(
+    "customer_name", "order_date", "product_name", 
+    "quantity", "price", "total_amount"
+).show(20, truncate=False)
+
+# 6. SELF JOIN - Employees with their managers
+print("\n6. SELF JOIN - Employees with Managers:")
+managers = employees_df.select(
+    employees_df.employee_id.alias("mgr_id"),
+    employees_df.employee_name.alias("manager_name")
+)
+
+emp_mgr = employees_df.join(
+    managers, 
+    employees_df.manager_id == managers.mgr_id, 
+    "left"
+)
+emp_mgr.select("employee_name", "manager_name", "department").show()
+
+# 7. ANTI JOIN - Customers with no orders
+print("\n7. ANTI JOIN - Customers with No Orders:")
+customers_no_orders = customers_df.join(orders_df, "customer_id", "left_anti")
+customers_no_orders.show()
+
+# 8. SEMI JOIN - Customers who have placed orders
+print("\n8. SEMI JOIN - Customers Who Have Orders:")
+customers_with_orders = customers_df.join(orders_df, "customer_id", "left_semi")
+customers_with_orders.show()
+```
