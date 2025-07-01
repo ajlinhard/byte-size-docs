@@ -12,6 +12,7 @@ Here's a comprehensive example of multi-table joins in PySpark:This comprehensiv
 7. **SQL-Style Joins** - Using Spark SQL syntax for complex multi-table operations
 
 **Jump To Examples**
+- [Joins Overview](#Joins-Overview)
 - [PySpark Examples](#Python-PySpark-Examples)
 - [Spark SQL Examples](#Spark-SQL-Examples)
 
@@ -24,6 +25,83 @@ Here's a comprehensive example of multi-table joins in PySpark:This comprehensiv
 - **Optimization**: Filter data before joins and consider partitioning strategies
 
 The examples show real-world scenarios like customer order analysis, product performance tracking, and business intelligence queries that commonly require joining multiple tables.
+
+---
+# Joins Overview
+PySpark supports several types of joins for combining DataFrames. Here are all the different join types:
+
+## Inner Join
+**Default join type**. Returns only rows that have matching keys in both DataFrames.
+```python
+df1.join(df2, "key")  # Default is inner
+df1.join(df2, "key", "inner")
+```
+
+## Left Join (Left Outer)
+Returns all rows from the left DataFrame, with matching rows from the right DataFrame. Non-matching rows from the right will have null values.
+```python
+df1.join(df2, "key", "left")
+df1.join(df2, "key", "left_outer")  # Same as "left"
+```
+
+## Right Join (Right Outer)
+Returns all rows from the right DataFrame, with matching rows from the left DataFrame. Non-matching rows from the left will have null values.
+```python
+df1.join(df2, "key", "right")
+df1.join(df2, "key", "right_outer")  # Same as "right"
+```
+
+## Full Outer Join
+Returns all rows from both DataFrames. Non-matching rows will have null values for columns from the other DataFrame.
+```python
+df1.join(df2, "key", "outer")
+df1.join(df2, "key", "full")
+df1.join(df2, "key", "full_outer")  # All three are equivalent
+```
+
+## Left Semi Join
+Returns rows from the left DataFrame that have matching keys in the right DataFrame, but only returns columns from the left DataFrame.
+```python
+df1.join(df2, "key", "left_semi")
+```
+
+## Left Anti Join
+Returns rows from the left DataFrame that do NOT have matching keys in the right DataFrame.
+```python
+df1.join(df2, "key", "left_anti")
+```
+
+## Cross Join
+Cartesian product of both DataFrames - every row from the left DataFrame is joined with every row from the right DataFrame.
+```python
+df1.crossJoin(df2)  # Special method for cross join
+df1.join(df2, how="cross")  # Alternative syntax
+```
+
+## Join Syntax Examples
+
+**Single column join:**
+```python
+df1.join(df2, "common_column", "inner")
+```
+
+**Multiple column join:**
+```python
+df1.join(df2, ["col1", "col2"], "left")
+```
+
+**Different column names:**
+```python
+df1.join(df2, df1.id == df2.user_id, "inner")
+```
+
+**Complex join conditions:**
+```python
+df1.join(df2, (df1.id == df2.user_id) & (df1.status == "active"), "left")
+```
+
+The most commonly used joins are inner, left, right, and full outer joins, while semi and anti joins are useful for filtering operations, and cross joins should be used carefully due to their potential to create very large result sets.
+
 ---
 # Python PySpark Examples:
 ```python
