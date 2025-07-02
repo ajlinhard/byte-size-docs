@@ -3,6 +3,7 @@ Amazon Redshift is a data warehouse service designed for analytics workloads on 
 
 ### Documentation and Tutorials
 - [AWS Redshift Homepage](https://aws.amazon.com/pm/redshift/)
+- [Youtube - Better Dev: Redshift Intro](https://www.youtube.com/watch?v=IAagaCN4CIk)
 
 ## Technical Backend
 Redshift uses a custom-built massively parallel processing (MPP) architecture that AWS developed specifically for data warehousing. It's not built on Hive or Spark. The core technology includes:
