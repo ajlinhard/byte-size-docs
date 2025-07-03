@@ -85,4 +85,4 @@ In practice, B-trees in databases work slightly differently:
 This structure makes B-trees ideal for database indexes where you need fast, predictable access to individual records, though as discussed earlier, columnar formats like those used by Spark are better optimized for analytical workloads that scan large amounts of data.
 processing systems, from simple file systems to massive distributed databases handling petabytes of information.
 
-[Download and Use this HTML File](General_Code_Concepts/Data_Concepts/Structures/B-Tree_visualization.html)
+[Download and Use this HTML File]([General_Code_Concepts/Data_Concepts/Structures/B-Tree_visualization.html](https://github.com/ajlinhard/byte-size-docs/blob/main/General_Code_Concepts/Data_Concepts/Structures/B-Tree_visualization.html))
