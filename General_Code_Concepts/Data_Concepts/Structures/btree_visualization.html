@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-Tree Data Records Example</title>
+    <style>
+        body {
+            font-family: 'Monaco', 'Menlo', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .btree-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            margin: 40px 0;
+        }
+        
+        .level {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            width: 100%;
+        }
+        
+        .node {
+            background: linear-gradient(145deg, #f7fafc, #edf2f7);
+            border: 3px solid #4299e1;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            position: relative;
+            min-width: 200px;
+            transition: all 0.3s ease;
+        }
+        
+        .node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            border-color: #3182ce;
+        }
+        
+        .node-header {
+            background: #4299e1;
+            color: white;
+            padding: 8px 12px;
+            margin: -15px -15px 10px -15px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        
+        .keys {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .key-record {
+            background: #e6fffa;
+            border: 1px solid #38b2ac;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 0.85em;
+            transition: background 0.2s ease;
+        }
+        
+        .key-record:hover {
+            background: #b2f5ea;
+        }
+        
+        .key-id {
+            font-weight: bold;
+            color: #2c7a7b;
+        }
+        
+        .key-data {
+            color: #4a5568;
+            font-size: 0.8em;
+            margin-top: 2px;
+        }
+        
+        .leaf-node {
+            border-color: #48bb78;
+            background: linear-gradient(145deg, #f0fff4, #e6fffa);
+        }
+        
+        .leaf-node .node-header {
+            background: #48bb78;
+        }
+        
+        .leaf-node .key-record {
+            background: #f0fff4;
+            border-color: #48bb78;
+        }
+        
+        .leaf-node .key-record:hover {
+            background: #c6f6d5;
+        }
+        
+        .connector {
+            width: 2px;
+            height: 30px;
+            background: #4a5568;
+            margin: -10px 0;
+        }
+        
+        .horizontal-connectors {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+        }
+        
+        .h-connector {
+            height: 2px;
+            background: #4a5568;
+            flex: 1;
+            max-width: 100px;
+        }
+        
+        .search-demo {
+            background: #fef5e7;
+            border: 2px solid #ed8936;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        
+        .search-demo h3 {
+            color: #c05621;
+            margin-top: 0;
+        }
+        
+        .search-path {
+            background: #fff5f5;
+            border: 1px solid #fc8181;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(145deg, #f7fafc, #edf2f7);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4299e1;
+            display: block;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .highlight {
+            background: #fed7d7 !important;
+            border-color: #e53e3e !important;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>B-Tree with Data Records</h1>
+        <p class="subtitle">Order-3 B-Tree storing Employee Records (Max 2 keys per node)</p>
+        
+        <div class="controls">
+            <button onclick="searchRecord(105)">Search ID: 105</button>
+            <button onclick="searchRecord(134)">Search ID: 134</button>
+            <button onclick="searchRecord(178)">Search ID: 178</button>
+            <button onclick="clearHighlight()">Clear</button>
+        </div>
+        
+        <div class="btree-container">
+            <!-- Level 0 - Root -->
+            <div class="level">
+                <div class="node" id="node-root">
+                    <div class="node-header">Internal Node (Root)</div>
+                    <div class="keys">
+                        <div class="key-record">
+                            <div class="key-id">Key: 125</div>
+                            <div class="key-data">Split point</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="connector"></div>
+            
+            <!-- Horizontal connectors -->
+            <div class="horizontal-connectors">
+                <div class="h-connector"></div>
+                <div style="width: 20px;"></div>
+                <div class="h-connector"></div>
+            </div>
+            
+            <!-- Level 1 - Internal nodes -->
+            <div class="level">
+                <div class="node" id="node-left">
+                    <div class="node-header">Internal Node</div>
+                    <div class="keys">
+                        <div class="key-record">
+                            <div class="key-id">Key: 110</div>
+                            <div class="key-data">Split point</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="node" id="node-right">
+                    <div class="node-header">Internal Node</div>
+                    <div class="keys">
+                        <div class="key-record">
+                            <div class="key-id">Key: 150</div>
+                            <div class="key-data">Split point</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="connector"></div>
+            
+            <!-- More horizontal connectors -->
+            <div class="horizontal-connectors">
+                <div class="h-connector" style="max-width: 60px;"></div>
+                <div style="width: 10px;"></div>
+                <div class="h-connector" style="max-width: 60px;"></div>
+                <div style="width: 40px;"></div>
+                <div class="h-connector" style="max-width: 60px;"></div>
+                <div style="width: 10px;"></div>
+                <div class="h-connector" style="max-width: 60px;"></div>
+            </div>
+            
+            <!-- Level 2 - Leaf nodes -->
+            <div class="level">
+                <div class="node leaf-node" id="leaf-1">
+                    <div class="node-header">Leaf Node</div>
+                    <div class="keys">
+                        <div class="key-record" id="record-101">
+                            <div class="key-id">ID: 101</div>
+                            <div class="key-data">Alice Johnson, Engineer</div>
+                        </div>
+                        <div class="key-record" id="record-105">
+                            <div class="key-id">ID: 105</div>
+                            <div class="key-data">Bob Smith, Designer</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="node leaf-node" id="leaf-2">
+                    <div class="node-header">Leaf Node</div>
+                    <div class="keys">
+                        <div class="key-record" id="record-112">
+                            <div class="key-id">ID: 112</div>
+                            <div class="key-data">Carol Davis, Manager</div>
+                        </div>
+                        <div class="key-record" id="record-118">
+                            <div class="key-id">ID: 118</div>
+                            <div class="key-data">David Wilson, Analyst</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="node leaf-node" id="leaf-3">
+                    <div class="node-header">Leaf Node</div>
+                    <div class="keys">
+                        <div class="key-record" id="record-134">
+                            <div class="key-id">ID: 134</div>
+                            <div class="key-data">Eva Martinez, Developer</div>
+                        </div>
+                        <div class="key-record" id="record-142">
+                            <div class="key-id">ID: 142</div>
+                            <div class="key-data">Frank Lee, Tester</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="node leaf-node" id="leaf-4">
+                    <div class="node-header">Leaf Node</div>
+                    <div class="keys">
+                        <div class="key-record" id="record-156">
+                            <div class="key-id">ID: 156</div>
+                            <div class="key-data">Grace Kim, Architect</div>
+                        </div>
+                        <div class="key-record" id="record-178">
+                            <div class="key-id">ID: 178</div>
+                            <div class="key-data">Henry Brown, Director</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="search-demo" id="search-demo" style="display: none;">
+            <h3>Search Path Demonstration</h3>
+            <div id="search-steps"></div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <span class="stat-number">3</span>
+                <div class="stat-label">Tree Height</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">7</span>
+                <div class="stat-label">Total Nodes</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">8</span>
+                <div class="stat-label">Data Records</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">≤3</span>
+                <div class="stat-label">Max Disk Reads</div>
+            </div>
+        </div>
+        
+        <div style="background: #f7fafc; padding: 20px; border-radius: 10px; margin-top: 30px;">
+            <h3 style="color: #4a5568; margin-top: 0;">Key Characteristics:</h3>
+            <ul style="color: #718096; line-height: 1.6;">
+                <li><strong>Order 3 B-Tree:</strong> Each node can have maximum 2 keys and 3 children</li>
+                <li><strong>Balanced:</strong> All leaf nodes are at the same level (depth 2)</li>
+                <li><strong>Sorted:</strong> Keys are maintained in ascending order within nodes</li>
+                <li><strong>Efficient Search:</strong> Maximum 3 disk reads to find any record</li>
+                <li><strong>Space Efficient:</strong> Nodes are at least 50% full (except root)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentHighlight = [];
+        
+        function clearHighlight() {
+            currentHighlight.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.classList.remove('highlight');
+                }
+            });
+            currentHighlight = [];
+            document.getElementById('search-demo').style.display = 'none';
+        }
+        
+        function searchRecord(targetId) {
+            clearHighlight();
+            
+            const searchSteps = [];
+            const path = [];
+            
+            // Simulate B-tree search
+            if (targetId < 125) {
+                // Go left from root
+                path.push('node-root');
+                searchSteps.push(`Step 1: Compare ${targetId} with 125 at root → Go left (${targetId} < 125)`);
+                
+                if (targetId < 110) {
+                    // Go left from left internal
+                    path.push('node-left');
+                    searchSteps.push(`Step 2: Compare ${targetId} with 110 → Go left (${targetId} < 110)`);
+                    
+                    if (targetId <= 105) {
+                        path.push('leaf-1');
+                        searchSteps.push(`Step 3: Reached leaf node → Search for ID ${targetId}`);
+                        if (targetId === 101) path.push('record-101');
+                        if (targetId === 105) path.push('record-105');
+                    } else {
+                        path.push('leaf-2');
+                        searchSteps.push(`Step 3: Reached leaf node → Search for ID ${targetId}`);
+                        if (targetId === 112) path.push('record-112');
+                        if (targetId === 118) path.push('record-118');
+                    }
+                } else {
+                    // Go right from left internal
+                    path.push('node-left');
+                    searchSteps.push(`Step 2: Compare ${targetId} with 110 → Go right (${targetId} > 110)`);
+                    path.push('leaf-2');
+                    searchSteps.push(`Step 3: Reached leaf node → Search for ID ${targetId}`);
+                    if (targetId === 112) path.push('record-112');
+                    if (targetId === 118) path.push('record-118');
+                }
+            } else {
+                // Go right from root
+                path.push('node-root');
+                searchSteps.push(`Step 1: Compare ${targetId} with 125 at root → Go right (${targetId} > 125)`);
+                
+                if (targetId < 150) {
+                    // Go left from right internal
+                    path.push('node-right');
+                    searchSteps.push(`Step 2: Compare ${targetId} with 150 → Go left (${targetId} < 150)`);
+                    path.push('leaf-3');
+                    searchSteps.push(`Step 3: Reached leaf node → Search for ID ${targetId}`);
+                    if (targetId === 134) path.push('record-134');
+                    if (targetId === 142) path.push('record-142');
+                } else {
+                    // Go right from right internal
+                    path.push('node-right');
+                    searchSteps.push(`Step 2: Compare ${targetId} with 150 → Go right (${targetId} > 150)`);
+                    path.push('leaf-4');
+                    searchSteps.push(`Step 3: Reached leaf node → Search for ID ${targetId}`);
+                    if (targetId === 156) path.push('record-156');
+                    if (targetId === 178) path.push('record-178');
+                }
+            }
+            
+            // Highlight the path
+            currentHighlight = path;
+            let delay = 0;
+            path.forEach((nodeId, index) => {
+                setTimeout(() => {
+                    const element = document.getElementById(nodeId);
+                    if (element) {
+                        element.classList.add('highlight');
+                    }
+                }, delay);
+                delay += 500;
+            });
+            
+            // Show search steps
+            setTimeout(() => {
+                const demoDiv = document.getElementById('search-demo');
+                const stepsDiv = document.getElementById('search-steps');
+                stepsDiv.innerHTML = searchSteps.map(step => `<div class="search-path">${step}</div>`).join('');
+                demoDiv.style.display = 'block';
+            }, 100);
+        }
+        
+        // Add some interactive hover effects
+        document.querySelectorAll('.node').forEach(node => {
+            node.addEventListener('mouseenter', function() {
+                if (!this.classList.contains('highlight')) {
+                    this.style.transform = 'translateY(-3px)';
+                    this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.12)';
+                }
+            });
+            
+            node.addEventListener('mouseleave', function() {
+                if (!this.classList.contains('highlight')) {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
