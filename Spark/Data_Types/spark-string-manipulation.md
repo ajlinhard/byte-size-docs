@@ -1,4 +1,28 @@
 # PySpark String Manipulation Cheat Sheet
+### Function Reference Table
+
+| Function Name | Purpose | Parameters | Example |
+|---------------|---------|------------|---------|
+| `upper()` | Convert to uppercase | `col` | `df.select(upper(col("name")))` |
+| `lower()` | Convert to lowercase | `col` | `df.select(lower(col("name")))` |
+| `length()` | Get string length | `col` | `df.select(length(col("name")))` |
+| `trim()` | Remove leading/trailing spaces | `col` | `df.select(trim(col("name")))` |
+| `ltrim()` | Remove leading spaces | `col` | `df.select(ltrim(col("name")))` |
+| `rtrim()` | Remove trailing spaces | `col` | `df.select(rtrim(col("name")))` |
+| `substring()` | Extract substring | `col, pos, len` | `df.select(substring(col("name"), 1, 3))` |
+| `concat()` | Concatenate strings | `*cols` | `df.select(concat(col("first"), col("last")))` |
+| `concat_ws()` | Concatenate with separator | `sep, *cols` | `df.select(concat_ws(" ", col("first"), col("last")))` |
+| `split()` | Split string into array | `col, pattern` | `df.select(split(col("name"), " "))` |
+| `regexp_replace()` | Replace using regex | `col, pattern, replacement` | `df.select(regexp_replace(col("phone"), r"\D", ""))` |
+| `regexp_extract()` | Extract using regex | `col, pattern, idx` | `df.select(regexp_extract(col("email"), r"@(.+)", 1))` |
+| `contains()` | Check if contains substring | `other` | `df.filter(col("name").contains("John"))` |
+| `startswith()` | Check if starts with | `other` | `df.filter(col("name").startswith("A"))` |
+| `endswith()` | Check if ends with | `other` | `df.filter(col("name").endswith("son"))` |
+| `like()` | Pattern matching with wildcards | `other` | `df.filter(col("name").like("J%"))` |
+| `rlike()` | Regular expression matching | `other` | `df.filter(col("name").rlike(r"^[A-Z]"))` |
+| `substr()` | Extract substring (alias) | `startPos, length` | `df.select(col("name").substr(1, 3))` |
+| `translate()` | Replace characters | `col, matching, replace` | `df.select(translate(col("text"), "123", "abc"))` |
+| `initcap()` | Convert to title case | `col` | `df.select(initcap(col("name")))` |
 
 ## Basic Setup
 
