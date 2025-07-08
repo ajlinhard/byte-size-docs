@@ -36,11 +36,33 @@ Delta Lake implements these ACID properties through several key mechanisms:
 This makes Delta Lake suitable for use cases requiring strong consistency guarantees, such as financial data processing, regulatory compliance, and scenarios where data accuracy is critical. Standard Apache Spark without Delta Lake does not provide these ACID guarantees.
 ![image](https://github.com/user-attachments/assets/54a5a492-96bf-4cf7-81c4-c3c9f38e23a9)
 
-# Medallion Architecture
+# Medallion Architecture (aka Multi-hop)
 Bronze is the Raw data storage which is not altered, or adjusted at all.
 Silver is the transformation, hygiene and column additions.
 Gold is the aggregates, joined, or normalized data.
 ![image](https://github.com/user-attachments/assets/add4492a-b630-41dc-8d23-b4150ffe58ff)
+
+### Bronze Layer
+- Typically just a raw copy of the ingested data.
+  - The reason to leave it raw, aka no transforms or deduplication is to avoid back-pressure.
+- Replaces traditional data lakes.
+- Provides efficient storage and querying of full, unprocessed history of data.
+  - This allows for an accurate review and study of all data created. Solve ingest issues, or gather even more insights from transactions.
+
+### Silver Layer
+- Reduce data storage complexity, latency, and redundancy
+- Optimizes ETL throughput and analytic query performance.
+- Tons of transformation: data type casting, null-handing, data mining
+- Preserves grain of original data (without aggregation)
+- Eliminates duplicated
+- Enforce production schema
+- Data quality check, corrupt data quarantined
+
+### Gold Layer
+- Powers ML applications, reporting, dashboards, and ad hoc analytics
+- Refined views of data, typlically with aggregations
+- Reduces strain on production systems
+- Optimizes query perfomance for business-critical data
 
 ## Metastore
 A metastore contains all the catalogs, schemas(databases), tables, views , functions, etc in your system. A workspace is assigned a Metastore to work on/from. The databricks admin sets this up.
