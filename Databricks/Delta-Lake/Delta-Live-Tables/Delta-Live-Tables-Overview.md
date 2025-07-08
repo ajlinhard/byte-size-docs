@@ -110,7 +110,6 @@ Additionally:
   - Allows you to deep dive into events that occurred within your data.
   - Export them to another table for investigation and additional stats of feeds.
  
-
 ## Parameterize Pipelines
 To avoid hard coding paths, catalogs, schmea, etc you may want to parameterize the pipeline for ease reuse.
 
@@ -150,3 +149,35 @@ Databricks Delta Live Tables (DLT) has several limitations and scenarios where i
 - Workloads that need to run outside the Databricks ecosystem
 
 DLT works best for medallion architecture implementations, data quality enforcement, and managed ETL/ELT pipelines, but it's not a universal solution for all data processing needs.
+
+## Schema Evolution Support in DLT
+
+**Yes**, DLT does allow schema evolution for both materialized views and streaming tables, **BUT** with important limitations and considerations:
+
+### Automatic Schema Evolution Support
+
+DLT automatically handles adding new columns to streaming tables. The following data type changes are handled automatically: changing from NullType to any other type, and upcasts from ByteType → ShortType → IntegerType.
+
+For incompatible schema changes in streaming tables, data is rescued into the _rescued_data column rather than causing pipeline failures.
+
+### Materialized Views
+For materialized views to support incremental refresh, source data should be stored in Delta tables with row tracking and change data feed enabled. When schema changes occur in the underlying tables, materialized views can be refreshed to accommodate the changes, though when materialized views are created over source tables that contain row filters and column masks, the refresh is always a full refresh.
+
+### Streaming Tables
+In DLT streaming pipelines, adding new columns is automatically handled. However, when there are incompatible data type changes for existing columns, the pipeline will rescue the incompatible data to the _rescued_data column.
+
+### Key Limitations and Workarounds
+
+**Data Type Changes:** When incompatible schema changes occur, you may need to perform a full refresh of the pipeline or create additional versioned tables and union them with views.
+
+**Column Renaming:** Column renaming is not automatically supported for streaming tables in Unity Catalog. You can handle this by coalescing the old and new columns in your transformations.
+
+**Configuration:** You can enable automatic schema merging using spark.databricks.delta.schema.autoMerge.enabled configuration for streaming data.
+
+### Best Practices
+- Design schemas to anticipate future changes
+- Use the `mergeSchema` option when writing to Delta tables
+- Monitor pipeline behavior to verify incremental vs. full refreshes
+- Consider using versioned tables for major schema changes
+
+While DLT provides good support for additive schema changes (new columns), non-additive changes (column renames, type changes) require more careful handling and may necessitate full refreshes or manual intervention.
