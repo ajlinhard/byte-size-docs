@@ -1,6 +1,8 @@
 # Spark SQL File Loading
 This file loading cheat sheet uses pure Spark SQL syntax instead of Python/PySpark. The sheet covers:
 
+---
+# Temp View Code
 **Key Features:**
 - **Pure SQL Syntax**: All examples use `CREATE TEMPORARY VIEW` and standard SQL queries
 - **CSV Files**: Basic and advanced loading with OPTIONS, schema definition, multiple files
@@ -20,7 +22,6 @@ This file loading cheat sheet uses pure Spark SQL syntax instead of Python/PySpa
 
 All examples now use standard Spark SQL syntax that you can run directly in Spark SQL, Databricks notebooks, or any Spark SQL environment without requiring Python knowledge.
 
----
 # Code
 # Spark SQL File Loading Cheat Sheet
 
