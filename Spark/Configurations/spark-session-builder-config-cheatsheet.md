@@ -24,113 +24,264 @@ I've also included three common configuration examples at the end for different 
 ---
 # Spark Session Builder Configuration Options Cheatsheet
 
-| Key | Purpose | Example Values |
-|-----|---------|----------------|
-| **Application Settings** | | |
-| `spark.app.name` | Sets the application name shown in Spark UI | `"MySparkApp"`, `"ETL Pipeline"` |
-| `spark.app.id` | Unique identifier for the application | `"app-20231201-1234"` |
-| | | |
-| **Driver Configuration** | | |
-| `spark.driver.memory` | Memory allocated to the driver process | `"2g"`, `"4g"`, `"8g"` |
-| `spark.driver.cores` | Number of cores allocated to driver | `"1"`, `"2"`, `"4"` |
-| `spark.driver.maxResultSize` | Maximum size of results collected to driver | `"1g"`, `"2g"`, `"0"` (unlimited) |
-| `spark.driver.host` | Hostname or IP address for the driver | `"localhost"`, `"192.168.1.100"` |
-| `spark.driver.port` | Port for the driver to listen on | `"7077"`, `"4040"` |
-| | | |
-| **Executor Configuration** | | |
-| `spark.executor.memory` | Memory allocated per executor | `"2g"`, `"4g"`, `"8g"` |
-| `spark.executor.cores` | Number of cores per executor | `"2"`, `"4"`, `"8"` |
-| `spark.executor.instances` | Number of executor instances | `"2"`, `"10"`, `"50"` |
-| `spark.executor.memoryFraction` | Fraction of executor memory for caching | `"0.6"`, `"0.8"` |
-| `spark.executor.heartbeatInterval` | Interval for executor heartbeats | `"10s"`, `"30s"` |
-| `spark.executor.logs.rolling.strategy` | Rolling strategy for executor logs | `"time"`, `"size"` |
-| | | |
-| **Dynamic Allocation** | | |
-| `spark.dynamicAllocation.enabled` | Enable dynamic allocation of executors | `"true"`, `"false"` |
-| `spark.dynamicAllocation.minExecutors` | Minimum number of executors | `"1"`, `"2"`, `"5"` |
-| `spark.dynamicAllocation.maxExecutors` | Maximum number of executors | `"10"`, `"50"`, `"100"` |
-| `spark.dynamicAllocation.initialExecutors` | Initial number of executors | `"2"`, `"5"`, `"10"` |
-| `spark.dynamicAllocation.executorIdleTimeout` | Timeout for idle executors | `"60s"`, `"300s"` |
-| | | |
-| **Serialization** | | |
-| `spark.serializer` | Serializer class for objects | `"org.apache.spark.serializer.KryoSerializer"` |
-| `spark.serializer.objectStreamReset` | Reset object stream periodically | `"100"`, `"10000"` |
-| `spark.kryoserializer.buffer.max` | Maximum Kryo serialization buffer size | `"64m"`, `"128m"`, `"256m"` |
-| | | |
-| **Shuffle Configuration** | | |
-| `spark.shuffle.service.enabled` | Enable external shuffle service | `"true"`, `"false"` |
-| `spark.shuffle.service.port` | Port for external shuffle service | `"7337"`, `"7338"` |
-| `spark.shuffle.compress` | Compress shuffle output | `"true"`, `"false"` |
-| `spark.shuffle.spill.compress` | Compress spilled data during shuffle | `"true"`, `"false"` |
-| `spark.shuffle.file.buffer` | Buffer size for shuffle files | `"32k"`, `"64k"`, `"128k"` |
-| | | |
-| **Storage Configuration** | | |
-| `spark.storage.memoryFraction` | Fraction of memory for RDD storage | `"0.6"`, `"0.8"` |
-| `spark.storage.unrollFraction` | Fraction of memory for unrolling blocks | `"0.2"`, `"0.3"` |
-| `spark.storage.blockManagerHeartBeatMs` | Block manager heartbeat interval | `"10000"`, `"30000"` |
-| | | |
-| **Network Configuration** | | |
-| `spark.network.timeout` | Default network timeout | `"120s"`, `"300s"` |
-| `spark.rpc.askTimeout` | Timeout for RPC ask operations | `"120s"`, `"300s"` |
-| `spark.rpc.lookupTimeout` | Timeout for RPC lookup operations | `"120s"`, `"300s"` |
-| `spark.port.maxRetries` | Maximum retries for port binding | `"16"`, `"100"` |
-| | | |
-| **SQL Configuration** | | |
-| `spark.sql.adaptive.enabled` | Enable adaptive query execution | `"true"`, `"false"` |
-| `spark.sql.adaptive.coalescePartitions.enabled` | Enable partition coalescing | `"true"`, `"false"` |
-| `spark.sql.adaptive.skewJoin.enabled` | Enable skew join optimization | `"true"`, `"false"` |
-| `spark.sql.warehouse.dir` | Default warehouse directory | `"/user/hive/warehouse"`, `"s3a://bucket/warehouse"` |
-| `spark.sql.hive.metastore.version` | Hive metastore version | `"2.3.7"`, `"3.1.2"` |
-| `spark.sql.hive.metastore.jars` | Hive metastore JARs | `"builtin"`, `"maven"`, `"path"` |
-| `spark.sql.catalogImplementation` | Catalog implementation | `"hive"`, `"in-memory"` |
-| `spark.sql.execution.arrow.pyspark.enabled` | Enable Arrow-based columnar data transfers | `"true"`, `"false"` |
-| | | |
-| **Hive Configuration** | | |
-| `hive.metastore.uris` | Hive metastore URI | `"thrift://localhost:9083"`, `"thrift://metastore:9083"` |
-| `hive.metastore.warehouse.dir` | Hive warehouse directory | `"/user/hive/warehouse"`, `"s3a://bucket/warehouse"` |
-| `hive.exec.dynamic.partition` | Enable dynamic partitioning | `"true"`, `"false"` |
-| `hive.exec.dynamic.partition.mode` | Dynamic partition mode | `"nonstrict"`, `"strict"` |
-| `hive.exec.max.dynamic.partitions` | Maximum dynamic partitions | `"1000"`, `"5000"` |
-| | | |
-| **Checkpointing** | | |
-| `spark.sql.streaming.checkpointLocation` | Checkpoint location for streaming | `"/tmp/checkpoints"`, `"s3a://bucket/checkpoints"` |
-| `spark.sql.recovery.checkpointDir` | Directory for SQL recovery checkpoints | `"/tmp/recovery"`, `"hdfs://namenode/recovery"` |
-| | | |
-| **Logging Configuration** | | |
-| `spark.eventLog.enabled` | Enable event logging | `"true"`, `"false"` |
-| `spark.eventLog.dir` | Directory for event logs | `"/tmp/spark-events"`, `"hdfs://namenode/spark-logs"` |
-| `spark.eventLog.compress` | Compress event logs | `"true"`, `"false"` |
-| `spark.history.fs.logDirectory` | History server log directory | `"/tmp/spark-events"`, `"s3a://bucket/spark-logs"` |
-| | | |
-| **Security Configuration** | | |
-| `spark.authenticate` | Enable authentication | `"true"`, `"false"` |
-| `spark.authenticate.secret` | Authentication secret | `"my-secret-key"` |
-| `spark.ssl.enabled` | Enable SSL | `"true"`, `"false"` |
-| `spark.ssl.keyStore` | SSL keystore path | `"/path/to/keystore.jks"` |
-| `spark.ssl.keyStorePassword` | SSL keystore password | `"password123"` |
-| | | |
-| **Resource Management** | | |
-| `spark.kubernetes.namespace` | Kubernetes namespace | `"default"`, `"spark-jobs"` |
-| `spark.kubernetes.container.image` | Container image for Kubernetes | `"spark:3.4.0"`, `"my-registry/spark:latest"` |
-| `spark.yarn.queue` | YARN queue name | `"default"`, `"production"` |
-| `spark.yarn.am.memory` | YARN Application Master memory | `"512m"`, `"1g"` |
-| `spark.yarn.am.cores` | YARN Application Master cores | `"1"`, `"2"` |
-| | | |
-| **Advanced Configuration** | | |
-| `spark.jars` | Additional JARs to include | `"/path/to/jar1.jar,/path/to/jar2.jar"` |
-| `spark.jars.packages` | Maven packages to include | `"org.apache.spark:spark-avro_2.12:3.4.0"` |
-| `spark.files` | Additional files to include | `"/path/to/file1.txt,/path/to/file2.conf"` |
-| `spark.python.worker.reuse` | Reuse Python worker processes | `"true"`, `"false"` |
-| `spark.python.worker.memory` | Memory for Python worker processes | `"512m"`, `"1g"` |
-| `spark.task.maxFailures` | Maximum task failures before job fails | `"1"`, `"3"`, `"5"` |
-| `spark.stage.maxConsecutiveAttempts` | Maximum consecutive stage attempts | `"4"`, `"8"` |
-| | | |
-| **Monitoring and Metrics** | | |
-| `spark.ui.enabled` | Enable Spark web UI | `"true"`, `"false"` |
-| `spark.ui.port` | Port for Spark web UI | `"4040"`, `"8080"` |
-| `spark.ui.killEnabled` | Enable killing jobs from UI | `"true"`, `"false"` |
-| `spark.metrics.conf` | Metrics configuration file | `"/path/to/metrics.properties"` |
-| `spark.sql.ui.explainMode` | Explain mode for SQL UI | `"simple"`, `"extended"`, `"formatted"` |
+## Overview
+This cheat sheet covers all configuration options that can be used with `SparkSession.builder.config()`. These properties control various aspects of Spark application behavior including memory management, execution, networking, and more.
+
+## Usage
+```python
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder \
+    .appName("MyApp") \
+    .config("spark.executor.memory", "4g") \
+    .config("spark.sql.adaptive.enabled", "true") \
+    .getOrCreate()
+```
+
+---
+
+## Application Properties
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.app.name` | Application name displayed in UI and logs | `"MySparkApp"`, `"ETL Pipeline"` | no default |
+| `spark.master` | Cluster manager to connect to | `"local[*]"`, `"yarn"`, `"spark://host:7077"` | no default |
+| `spark.submit.deployMode` | Deploy mode for driver | `"client"`, `"cluster"` | `"client"` |
+| `spark.driver.cores` | Number of cores for driver (cluster mode only) | `1`, `2`, `4` | `1` |
+| `spark.driver.memory` | Memory for driver process | `"1g"`, `"2g"`, `"512m"` | `"1g"` |
+| `spark.driver.memoryOverhead` | Non-heap memory for driver | `"384m"`, `"1g"` | `driverMemory * 0.10, min 384` |
+| `spark.executor.memory` | Memory per executor process | `"1g"`, `"4g"`, `"8g"` | `"1g"` |
+| `spark.executor.cores` | Number of cores per executor | `1`, `2`, `4`, `8` | `1` in YARN, all available in standalone` |
+| `spark.executor.instances` | Number of executor instances | `2`, `10`, `50` | no default |
+| `spark.executor.memoryOverhead` | Non-heap memory per executor | `"384m"`, `"1g"` | `executorMemory * 0.10, min 384` |
+| `spark.default.parallelism` | Default number of partitions for RDDs | `100`, `200`, `1000` | depends on cluster manager |
+| `spark.sql.shuffle.partitions` | Default partitions for shuffles | `200`, `400`, `800` | `200` |
+
+---
+
+## Memory Management
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.memory.fraction` | Fraction of heap for execution and storage | `0.6`, `0.7`, `0.8` | `0.6` |
+| `spark.memory.storageFraction` | Fraction of memory.fraction for storage | `0.5`, `0.3`, `0.7` | `0.5` |
+| `spark.memory.offHeap.enabled` | Enable off-heap memory | `true`, `false` | `false` |
+| `spark.memory.offHeap.size` | Size of off-heap memory | `"1g"`, `"2g"`, `"4g"` | `0` |
+| `spark.executor.pyspark.memory` | Memory limit for PySpark per executor | `"1g"`, `"2g"` | no default |
+| `spark.python.worker.memory` | Memory for Python worker processes | `"512m"`, `"1g"` | `"512m"` |
+| `spark.storage.memoryMapThreshold` | Threshold for memory mapping | `"2m"`, `"4m"`, `"8m"` | `"2m"` |
+| `spark.cleaner.periodicGC.interval` | Interval for periodic GC | `"30min"`, `"1h"` | no default |
+
+---
+
+## Execution Behavior
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.task.cpus` | Number of CPUs per task | `1`, `2`, `4` | `1` |
+| `spark.task.maxFailures` | Max task failures before failing job | `1`, `3`, `5` | `3` |
+| `spark.speculation` | Enable speculative execution | `true`, `false` | `false` |
+| `spark.speculation.interval` | Interval to check for speculation | `"100ms"`, `"1s"` | `"100ms"` |
+| `spark.speculation.multiplier` | Multiplier for speculation threshold | `1.5`, `2.0`, `3.0` | `1.5` |
+| `spark.broadcast.blockSize` | Block size for broadcast variables | `"4m"`, `"8m"`, `"16m"` | `"4m"` |
+| `spark.files.fetchTimeout` | Timeout for fetching files | `"60s"`, `"120s"`, `"300s"` | `"60s"` |
+| `spark.files.useFetchCache` | Use local cache for remote files | `true`, `false` | `true` |
+| `spark.files.overwrite` | Overwrite files if they exist | `true`, `false` | `false` |
+
+---
+
+## Shuffle Behavior
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.shuffle.compress` | Compress shuffle output files | `true`, `false` | `true` |
+| `spark.shuffle.file.buffer` | Buffer size for shuffle files | `"32k"`, `"64k"`, `"128k"` | `"32k"` |
+| `spark.shuffle.io.maxRetries` | Max retries for shuffle IO failures | `3`, `5`, `10` | `3` |
+| `spark.shuffle.io.retryWait` | Wait time between shuffle retries | `"5s"`, `"10s"`, `"30s"` | `"5s"` |
+| `spark.shuffle.service.enabled` | Enable external shuffle service | `true`, `false` | `false` |
+| `spark.shuffle.service.port` | Port for external shuffle service | `7337`, `7338` | `7337` |
+| `spark.shuffle.sort.bypassMergeThreshold` | Threshold to bypass merge sort | `200`, `400`, `800` | `200` |
+| `spark.shuffle.spill.compress` | Compress spilled shuffle data | `true`, `false` | `true` |
+
+---
+
+## Networking
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.rpc.message.maxSize` | Max RPC message size | `"128"`, `"256"`, `"512"` | `"128"` (MB) |
+| `spark.network.timeout` | Default network timeout | `"120s"`, `"300s"`, `"600s"` | `"120s"` |
+| `spark.rpc.askTimeout` | Timeout for RPC ask operations | `"120s"`, `"300s"` | value of `spark.network.timeout` |
+| `spark.rpc.lookupTimeout` | Timeout for RPC lookups | `"120s"`, `"300s"` | `"120s"` |
+| `spark.blockManager.port` | Port for block managers | `random`, `8020`, `8021` | random |
+| `spark.driver.port` | Port for driver to listen on | `random`, `4040`, `4041` | random |
+| `spark.driver.host` | Hostname/IP for driver | `"localhost"`, `"10.0.0.1"` | local hostname |
+| `spark.driver.bindAddress` | Address to bind listening sockets | `"0.0.0.0"`, `"10.0.0.1"` | value of `spark.driver.host` |
+
+---
+
+## Spark SQL
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.sql.adaptive.enabled` | Enable adaptive query execution | `true`, `false` | `true` |
+| `spark.sql.adaptive.coalescePartitions.enabled` | Coalesce shuffle partitions | `true`, `false` | `true` |
+| `spark.sql.adaptive.skewJoin.enabled` | Handle skewed joins | `true`, `false` | `true` |
+| `spark.sql.autoBroadcastJoinThreshold` | Broadcast join threshold | `"10MB"`, `"20MB"`, `"-1"` | `"10MB"` |
+| `spark.sql.warehouse.dir` | Default warehouse directory | `"/path/to/warehouse"` | `$PWD/spark-warehouse` |
+| `spark.sql.catalogImplementation` | Catalog implementation | `"hive"`, `"in-memory"` | `"in-memory"` |
+| `spark.sql.hive.metastore.version` | Hive metastore version | `"2.3.9"`, `"3.1.2"` | `"2.3.9"` |
+| `spark.sql.hive.metastore.jars` | Hive metastore JARs location | `"builtin"`, `"maven"`, `"/path/to/jars"` | `"builtin"` |
+| `spark.sql.execution.arrow.pyspark.enabled` | Enable Arrow for PySpark | `true`, `false` | `false` |
+| `spark.sql.repl.eagerEval.enabled` | Enable eager evaluation in REPL | `true`, `false` | `false` |
+
+---
+
+## Compression and Serialization
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.serializer` | Serializer for RDD data | `"org.apache.spark.serializer.KryoSerializer"` | `"org.apache.spark.serializer.JavaSerializer"` |
+| `spark.io.compression.codec` | Compression codec for internal data | `"lz4"`, `"lzf"`, `"snappy"`, `"zstd"` | `"lz4"` |
+| `spark.broadcast.compress` | Compress broadcast variables | `true`, `false` | `true` |
+| `spark.rdd.compress` | Compress serialized RDD partitions | `true`, `false` | `false` |
+| `spark.kryo.registrationRequired` | Require Kryo registration | `true`, `false` | `false` |
+| `spark.kryo.referenceTracking` | Track object references in Kryo | `true`, `false` | `true` |
+| `spark.kryoserializer.buffer` | Initial Kryo buffer size | `"64k"`, `"128k"`, `"256k"` | `"64k"` |
+| `spark.kryoserializer.buffer.max` | Max Kryo buffer size | `"64m"`, `"128m"`, `"256m"` | `"64m"` |
+
+---
+
+## Logging and UI
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.logConf` | Log effective SparkConf at startup | `true`, `false` | `false` |
+| `spark.ui.enabled` | Enable Spark web UI | `true`, `false` | `true` |
+| `spark.ui.port` | Port for Spark web UI | `4040`, `4041`, `8080` | `4040` |
+| `spark.ui.retainedJobs` | Number of jobs to retain in UI | `1000`, `2000`, `5000` | `1000` |
+| `spark.ui.retainedStages` | Number of stages to retain in UI | `1000`, `2000`, `5000` | `1000` |
+| `spark.ui.retainedTasks` | Number of tasks to retain in UI | `100000`, `200000` | `100000` |
+| `spark.eventLog.enabled` | Enable event logging | `true`, `false` | `false` |
+| `spark.eventLog.dir` | Directory for event logs | `"/tmp/spark-events"`, `"hdfs://logs"` | `"file:///tmp/spark-events"` |
+| `spark.eventLog.compress` | Compress event logs | `true`, `false` | `false` |
+| `spark.ui.showConsoleProgress` | Show progress in console | `true`, `false` | `false` (true in shell) |
+
+---
+
+## Dynamic Allocation
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.dynamicAllocation.enabled` | Enable dynamic executor allocation | `true`, `false` | `false` |
+| `spark.dynamicAllocation.minExecutors` | Minimum number of executors | `0`, `1`, `5` | `0` |
+| `spark.dynamicAllocation.maxExecutors` | Maximum number of executors | `10`, `50`, `100` | `infinity` |
+| `spark.dynamicAllocation.initialExecutors` | Initial number of executors | `1`, `5`, `10` | value of `spark.dynamicAllocation.minExecutors` |
+| `spark.dynamicAllocation.executorIdleTimeout` | Timeout for idle executors | `"60s"`, `"300s"`, `"600s"` | `"60s"` |
+| `spark.dynamicAllocation.cachedExecutorIdleTimeout` | Timeout for cached executors | `"infinity"`, `"1800s"` | `"infinity"` |
+| `spark.dynamicAllocation.schedulerBacklogTimeout` | Backlog timeout before scaling up | `"1s"`, `"5s"`, `"10s"` | `"1s"` |
+| `spark.dynamicAllocation.sustainedSchedulerBacklogTimeout` | Sustained backlog timeout | `"1s"`, `"5s"` | value of `schedulerBacklogTimeout` |
+
+---
+
+## Security
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.authenticate` | Enable Spark authentication | `true`, `false` | `false` |
+| `spark.authenticate.secret` | Shared secret for authentication | `"mysecret"`, `"abc123"` | no default |
+| `spark.ssl.enabled` | Enable SSL | `true`, `false` | `false` |
+| `spark.ssl.keyStore` | Path to SSL keystore | `"/path/to/keystore.jks"` | no default |
+| `spark.ssl.keyStorePassword` | Keystore password | `"password123"` | no default |
+| `spark.ssl.trustStore` | Path to SSL truststore | `"/path/to/truststore.jks"` | no default |
+| `spark.ssl.trustStorePassword` | Truststore password | `"password123"` | no default |
+| `spark.acls.enable` | Enable Spark ACLs | `true`, `false` | `false` |
+| `spark.admin.acls` | Admin users for ACLs | `"admin1,admin2"` | no default |
+
+---
+
+## Kubernetes Specific
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.kubernetes.container.image` | Docker image for executors | `"spark:3.5.0"`, `"myregistry/spark:latest"` | no default |
+| `spark.kubernetes.namespace` | Kubernetes namespace | `"default"`, `"spark-jobs"` | `"default"` |
+| `spark.kubernetes.authenticate.driver.serviceAccountName` | Service account for driver | `"spark-driver"` | no default |
+| `spark.kubernetes.executor.deleteOnTermination` | Delete executor pods on termination | `true`, `false` | `true` |
+| `spark.kubernetes.executor.request.cores` | CPU request for executors | `"1"`, `"2"`, `"0.5"` | no default |
+| `spark.kubernetes.executor.limit.cores` | CPU limit for executors | `"2"`, `"4"`, `"1"` | no default |
+| `spark.kubernetes.driver.pod.name` | Name for driver pod | `"my-spark-driver"` | no default |
+
+---
+
+## YARN Specific
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.yarn.queue` | YARN queue to submit to | `"default"`, `"production"`, `"batch"` | `"default"` |
+| `spark.yarn.am.memory` | Memory for YARN Application Master | `"512m"`, `"1g"`, `"2g"` | `"512m"` |
+| `spark.yarn.am.cores` | Cores for YARN Application Master | `1`, `2` | `1` |
+| `spark.yarn.executor.memoryOverhead` | Memory overhead for executors | `"384m"`, `"1g"` | `max(384, .1 * spark.executor.memory)` |
+| `spark.yarn.am.waitTime` | Wait time for AM to start | `"100s"`, `"300s"` | `"100s"` |
+| `spark.yarn.submit.waitAppCompletion` | Wait for app completion | `true`, `false` | `true` |
+| `spark.yarn.appMasterEnv.VARIABLE` | Environment variables for AM | `"value"` | no default |
+| `spark.yarn.executorEnv.VARIABLE` | Environment variables for executors | `"value"` | no default |
+
+---
+
+## Data Sources
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.sql.sources.default` | Default data source format | `"parquet"`, `"delta"`, `"json"` | `"parquet"` |
+| `spark.sql.parquet.compression.codec` | Parquet compression codec | `"snappy"`, `"gzip"`, `"lzo"` | `"snappy"` |
+| `spark.sql.parquet.enableVectorizedReader` | Enable vectorized Parquet reader | `true`, `false` | `true` |
+| `spark.sql.orc.compression.codec` | ORC compression codec | `"snappy"`, `"zlib"`, `"lzo"` | `"snappy"` |
+| `spark.sql.csv.filterPushdown.enabled` | Enable CSV filter pushdown | `true`, `false` | `true` |
+| `spark.sql.json.filterPushdown.enabled` | Enable JSON filter pushdown | `true`, `false` | `true` |
+| `spark.sql.files.maxPartitionBytes` | Max bytes per file partition | `"128MB"`, `"256MB"`, `"512MB"` | `"128MB"` |
+| `spark.sql.files.maxRecordsPerFile` | Max records per output file | `0`, `10000`, `100000` | `0` (unlimited) |
+
+---
+
+## Connect (Spark 3.4+)
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.connect.grpc.binding.port` | Port for Spark Connect server | `15002`, `15003` | `15002` |
+| `spark.connect.grpc.maxInboundMessageSize` | Max gRPC message size | `134217728`, `268435456` | `134217728` |
+| `spark.connect.grpc.arrow.maxBatchSize` | Max Arrow batch size | `"4m"`, `"8m"`, `"16m"` | `"4m"` |
+
+---
+
+## Notes
+
+### Time Formats
+- `25ms` (milliseconds)
+- `5s` (seconds) 
+- `10m` or `10min` (minutes)
+- `3h` (hours)
+- `5d` (days)
+- `1y` (years)
+
+### Size Formats  
+- `1b` (bytes)
+- `1k` or `1kb` (kibibytes = 1024 bytes)
+- `1m` or `1mb` (mebibytes = 1024 kibibytes) 
+- `1g` or `1gb` (gibibytes = 1024 mebibytes)
+- `1t` or `1tb` (tebibytes = 1024 gibibytes)
+- `1p` or `1pb` (pebibytes = 1024 tebibytes)
+
+### Configuration Precedence (highest to lowest)
+1. `SparkConf` set programmatically
+2. `--conf` flags passed to `spark-submit` 
+3. `spark-defaults.conf` file
+4. Default values
+
+### Additional Resources
+- [Official Spark Configuration Documentation](https://spark.apache.org/docs/latest/configuration.html)
+- Use `spark.conf.getAll()` to view all current configurations
+- Use `spark.conf.isModifiable("config.key")` to check if a config can be changed at runtime
 
 ## Common Configuration Examples
 
