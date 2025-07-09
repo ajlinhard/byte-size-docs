@@ -105,6 +105,15 @@ spark = SparkSession.builder \
 
 ---
 
+## Storage Configuration
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.storage.memoryFraction` | Fraction of memory for RDD storage | `"0.6"`, `"0.8"` |
+| `spark.storage.unrollFraction` | Fraction of memory for unrolling blocks | `"0.2"`, `"0.3"` |
+| `spark.storage.blockManagerHeartBeatMs` | Block manager heartbeat interval | `"10000"`, `"30000"` |
+
+---
+
 ## Networking
 
 | Key | Purpose | Example Values | Default Value |
@@ -134,6 +143,18 @@ spark = SparkSession.builder \
 | `spark.sql.hive.metastore.jars` | Hive metastore JARs location | `"builtin"`, `"maven"`, `"/path/to/jars"` | `"builtin"` |
 | `spark.sql.execution.arrow.pyspark.enabled` | Enable Arrow for PySpark | `true`, `false` | `false` |
 | `spark.sql.repl.eagerEval.enabled` | Enable eager evaluation in REPL | `true`, `false` | `false` |
+
+---
+
+## Hive Configuration
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `hive.metastore.uris` | Hive metastore URI | `"thrift://localhost:9083"`, `"thrift://metastore:9083"` |
+| `hive.metastore.warehouse.dir` | Hive warehouse directory | `"/user/hive/warehouse"`, `"s3a://bucket/warehouse"` |
+| `hive.exec.dynamic.partition` | Enable dynamic partitioning | `"true"`, `"false"` |
+| `hive.exec.dynamic.partition.mode` | Dynamic partition mode | `"nonstrict"`, `"strict"` |
+| `hive.exec.max.dynamic.partitions` | Maximum dynamic partitions | `"1000"`, `"5000"` |
 
 ---
 
@@ -200,6 +221,18 @@ spark = SparkSession.builder \
 
 ---
 
+## Checkpointing and Logging Configuration
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.sql.streaming.checkpointLocation` | Checkpoint location for streaming | `"/tmp/checkpoints"`, `"s3a://bucket/checkpoints"` |
+| `spark.sql.recovery.checkpointDir` | Directory for SQL recovery checkpoints | `"/tmp/recovery"`, `"hdfs://namenode/recovery"` |
+| `spark.eventLog.enabled` | Enable event logging | `"true"`, `"false"` |
+| `spark.eventLog.dir` | Directory for event logs | `"/tmp/spark-events"`, `"hdfs://namenode/spark-logs"` |
+| `spark.eventLog.compress` | Compress event logs | `"true"`, `"false"` |
+| `spark.history.fs.logDirectory` | History server log directory | `"/tmp/spark-events"`, `"s3a://bucket/spark-logs"` |
+
+---
 ## Kubernetes Specific
 
 | Key | Purpose | Example Values | Default Value |
@@ -254,6 +287,19 @@ spark = SparkSession.builder \
 
 ---
 
+## Advanced Configuration
+
+| Key | Purpose | Example Values | Default Value |
+|-----|---------|---------------|---------------|
+| `spark.jars` | Additional JARs to include | `"/path/to/jar1.jar,/path/to/jar2.jar"` |
+| `spark.jars.packages` | Maven packages to include | `"org.apache.spark:spark-avro_2.12:3.4.0"` |
+| `spark.files` | Additional files to include | `"/path/to/file1.txt,/path/to/file2.conf"` |
+| `spark.python.worker.reuse` | Reuse Python worker processes | `"true"`, `"false"` |
+| `spark.python.worker.memory` | Memory for Python worker processes | `"512m"`, `"1g"` |
+| `spark.task.maxFailures` | Maximum task failures before job fails | `"1"`, `"3"`, `"5"` |
+| `spark.stage.maxConsecutiveAttempts` | Maximum consecutive stage attempts | `"4"`, `"8"` |
+
+---
 ## Notes
 
 ### Time Formats
