@@ -1,4 +1,4 @@
-# Dataricks File Loading Overview
+# Dataricks File Loading CTAS
 When loading data into Databricks there are 3 high level methods: Batch, Incremental Batch, and Streaming. Additionally, there are multiple syntaxes for accomplishing each depending on the use case.
 
 ## Batch or Incremental Batch
