@@ -25,6 +25,73 @@ The delta-rs library lets you read, write, and manage Delta Lake tables with Pyt
 ### **Cloud Services**
 Delta Lake integrates with managed services including AWS Athena (native support starting with Athena SQL 3.0), Amazon EMR (starting with release 6.9.0), AWS Glue (3.0 and later supports Delta Lake), and Azure Stream Analytics (provides native write support)
 
+---
+## What Databricks Runtime Includes by Default
+**Databricks runtime has mixed support for the delta-rs Python package**, and there are important distinctions to understand:
+
+**Built-in Delta Lake Support:**
+All tables created on Databricks use Delta Lake by default, and Delta Lake is the default for all reads, writes, and table creation commands in Databricks. This uses the **Spark-based Delta Lake implementation** (not delta-rs).
+
+**Native Delta APIs Available:**
+- `from delta.tables import DeltaTable` (Spark-based)
+- Standard `df.write.format("delta")` operations
+- Time travel, MERGE operations, etc.
+
+## delta-rs (Python Package) Compatibility Issues
+
+**Known Problems:**
+There are documented issues using delta-rs on Databricks runtime, including authentication problems where Databricks clusters use IAM roles to access S3 buckets, but delta-rs fails with errors like "Failed to load checkpoint: Invalid JSON in checkpoint"
+
+**Version Compatibility Conflicts:**
+If you create Delta tables using the Databricks Spark Engine, the read & write version will be higher, and if you want to write to those delta tables created by Databricks, Python (delta-rs) is currently not supported with that
+
+## Key Differences
+
+**Databricks Native (Spark-based):**
+```python
+# This works seamlessly in Databricks
+from delta.tables import DeltaTable
+deltaTable = DeltaTable.forName(spark, "main.default.people_10m")
+deltaTable.history().show()
+```
+
+**delta-rs (Rust-based):**
+```python
+# This may have compatibility issues in Databricks
+from deltalake import DeltaTable
+dt = DeltaTable("s3://bucket/path")  # May fail with auth/version issues
+```
+
+## Why the Conflicts Exist
+
+**Different Implementations:**
+The deltalake implementation (delta-rs) has no dependencies on Java, Spark, or Databricks, while "Delta Spark" refers to the Scala implementation that depends on Spark and Java
+
+**Authentication Mechanisms:**
+- Databricks uses Spark-integrated authentication
+- delta-rs has its own authentication system that may not work with Databricks' IAM integration
+
+## Recommendations
+
+**For Databricks Users:**
+1. **Use the built-in Spark-based Delta APIs** - they're optimized for Databricks
+2. **Avoid delta-rs in Databricks runtime** unless you have specific use cases
+3. **Use delta-rs outside of Databricks** for local development or non-Spark environments
+
+**Best Practice:**
+```python
+# In Databricks - use this
+from delta.tables import DeltaTable
+deltaTable = DeltaTable.forPath(spark, "/path/to/table")
+
+# Outside Databricks - use this  
+from deltalake import DeltaTable
+dt = DeltaTable("/path/to/table")
+```
+
+The general consensus is that while you *can* install delta-rs in Databricks runtime, it's not recommended due to compatibility issues and redundancy with the already excellent built-in Spark-based Delta Lake support.
+
+---
 ## Two Integration Approaches
 
 **1. Delta Standalone (JVM-based):**
