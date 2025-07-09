@@ -1,6 +1,13 @@
 # Spark File Loading COPY INTO
 The COPY INTO command in spark has some useful perks as a file loading method. The most important is idempotency or incremental file loading, which requires the installation/configuration of Delta Lake. The syntax is only available in Spark SQL.
 
+### Spark File Loading COPY INTO
+- The Basics
+- Backend Processing Walkthrough
+- Data Copying/Flow
+- Example Code
+- COPY INTO Options Cheatsheet
+
 ## The Basics
 ### **Basic Structure:**
 Here's the basic structure and examples of the COPY INTO statement in Spark:Key points about COPY INTO in Spark:
@@ -198,3 +205,78 @@ COPY_OPTIONS (
 -- 'mergeSchema' = 'true'/'false' (merge schema evolution)
 -- 'validate' = 'true'/'false' (validate before copy)
 ```
+
+---
+# COPY INTO Options Cheatsheet
+This cheatsheet covers the most commonly used FORMAT_OPTIONS and COPY_OPTIONS for COPY INTO statements. The key things to remember:
+
+- **FORMAT_OPTIONS** are specific to the file format (CSV, JSON, Parquet, etc.)
+- **COPY_OPTIONS** control the copy behavior regardless of file format
+- All values must be strings in single quotes, even booleans
+- `mergeSchema` appears in both sections because it can be used in either context
+- The `force` option is crucial for reprocessing files that have already been loaded
+
+The most frequently used options are probably `header`, `delimiter`, and `nullValue` for CSV files, `multiLine` for JSON, and `force` and `mergeSchema` for copy behavior.
+
+## FORMAT_OPTIONS (File Format Specific)
+
+### CSV Format Options
+
+| Option Name | Purpose | Default Value | Example Values |
+|-------------|---------|---------------|----------------|
+| `header` | Whether first row contains column names | `false` | `'true'`, `'false'` |
+| `delimiter` | Column separator character | `','` | `','`, `'\t'`, `'|'`, `';'` |
+| `quote` | Quote character for text fields | `'"'` | `'"'`, `"'"`, `'`' |
+| `escape` | Escape character | `'\'` | `'\'`, `'"'` |
+| `nullValue` | String representation of null values | `''` | `'NULL'`, `'N/A'`, `'null'` |
+| `dateFormat` | Date parsing format | `'yyyy-MM-dd'` | `'MM/dd/yyyy'`, `'dd-MM-yyyy'` |
+| `timestampFormat` | Timestamp parsing format | `'yyyy-MM-dd HH:mm:ss'` | `'MM/dd/yyyy HH:mm:ss'`, `'yyyy-MM-dd'T'HH:mm:ss'` |
+| `multiLine` | Allow records to span multiple lines | `false` | `'true'`, `'false'` |
+| `encoding` | Character encoding | `'UTF-8'` | `'UTF-8'`, `'ISO-8859-1'`, `'UTF-16'` |
+| `ignoreLeadingWhiteSpace` | Ignore leading whitespace | `false` | `'true'`, `'false'` |
+| `ignoreTrailingWhiteSpace` | Ignore trailing whitespace | `false` | `'true'`, `'false'` |
+
+### JSON Format Options
+
+| Option Name | Purpose | Default Value | Example Values |
+|-------------|---------|---------------|----------------|
+| `multiLine` | Allow single JSON record across multiple lines | `false` | `'true'`, `'false'` |
+| `timestampFormat` | Timestamp parsing format | `'yyyy-MM-dd HH:mm:ss'` | `'yyyy-MM-dd'T'HH:mm:ss.SSSS'`, `'MM/dd/yyyy HH:mm:ss'` |
+| `dateFormat` | Date parsing format | `'yyyy-MM-dd'` | `'MM/dd/yyyy'`, `'dd-MM-yyyy'` |
+| `allowComments` | Allow comments in JSON | `false` | `'true'`, `'false'` |
+| `allowUnquotedFieldNames` | Allow unquoted field names | `false` | `'true'`, `'false'` |
+| `allowSingleQuotes` | Allow single quotes around strings | `true` | `'true'`, `'false'` |
+| `allowNumericLeadingZeros` | Allow leading zeros in numbers | `false` | `'true'`, `'false'` |
+| `allowBackslashEscapingAnyCharacter` | Allow backslash escaping any character | `false` | `'true'`, `'false'` |
+| `compression` | Compression format | `'none'` | `'gzip'`, `'bzip2'`, `'deflate'` |
+
+### Parquet Format Options
+
+| Option Name | Purpose | Default Value | Example Values |
+|-------------|---------|---------------|----------------|
+| `mergeSchema` | Merge schemas from multiple files | `false` | `'true'`, `'false'` |
+| `compression` | Compression codec | `'snappy'` | `'snappy'`, `'gzip'`, `'lzo'`, `'brotli'` |
+
+### Avro Format Options
+
+| Option Name | Purpose | Default Value | Example Values |
+|-------------|---------|---------------|----------------|
+| `compression` | Compression codec | `'snappy'` | `'snappy'`, `'deflate'`, `'bzip2'` |
+| `recordName` | Record name in Avro schema | `'topLevelRecord'` | `'MyRecord'`, `'DataRecord'` |
+| `recordNamespace` | Namespace for Avro schema | `''` | `'com.example'`, `'org.mycompany'` |
+
+## COPY_OPTIONS (Copy Behavior)
+
+| Option Name | Purpose | Default Value | Example Values |
+|-------------|---------|---------------|----------------|
+| `force` | Reprocess files even if already loaded | `false` | `'true'`, `'false'` |
+| `mergeSchema` | Allow schema evolution during copy | `false` | `'true'`, `'false'` |
+| `validate` | Validate data before copying | `false` | `'true'`, `'false'` |
+
+## Notes
+
+- All option values must be strings (wrapped in single quotes)
+- Boolean values are specified as `'true'` or `'false'` strings
+- Default values may vary by Spark version and Delta Lake version
+- Some options are mutually exclusive or may not work together
+- Always test with sample data before processing large datasets
