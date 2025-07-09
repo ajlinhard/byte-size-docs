@@ -1,5 +1,43 @@
 # Spark SQL File Loading
-This file loading cheat sheet uses pure Spark SQL syntax instead of Python/PySpark. The sheet covers:
+This file loading cheat sheet uses pure Spark SQL syntax instead of Python/PySpark. These are included in any Spark SQL implementation such as Databricks.
+
+## Basic Syntaxes
+### CTAS
+```sql
+CREATE TABLE [IF NOT EXISTS] table_name
+[USING data_source]
+[OPTIONS (key1=val1, key2=val2, ...)]
+[PARTITIONED BY (col_name1, col_name2, ...)]
+[LOCATION path]
+AS SELECT ...
+```
+
+### CTAS + Direct Path
+```sql
+-- This will fail if 'sales' table already exists
+CREATE TABLE sales AS
+SELECT *
+FROM parquet.`/path/to/data/`;
+```
+
+### Temp View
+```sql
+CREATE [OR REPLACE] TEMPORARY VIEW view_name
+USING data_source_format
+OPTIONS (
+  key1 "value1",
+  key2 "value2"
+)
+[AS SELECT ...]
+```
+
+### Temp View + Direct Path
+```sql
+-- Use view for current data access
+CREATE OR REPLACE TEMPORARY VIEW current_sales 
+AS SELECT * FROM parquet.`/path/to/sales/`
+WHERE YEAR(sale_date) = 2024;
+```
 
 ---
 # Temp View Code
