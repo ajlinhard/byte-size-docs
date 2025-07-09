@@ -1,25 +1,51 @@
 # Spark Session Builder Config Cheatsheet
 Below is a comprehensive cheatsheet of Spark session builder configuration options organized into logical categories. The table includes the configuration key, its purpose, and example values for each setting.
 
-The cheatsheet covers:
+**Key Features:**
+- **Over 150 configuration properties** organized by category
+- **Table format** with columns for Key, Purpose, Example Values, and Default Value
+- **Practical examples** showing how to use the configurations
+- **Coverage of all major areas** including:
+  - Application properties (cores, memory, instances)
+  - Memory management and optimization
+  - Execution behavior and task settings
+  - Shuffle and networking configuration
+  - Spark SQL and adaptive query execution
+  - Security and authentication
+  - Platform-specific configs (Kubernetes, YARN)
+  - Data source configurations
+  - UI and logging settings
 
-- **Application Settings** - Basic app configuration
-- **Driver & Executor Configuration** - Resource allocation
-- **Dynamic Allocation** - Auto-scaling settings
-- **Serialization** - Object serialization options
-- **Shuffle Configuration** - Data shuffle optimization
-- **Storage Configuration** - Memory and storage settings
-- **Network Configuration** - Timeout and connection settings
-- **SQL Configuration** - Spark SQL and adaptive query execution
-- **Hive Configuration** - Hive metastore integration
-- **Checkpointing** - Fault tolerance settings
-- **Logging Configuration** - Event logging and history
-- **Security Configuration** - Authentication and SSL
-- **Resource Management** - Kubernetes and YARN settings
-- **Advanced Configuration** - Additional JARs, files, and worker settings
-- **Monitoring and Metrics** - UI and metrics configuration
+**Highlights:**
+- Includes configurations from the latest Spark documentation
+- Shows "no default" where applicable as requested
+- Provides helpful notes on time/size formats and configuration precedence
+- Covers both basic and advanced configuration scenarios
 
-I've also included three common configuration examples at the end for different use cases: local development, production cluster with Hive, and streaming applications. This should give you a solid reference for configuring Spark sessions for various scenarios.
+The cheat sheet is organized logically so you can quickly find the configurations you need for specific use cases, whether you're tuning performance, configuring cluster resources, or setting up data source connections. I've also included three common configuration examples at the end for different use cases: local development, production cluster with Hive, and streaming applications. This should give you a solid reference for configuring Spark sessions for various scenarios.
+
+## Table of Contents
+- [Overview](#overview)
+- [Application Properties](#application-properties)
+- [Memory Management](#memory-management)
+- [Execution Behavior](#execution-behavior)
+- [Shuffle Behavior](#shuffle-behavior)
+- [Storage Configuration](#storage-configuration)
+- [Networking](#networking)
+- [Spark SQL](#spark-sql)
+- [Hive Configuration](#hive-configuration)
+- [Compression and Serialization](#compression-and-serialization)
+- [Logging and UI](#logging-and-ui)
+- [Dynamic Allocation](#dynamic-allocation)
+- [Security](#security)
+- [Checkpointing and Logging Configuration](#checkpointing-and-logging-configuration)
+- [Kubernetes Specific](#kubernetes-specific)
+- [YARN Specific](#yarn-specific)
+- [Data Sources](#data-sources)
+- [Connect (Spark 3.4+)](#connect-spark-34)
+- [Advanced Configuration](#advanced-configuration)
+- [Notes](#notes)
+- [Common Configuration Examples](#common-configuration-examples)
 
 ---
 # Spark Session Builder Configuration Options Cheatsheet
