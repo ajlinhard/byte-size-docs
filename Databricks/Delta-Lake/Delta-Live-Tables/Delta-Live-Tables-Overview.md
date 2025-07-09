@@ -3,7 +3,8 @@ DLT is a syntax to help with a data pipelines using a declarative instead of an 
 
 **NOTE:** Some of the information below is from this [Databricks Academy Resource](https://customer-academy.databricks.com/learn/courses/2971/build-data-pipelines-with-lakeflow-declarative-pipelines/lessons/32807/introduction-to-delta-live-tables)
 
-![image](https://github.com/user-attachments/assets/dee71ff8-c1ec-4e4e-a633-59788742ca36)
+![image](https://github.com/user-attachments/assets/384ac50b-38e4-41f7-9cd3-4e655ef00482)
+
 
 ## Large scale ETL is complex and brittle
 The reality is the downhill flow of data cascades in a non-linear fashions creating dependencies of the freshness of data from many fields and feeds.
