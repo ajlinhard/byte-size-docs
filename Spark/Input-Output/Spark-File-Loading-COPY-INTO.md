@@ -1,12 +1,15 @@
 # Spark File Loading COPY INTO
 The COPY INTO command in spark has some useful perks as a file loading method. The most important is idempotency or incremental file loading, which requires the installation/configuration of Delta Lake. The syntax is only available in Spark SQL.
 
-### Spark File Loading COPY INTO
-- The Basics
-- Backend Processing Walkthrough
-- Data Copying/Flow
-- Example Code
-- COPY INTO Options Cheatsheet
+### Table of Contents
+- [Spark File Loading COPY INTO](#spark-file-loading-copy-into)
+  - [The Basics](#the-basics)
+  - [Backend Processing Walkthrough](#backend-processing-walkthrough)
+  - [Data Copying/Flow](#data-copyingflow)
+  - [Example Code](#example-code)
+- [COPY INTO Options Cheatsheet](#copy-into-options-cheatsheet)
+  - [FORMAT_OPTIONS (File Format Specific)](#format_options-file-format-specific)
+  - [COPY_OPTIONS (Copy Behavior)](#copy_options-copy-behavior)
 
 ## The Basics
 ### **Basic Structure:**
