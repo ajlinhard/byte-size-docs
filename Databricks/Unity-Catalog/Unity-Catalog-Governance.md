@@ -71,7 +71,7 @@ Each metastore typically corresponds to a specific region or organizational boun
 
 So rather than Unity Catalog controlling multiple metastores, it's more accurate to say that each metastore *is* a Unity Catalog instance. The multiple metastores exist at the account level to handle different regions, compliance requirements, or organizational divisions, but they operate independently of each other.
 
-### Metastore Attached Entities
+## Metastore Attached Entities
 - Catalog - this is a namespace for bucketing out data. Note, this is not unity catalog itself. Unity Catalog can control mulitple catalogs under its domain. Underneath you can choose split data into different databases/schemas. 
 - External Storage Access
 - Query Federation
