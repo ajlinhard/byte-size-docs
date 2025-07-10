@@ -3,8 +3,30 @@ DLT is a syntax to help with a data pipelines using a declarative instead of an 
 
 **NOTE:** Some of the information below is from this [Databricks Academy Resource](https://customer-academy.databricks.com/learn/courses/2971/build-data-pipelines-with-lakeflow-declarative-pipelines/lessons/32807/introduction-to-delta-live-tables)
 
-![image](https://github.com/user-attachments/assets/384ac50b-38e4-41f7-9cd3-4e655ef00482)
+### Table of Contents
 
+- [Large scale ETL is complex and brittle](#large-scale-etl-is-complex-and-brittle)
+  - [Complex pipeline development](#complex-pipeline-development)
+  - [Data quality and governance](#data-quality-and-governance)
+  - [Difficult pipeline operations](#difficult-pipeline-operations)
+- [Materialized Views](#materialized-views)
+- [Streaming Table](#streaming-table)
+  - [Functionality](#functionality)
+- [Steps To Create DLT Pipeline](#steps-to-create-dlt-pipeline)
+  - [Development vs Production Mode](#development-vs-production-mode)
+  - [Dependencies](#dependencies)
+  - [Expections](#expections)
+- [Pipeline UI](#pipeline-ui)
+- [Parameterize Pipelines](#parameterize-pipelines)
+- [DLT Correct Usage and Limitations](#dlt-correct-usage-and-limitations)
+- [Schema Evolution Support in DLT](#schema-evolution-support-in-dlt)
+  - [Automatic Schema Evolution Support](#automatic-schema-evolution-support)
+  - [Materialized Views](#materialized-views-1)
+  - [Streaming Tables](#streaming-tables)
+  - [Key Limitations and Workarounds](#key-limitations-and-workarounds)
+  - [Best Practices](#best-practices)
+
+![image](https://github.com/user-attachments/assets/384ac50b-38e4-41f7-9cd3-4e655ef00482)
 
 ## Large scale ETL is complex and brittle
 The reality is the downhill flow of data cascades in a non-linear fashions creating dependencies of the freshness of data from many fields and feeds.
@@ -82,6 +104,7 @@ These are test that ensure the data quality. They are true/false expressions tha
 - Track number of bad records
 - Drop bad records
 - Abort processing for a single bad record
+- Link to more [Databricks Expectations Info](https://docs.databricks.com/aws/en/dlt/expectations)
 
 ```sql
 CONSTRAINT valid_ts EXPECT (ts > '2012-01-01')
