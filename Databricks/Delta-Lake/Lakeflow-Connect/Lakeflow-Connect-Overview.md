@@ -27,3 +27,23 @@ Streaming
 - Micro-batch processes small batches in a very short, frequent intervals
 - spark.readStream(AutoLoader with continuous trigger)
 - DLT (trigger mode contiuous)
+
+## Lakeflow Relationship with ETL + Auto Loader + DLT
+The high-level relationship is:
+
+Auto Loader: The ingestion mechanism
+DLT: The pipeline framework that orchestrates transformations (often starting with Auto Loader)
+Lakeflow: The broader workflow orchestration platform
+
+- **Auto Loader** = Narrow, specialized tool focused solely on incremental file ingestion from cloud storage into Databricks. It does one thing really well: detecting new files and streaming them into your lakehouse.
+- **Delta Live Tables (DLT)** = Broader ETL/data pipeline framework that handles the entire data transformation workflow. DLT often *uses* Auto Loader as its ingestion component, but then orchestrates all the downstream transformations, data quality checks, and pipeline dependencies.
+- **Lakeflow** = Even broader workflow orchestration platform that can handle data pipelines, ML workflows, business processes, and other complex multi-step workflows across your organization.
+
+The typical flow would be:
+1. **Auto Loader** → "New files detected, streaming them in"
+2. **DLT** → "Taking that ingested data and transforming it through bronze/silver/gold layers with quality checks"
+3. **Lakeflow** → "Orchestrating the entire end-to-end process, maybe triggering ML model retraining after data pipeline completes"
+
+Auto Loader is essentially the "data ingestion engine" that plugs into these larger frameworks. It's laser-focused on solving the specific technical challenges of reliable, efficient file loading (schema evolution, file discovery, error handling, checkpointing, etc.) rather than trying to be a general-purpose pipeline or workflow tool.
+
+This specialization is actually a strength - it means Auto Loader can be really good at file ingestion and can be used by multiple different orchestration frameworks, not just DLT.
