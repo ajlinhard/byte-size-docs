@@ -43,12 +43,12 @@ The I/O of the plataform for the files generated and read during operations in D
 # Unity Catalog Structure
 ## Metastore
 A metastore is the location where the governing of your data begins. . The only users that can see the metastore is the administrator through the account console. A Metastore has 4 main building blocks:
-- Cloud Region
-- Cloud Storage: the S3 bucket or other cloud location to store files. The metastores info is split in 2 sections:
+1. Cloud Region
+2. Cloud Storage: the S3 bucket or other cloud location to store files. The metastores info is split in 2 sections:
   - Control Plane: has all the metadata for the metastore and access control list
   - Cloud Storage: The data assets storage where the data files go.
-- Identity to access: the IAM Role or security entity for accessing the files/S3 location.
-- One or more workspace: A workspace is an environment of data assets. A metastore can point to one ore more for user groups and permissions.
+3. Identity to access: the IAM Role or security entity for accessing the files/S3 location.
+4. One or more workspace: A workspace is an environment of data assets. A metastore can point to one ore more for user groups and permissions.
 
 **NOTE: A legacy Hive metastore also exists for hive catalogs. Only one per workspace.**
 
@@ -69,9 +69,18 @@ Each metastore typically corresponds to a specific region or organizational boun
 So rather than Unity Catalog controlling multiple metastores, it's more accurate to say that each metastore *is* a Unity Catalog instance. The multiple metastores exist at the account level to handle different regions, compliance requirements, or organizational divisions, but they operate independently of each other.
 
 ### Metastore Attached Entities
-Catalog - this is a namespace for bucketing out data. Note, this is not unity catalog itself. Unity Catalog can control mulitple catalogs under its domain. Underneath you can choose split data into different databases/schemas. 
-External Storage Access
-Query Federation
-Delta Sharing
+- Catalog - this is a namespace for bucketing out data. Note, this is not unity catalog itself. Unity Catalog can control mulitple catalogs under its domain. Underneath you can choose split data into different databases/schemas. 
+- External Storage Access
+- Query Federation
+- Delta Sharing
+
+### Catalogs
+- Tables: for tabluar data whether structure or semi-structure.
+- Views: for stored queries of data, with option of being materialized for faster processing.
+- Volumes: for non-tabluar like images, json, pdf data. Can access a view the data from with in Databricks. Volumes are also Managed or External like tables.
+- Functions: Stores standardized calculations you wish to do in SQL. The code
+- Models: storing any models you have built-out for use.
+
+![image](https://github.com/user-attachments/assets/2e1c80a7-b594-42c8-9f75-8d26eb536ea7)
 
 
