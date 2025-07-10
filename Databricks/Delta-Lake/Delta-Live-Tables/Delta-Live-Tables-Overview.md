@@ -1,5 +1,3 @@
-<h3 style="color: red;">Red Header</h2>
-
 # Delta Live Tables (DLT) Overview
 DLT is a syntax to help with a data pipelines using a declarative instead of an imperative definition of data pipelines. This is a response to the reality of the medallion architecture in the real-world of data engineer in the image below.
 
