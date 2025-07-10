@@ -1,3 +1,5 @@
+<h3 style="color: red;">Red Header</h2>
+
 # Delta Live Tables (DLT) Overview
 DLT is a syntax to help with a data pipelines using a declarative instead of an imperative definition of data pipelines. This is a response to the reality of the medallion architecture in the real-world of data engineer in the image below.
 
@@ -91,15 +93,15 @@ The difference between development mode and production mode has to do with the n
 - resuse a long-running cluster for quick reruns as you adjust and fix queries.
 - No retries on errors enabling the error to appear sooner. Retries are auto attempts to process data through in the pipeline
 
-### Dependencies {.red-header}
+### Dependencies
 No matter how many notebooks you include in your DLT the DLT system will wire the correct query order together.
 
-**Features** {.red-header}
+**Features**
 - parallelsim is automatic if 2+ tables have all dependencies satisfied.
 - LIVE dependencies from the same pipeline, are read from the LIVE schema
 - Other producers are just read from the catalog or spark data source as they normally would.
 
-### Expections {.red-header}
+### Expections
 These are test that ensure the data quality. They are true/false expressions that are used to validate each row during processing. They are basically, constraints on steriods. DLT offers flexible policies on how to process record that violate the expectation:
 - Track number of bad records
 - Drop bad records
