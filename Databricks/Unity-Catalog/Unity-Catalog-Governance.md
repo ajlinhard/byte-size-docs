@@ -39,3 +39,39 @@ The I/O of the plataform for the files generated and read during operations in D
 
 ![image](https://github.com/user-attachments/assets/5cdcfb38-5302-4ec0-9795-47327a39d76f)
 
+---
+# Unity Catalog Structure
+## Metastore
+A metastore is the location where the governing of your data begins. . The only users that can see the metastore is the administrator through the account console. A Metastore has 4 main building blocks:
+- Cloud Region
+- Cloud Storage: the S3 bucket or other cloud location to store files. The metastores info is split in 2 sections:
+  - Control Plane: has all the metadata for the metastore and access control list
+  - Cloud Storage: The data assets storage where the data files go.
+- Identity to access: the IAM Role or security entity for accessing the files/S3 location.
+- One or more workspace: A workspace is an environment of data assets. A metastore can point to one ore more for user groups and permissions.
+
+**NOTE: A legacy Hive metastore also exists for hive catalogs. Only one per workspace.**
+
+![image](https://github.com/user-attachments/assets/3d860f1e-5e71-4dbc-93b0-d0e7a459448e)
+
+### **Unity Catalog has a 1:1 relationship with metastores at the account level.** 
+Each Databricks account can have multiple metastores, but each metastore is independent and serves as the top-level container for that particular Unity Catalog instance.
+
+The hierarchy works like this:
+- **Account** (your Databricks organization)
+  - **Metastore 1** (Unity Catalog instance for region/business unit A)
+    - Catalogs → Schemas → Tables/Views
+  - **Metastore 2** (Unity Catalog instance for region/business unit B)
+    - Catalogs → Schemas → Tables/Views
+
+Each metastore typically corresponds to a specific region or organizational boundary. Workspaces are then assigned to a metastore, and all the Unity Catalog governance (permissions, lineage, auditing) operates within that metastore's scope.
+
+So rather than Unity Catalog controlling multiple metastores, it's more accurate to say that each metastore *is* a Unity Catalog instance. The multiple metastores exist at the account level to handle different regions, compliance requirements, or organizational divisions, but they operate independently of each other.
+
+### Metastore Attached Entities
+Catalog - this is a namespace for bucketing out data. Note, this is not unity catalog itself. Unity Catalog can control mulitple catalogs under its domain. Underneath you can choose split data into different databases/schemas. 
+External Storage Access
+Query Federation
+Delta Sharing
+
+
