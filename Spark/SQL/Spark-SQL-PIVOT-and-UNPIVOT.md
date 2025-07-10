@@ -351,3 +351,71 @@ SELECT * FROM unpivoted_data
 - **Spark 2.4+**: Basic PIVOT support
 - **Spark 3.4+**: Enhanced UNPIVOT support with better syntax
 - **Spark 3.5+**: Improved performance optimizations for both operations
+
+---
+# Examples with Sample Data
+```sql
+-- Create the product_metrics table with sample data
+CREATE TABLE product_metrics (
+    product_id STRING,
+    product_name STRING,
+    category STRING,
+    jan_sales DECIMAL(10,2),
+    jan_orders INT,
+    feb_sales DECIMAL(10,2),
+    feb_orders INT,
+    mar_sales DECIMAL(10,2),
+    mar_orders INT
+);
+
+-- Insert sample data
+INSERT INTO product_metrics VALUES
+('P001', 'Wireless Headphones', 'Electronics', 15000.00, 150, 18000.00, 180, 22000.00, 220),
+('P002', 'Coffee Maker', 'Appliances', 8500.00, 85, 9200.00, 92, 11000.00, 110),
+('P003', 'Running Shoes', 'Sports', 12000.00, 120, 14500.00, 145, 16800.00, 168),
+('P004', 'Office Chair', 'Furniture', 25000.00, 100, 23000.00, 92, 28000.00, 112),
+('P005', 'Smartphone Case', 'Electronics', 3200.00, 320, 3800.00, 380, 4100.00, 410),
+('P006', 'Yoga Mat', 'Sports', 1800.00, 180, 2100.00, 210, 2400.00, 240),
+('P007', 'Kitchen Blender', 'Appliances', 6500.00, 65, 7200.00, 72, 8000.00, 80),
+('P008', 'Gaming Mouse', 'Electronics', 4200.00, 140, 4800.00, 160, 5400.00, 180);
+
+-- View the original pivoted data
+SELECT * FROM product_metrics;
+
+-- Your UNPIVOT query
+SELECT * FROM product_metrics 
+UNPIVOT ( 
+    (sales_value, order_count) 
+    FOR time_period IN ( 
+        (jan_sales, jan_orders) AS 'January', 
+        (feb_sales, feb_orders) AS 'February', 
+        (mar_sales, mar_orders) AS 'March' 
+    ) 
+) AS unpivoted
+ORDER BY product_id, time_period;
+
+-- Alternative: View results with better formatting
+SELECT 
+    product_id,
+    product_name,
+    category,
+    time_period,
+    sales_value,
+    order_count,
+    ROUND(sales_value / order_count, 2) as avg_order_value
+FROM product_metrics 
+UNPIVOT ( 
+    (sales_value, order_count) 
+    FOR time_period IN ( 
+        (jan_sales, jan_orders) AS 'January', 
+        (feb_sales, feb_orders) AS 'February', 
+        (mar_sales, mar_orders) AS 'March' 
+    ) 
+) AS unpivoted
+ORDER BY product_id, 
+         CASE time_period 
+             WHEN 'January' THEN 1 
+             WHEN 'February' THEN 2 
+             WHEN 'March' THEN 3 
+         END;
+```
