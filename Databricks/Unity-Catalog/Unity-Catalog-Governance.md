@@ -41,6 +41,9 @@ The I/O of the plataform for the files generated and read during operations in D
 
 ---
 # Unity Catalog Structure
+
+![image](https://github.com/user-attachments/assets/f3c809f7-e4fd-4b99-beb0-1bcc5a26e52c)
+
 ## Metastore
 A metastore is the location where the governing of your data begins. . The only users that can see the metastore is the administrator through the account console. A Metastore has 4 main building blocks:
 1. Cloud Region
@@ -79,8 +82,32 @@ So rather than Unity Catalog controlling multiple metastores, it's more accurate
 - Views: for stored queries of data, with option of being materialized for faster processing.
 - Volumes: for non-tabluar like images, json, pdf data. Can access a view the data from with in Databricks. Volumes are also Managed or External like tables.
 - Functions: Stores standardized calculations you wish to do in SQL. The code
-- Models: storing any models you have built-out for use.
+- Models: storing any ML models you have built-out for use.
+
+**NOTE:** Hive catalog cannot handle Volume and Models.
 
 ![image](https://github.com/user-attachments/assets/2e1c80a7-b594-42c8-9f75-8d26eb536ea7)
 
+### Lakehouse Federation
+The ability to create a foreign catalog pointing to an external data source like postgreSQL, MSSQL, Snowflake, etc. This allows you to join the data in Databricks to the external sources.
+- First create a connection pointing to the environment.
+- The create a new catalog of type "foreign"
 
+### Delta Sharing
+Under the catalog explore, you can setup the ability to share notebooks or data with other platforms or applications. 
+- You can share to platforms like Power BI, Tableau, Snowflake, etc.
+- You can share tables, views, files, models, and more.
+- Sharing cross-platform w/ Delta Sharing open protocol.
+- Sharing data WITHOUT replication.
+- Data is being pulled dynamically at the time its called.
+
+### Other Unity Catalog Topics
+- Feature Store: use any delta table in unity catalog with a primary key as a feature table for model training or inference.
+- Vector Search Index: create auto-updating vector indees, managed by Unity Catalog to search through text for AI similarity searchs. Acting like a vector databse.
+
+## Best Practices
+- Lead with Managed Tables
+  - They provide better performance and simplicity.
+  - Managed tables uses Delta Lake which have tons of additional features: predictive IO, predictive optimization, time travel, CDC help.
+  - Continued interoperability work and open APIs will reduce need for external tables.
+  - You can undrop a table.
