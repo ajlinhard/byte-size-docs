@@ -76,9 +76,12 @@ Unlike the tradional RDBMS the schema is essentially the same as the database. Y
 
 ### Tables
 There are managed table sand external tables. 
-**Managed tables** are stored in the default S3 storage location configured for the meta store.
-**External tables** are stored in a configured addition S3 location with separate credentials setup to interact with location.
 ![image](https://github.com/user-attachments/assets/c41523a4-dd60-43ba-8ba9-3b2a6f1d268b)
+<br>
+**Managed tables** are stored in the default S3 storage location configured for the meta store. <br>
+**External tables** are stored in a configured addition S3 location with separate credentials setup to interact with location.
+<img width="1283" height="557" alt="image" src="https://github.com/user-attachments/assets/a551e159-7d4c-4f40-adbe-6c81366652f2" />
+
 
 ### Views
 Temporary Views
