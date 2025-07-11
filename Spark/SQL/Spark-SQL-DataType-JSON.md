@@ -59,3 +59,54 @@ SELECT schema_of_json('{"name": "John", "age": 30}') as inferred_schema
 ```
 
 These functions make it easy to query and transform JSON data without needing to parse it in application code, keeping your data processing within SQL.
+
+---
+# Colon Notation
+You're absolutely right! That's the **colon notation** syntax, which is a more concise and readable way to extract values from JSON strings in Databricks SQL.
+
+The syntax `json_column:key` is equivalent to `get_json_object(json_column, '$.key')` but much cleaner:
+
+```sql
+-- These are equivalent:
+SELECT json_column:age, json_column:name FROM your_table
+SELECT get_json_object(json_column, '$.age'), get_json_object(json_column, '$.name') FROM your_table
+```
+
+## Colon Notation Features
+
+**Nested objects** - Use dot notation after the colon:
+```sql
+SELECT json_column:user.profile.name FROM your_table
+-- Equivalent to: get_json_object(json_column, '$.user.profile.name')
+```
+
+**Array access** - Use bracket notation:
+```sql
+SELECT json_column:items[0] FROM your_table
+-- Equivalent to: get_json_object(json_column, '$.items[0]')
+```
+
+**Complex paths**:
+```sql
+SELECT json_column:users[0].address.city FROM your_table
+```
+
+## Type Casting
+
+You can also cast the extracted values to specific types:
+```sql
+SELECT json_column:age::int,
+       json_column:active::boolean,
+       json_column:price::decimal(10,2)
+FROM your_table
+```
+
+## Advantages
+
+The colon notation is generally preferred because it's:
+- More concise and readable
+- Easier to write and maintain
+- Less prone to syntax errors with quotes and parentheses
+- Still performs the same underlying JSON parsing
+
+This syntax makes working with JSON data in Databricks much more intuitive, especially when you're extracting multiple fields or working with complex nested structures.
