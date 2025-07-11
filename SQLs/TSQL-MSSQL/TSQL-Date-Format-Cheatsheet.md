@@ -1,5 +1,42 @@
 # MSSQL Date Format Codes Cheatsheet
 
+## DATEPART Function Date Part Names
+
+| Date Part | Abbreviation | Description | Range |
+|-----------|--------------|-------------|-------|
+| year | yy, yyyy | Year | 1753-9999 |
+| quarter | qq, q | Quarter | 1-4 |
+| month | mm, m | Month | 1-12 |
+| dayofyear | dy, y | Day of year | 1-366 |
+| day | dd, d | Day | 1-31 |
+| week | wk, ww | Week | 1-53 |
+| weekday | dw, w | Day of week | 1-7 (Sunday=1) |
+| hour | hh | Hour | 0-23 |
+| minute | mi, n | Minute | 0-59 |
+| second | ss, s | Second | 0-59 |
+| millisecond | ms | Millisecond | 0-999 |
+| microsecond | mcs | Microsecond | 0-999999 |
+| nanosecond | ns | Nanosecond | 0-999999999 |
+| tzoffset | tz | Timezone offset in minutes | -840 to +840 |
+| iso_week | isowk, isoww | ISO week | 1-53 |
+
+### Usage Examples
+
+```sql
+-- Get current year
+SELECT DATEPART(year, GETDATE())
+SELECT DATEPART(yyyy, GETDATE())
+
+-- Get day of week (1=Sunday, 7=Saturday)
+SELECT DATEPART(weekday, GETDATE())
+SELECT DATEPART(dw, GETDATE())
+
+-- Get hour from datetime
+SELECT DATEPART(hour, GETDATE())
+SELECT DATEPART(hh, GETDATE())
+```
+
+
 ## FORMAT Function Format Codes
 
 ### Year Formats
