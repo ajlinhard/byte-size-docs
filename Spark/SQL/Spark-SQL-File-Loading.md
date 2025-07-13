@@ -13,6 +13,7 @@ AS SELECT ...
 ```
 
 ### CTAS + Direct Path
+[Apache Spark CTAS Syntax](https://spark.apache.org/docs/3.5.3/sql-ref-syntax-ddl-create-table-datasource.html)
 ```sql
 -- This will fail if 'sales' table already exists
 CREATE TABLE sales AS
