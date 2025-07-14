@@ -4,6 +4,7 @@ Cortex is the AI offering from Snowflake, to speed-up the use and interactions o
 ### Documentation:
 - [Snowflake Cortex Product Page](https://www.snowflake.com/en/product/features/cortex/)
 - [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql)
+- [Youtube - Aimpoint Digital Snowflake Cortex Series](https://www.youtube.com/watch?v=Ur1LWpVDtzw)
 
 ## Overview
 
