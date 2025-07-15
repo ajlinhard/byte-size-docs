@@ -37,8 +37,17 @@ Depending on the type of Task the configurations may vary.
 - Compute option
 - and more depending
 
+## DAG Orechestration Patterns
+Directed Acyclic Graph (DAG) meaning 
+- Directed => an unambiguous direction for each edge
+- Acyclic => contains no cycles or loop backs.
+- Graph => collection of vertices(task) and edges (dependencies)
+In Databricks you can use the UI, API, SDK, or Asset Bundles to setup DAGs.
 
-## CLuster Types
+<img width="1227" height="513" alt="image" src="https://github.com/user-attachments/assets/4bd054c0-dd1c-44bb-93b3-b75d1a39792e" />
+
+
+## Cluster Types
 Interactive Clusters:
 - Purpose: an all purpose cluster which can be shared by multiple users.
 - Use Case: this is best for adhoc analysis and exploration, because its can be used across many workload types.
