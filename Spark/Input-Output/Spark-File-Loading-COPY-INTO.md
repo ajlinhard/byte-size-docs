@@ -18,8 +18,8 @@ Here's the basic structure and examples of the COPY INTO statement in Spark:Key 
 - `COPY INTO target_table` - destination Delta table
 - `FROM source_location` - file path or directory
 - `FILEFORMAT` - CSV, JSON, PARQUET, etc.
-- `FORMAT_OPTIONS` - file format specific settings
-- `COPY_OPTIONS` - copy behavior settings
+- `OPTIONS` - copy behavior settings
+- `COPY_OPTIONS` - copy behavior settings on databricks
 
 ### **Important Features:**
 - **Idempotent by default** - won't reprocess files unless `force = true`
@@ -61,7 +61,7 @@ Here's how it works:
 COPY INTO my_database.new_table
 FROM '/path/to/csv/files/'
 FILEFORMAT = CSV
-FORMAT_OPTIONS ('header' = 'true');
+OPTIONS ('header' = 'true');
 ```
 
 **Controlling table creation:**
@@ -78,7 +78,7 @@ CREATE TABLE my_database.sales_data (
 COPY INTO my_database.sales_data
 FROM '/path/to/sales/*.csv'
 FILEFORMAT = CSV
-FORMAT_OPTIONS ('header' = 'true');
+OPTIONS ('header' = 'true');
 ```
 
 **Best practices:**
@@ -133,14 +133,14 @@ The operation is essentially a **read-and-transform** process - it reads from so
 COPY INTO target_table
 FROM source_location
 [FILEFORMAT = file_format]
-[FORMAT_OPTIONS (option_key = 'option_value', ...)]
+[OPTIONS (option_key = 'option_value', ...)]
 [COPY_OPTIONS (option_key = 'option_value', ...)]
 
 -- Example 1: Basic CSV copy
 COPY INTO my_database.sales_data
 FROM '/path/to/csv/files/'
 FILEFORMAT = CSV
-FORMAT_OPTIONS (
+OPTIONS (
   'header' = 'true',
   'delimiter' = ',',
   'inferSchema' = 'true'
@@ -150,7 +150,7 @@ FORMAT_OPTIONS (
 COPY INTO my_database.user_events
 FROM 's3://my-bucket/json-data/'
 FILEFORMAT = JSON
-FORMAT_OPTIONS (
+OPTIONS (
   'multiLine' = 'true',
   'timestampFormat' = 'yyyy-MM-dd HH:mm:ss'
 )
@@ -175,7 +175,7 @@ FROM (
   FROM '/path/to/source/'
 )
 FILEFORMAT = CSV
-FORMAT_OPTIONS ('header' = 'true');
+OPTIONS ('header' = 'true');
 
 -- Example 5: With file pattern and partition filtering
 COPY INTO my_database.daily_logs
@@ -190,7 +190,7 @@ COPY_OPTIONS (
 COPY INTO my_database.external_data
 FROM 's3://bucket/path/'
 FILEFORMAT = CSV
-FORMAT_OPTIONS (
+COPY_OPTIONS (
   'header' = 'true',
   'escape' = '"'
 )
@@ -198,7 +198,7 @@ COPY_OPTIONS (
   'force' = 'false'
 );
 
--- Common FORMAT_OPTIONS by file type:
+-- Common COPY_OPTIONS by file type:
 -- CSV: 'header', 'delimiter', 'quote', 'escape', 'nullValue', 'dateFormat'
 -- JSON: 'multiLine', 'timestampFormat', 'dateFormat'
 -- PARQUET: Generally no format options needed
@@ -211,9 +211,9 @@ COPY_OPTIONS (
 
 ---
 # COPY INTO Options Cheatsheet
-This cheatsheet covers the most commonly used FORMAT_OPTIONS and COPY_OPTIONS for COPY INTO statements. The key things to remember:
+This cheatsheet covers the most commonly used OPTIONS and COPY_OPTIONS for COPY INTO statements. The key things to remember:
 
-- **FORMAT_OPTIONS** are specific to the file format (CSV, JSON, Parquet, etc.)
+- **OPTIONS** are specific to the file format (CSV, JSON, Parquet, etc.)
 - **COPY_OPTIONS** control the copy behavior regardless of file format
 - All values must be strings in single quotes, even booleans
 - `mergeSchema` appears in both sections because it can be used in either context
