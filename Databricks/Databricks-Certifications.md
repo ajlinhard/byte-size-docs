@@ -12,6 +12,7 @@ Related Certifications:
 - [Summary and Recommendations](#Summary-and-Recommendations)
 - [Databricks Certified Data Engineer Associate](#Databricks-Certified-Data-Engineer-Associate)
 - [Databricks Certified Data Engineer Professional](#Databricks-Certified-Data-Engineer-Professional)
+- [Complete Certification Course List](https://community.databricks.com/t5/events/virtual-learning-festival-9-april-30-april/ev-p/111620)
 
 ---
 ## **Summary and Recommendations**
