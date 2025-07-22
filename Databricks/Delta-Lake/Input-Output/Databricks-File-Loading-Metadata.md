@@ -2,6 +2,8 @@
 
 When working with files in Apache Spark (3.2.0+) and Databricks, you can access special metadata columns that provide information about source files. These are available as a hidden `_metadata` struct column.
 
+[Databricks Docs - Metadata Columns](https://docs.databricks.com/aws/en/ingestion/file-metadata-column)
+
 ## Platform Availability
 
 | Platform | Version | Support Level |
