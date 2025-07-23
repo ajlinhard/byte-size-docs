@@ -34,8 +34,8 @@ This version of reading and writing always do exactly what the settings for the 
 Another loading method for the Spark SQL users, but this method has idempotency of all files loaded FROM <source data> INTO <output table>. The syntax works with Spark SQL, but requires the installation of Delta Lake and configuration of the spark session with the default storage method as "delta".
 
 #### Links:
-[Spark COPY INTO Overview](https://github.com/ajlinhard/byte-size-docs/blob/main/Spark/Input-Output/Spark-File-Loading-COPY-INTO.md)
-[Databricks extension read_files()](https://docs.databricks.com/aws/en/sql/language-manual/functions/read_files)
+- [Spark COPY INTO Overview](https://github.com/ajlinhard/byte-size-docs/blob/main/Spark/Input-Output/Spark-File-Loading-COPY-INTO.md)
+- [Databricks extension read_files()](https://docs.databricks.com/aws/en/sql/language-manual/functions/read_files)
 
 ## Auto Loader
 Databricks auto loader is an extension of the Spark Core streaming functionality. The main area of extension is the format "cloudFiles", which as the name suggest is optimize for cloud storage options.
