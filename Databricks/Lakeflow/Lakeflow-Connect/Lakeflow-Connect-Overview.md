@@ -4,6 +4,8 @@ Lakeflow and its supporting connectors are all about bringing data into Databric
 - Standard Connectors
 - Managed Connectors
 
+** [Databricks Lakeflow Connect Documentation](https://docs.databricks.com/aws/en/ingestion/lakeflow-connect/) **
+
 ## Summary of Options
 ![image](https://github.com/user-attachments/assets/cb142467-ee2f-472c-9546-a0acf1b131d3)
 
