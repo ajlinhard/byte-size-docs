@@ -60,6 +60,8 @@ The metastore acts as the central nervous system that coordinates all these comp
 # Data Lineage
 Databricks Unity Catalog does provide **column-level lineage** for datasets, in addition to data set level. This is one of Unity Catalog's key features and has been generally available since its release.
 
+<img width="1260" height="636" alt="image" src="https://github.com/user-attachments/assets/b6af5503-9e02-421b-a5b7-820d5866bec0" />
+
 ## Key aspects of column-level lineage in Databricks:
 
 **Automatic capture**: Unity Catalog automatically captures runtime data lineage across queries run on Databricks, and lineage is supported for all languages and is captured down to the column level.
@@ -97,6 +99,15 @@ When you set up Delta Sharing in Databricks, you configure sharing at the Unity 
 - Use a Single Cloude Region per MetasStore as well as for SDLC and Business Unit scopes.
 - Use Databricks-to-Databricks Delta Sharing between cloud providers + regions. Better performance.
 - If a MetaStore will have delta sharing think through compliance, user groups, and access patterns.
+
+---
+# Tagging and Comments
+Tagging and Comments are useful for tagging data for cost management or system ownership identification. Additionally, tags and more importantly comments help document what the data, tables, columns are useful for. Databricks has useful AI features for assisting with documentation of these values. Be careful auto-completing with AI and NOT reviewing.
+<img width="1293" height="531" alt="image" src="https://github.com/user-attachments/assets/7d9c49b9-41e2-488b-add6-f0347d33793a" />
+
+### Best Practices
+- Add tags during object creation aka in CTAS, COPY INTO, Auto Loader
+- Generate or Add comments early. This can help with other AI and comments in data lineage + data discovery.
 
 ---
 # Current State of Unity Catalog System Tables
