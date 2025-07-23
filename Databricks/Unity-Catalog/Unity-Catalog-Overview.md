@@ -84,7 +84,22 @@ The column-level lineage capability makes Unity Catalog particularly powerful fo
 Based on my research, I can provide you with a comprehensive answer about Iceberg and Unity Catalog system tables.
 
 ---
-## Current State of Unity Catalog System Tables
+# Delta Sharing
+When you need to share data between cloud regions, organizations, or applications (Snowflake, Tableau, AWS Redshift, etc) use the Delta Sharing feature in Databricks. The features is based off the open soruce Delta Sharing Protocol. In addition to built-in sharing providers like FiveTran have connectors setup to bring data into and out of Databricks.
+
+When you set up Delta Sharing in Databricks, you configure sharing at the Unity Catalog metastore level. This means:
+- The metastore acts as the top-level container for all shared data
+- You can then share specific catalogs, schemas, and tables from within that metastore
+- Recipients connect to the metastore and can access the shared objects you've granted them permissions to
+<img width="1277" height="661" alt="image" src="https://github.com/user-attachments/assets/db743ca6-b783-4f32-af8d-1c553263a516" />
+
+### Best Practices
+- Use a Single Cloude Region per MetasStore as well as for SDLC and Business Unit scopes.
+- Use Databricks-to-Databricks Delta Sharing between cloud providers + regions. Better performance.
+- If a MetaStore will have delta sharing think through compliance, user groups, and access patterns.
+
+---
+# Current State of Unity Catalog System Tables
 
 Unity Catalog provides system tables for operational data including audit logs, billable usage, and lineage, but these system tables remain the same regardless of whether you're using Delta Lake, Iceberg, or other table formats.
 
