@@ -80,3 +80,37 @@ Databricks Unity Catalog does provide **column-level lineage** for datasets, in 
 - Security is built-in: users can only see lineage for data they have permissions to access
 
 The column-level lineage capability makes Unity Catalog particularly powerful for compliance requirements like GDPR, impact analysis, and root cause analysis when data quality issues occur.
+
+Based on my research, I can provide you with a comprehensive answer about Iceberg and Unity Catalog system tables.
+
+---
+## Current State of Unity Catalog System Tables
+
+Unity Catalog provides system tables for operational data including audit logs, billable usage, and lineage, but these system tables remain the same regardless of whether you're using Delta Lake, Iceberg, or other table formats.
+
+The existing Unity Catalog system tables include:
+- `system.access.audit` - Audit logs
+- `system.access.table_lineage` - Table-level lineage 
+- `system.access.column_lineage` - Column-level lineage
+- `system.billing.usage` - Billing and usage data
+
+## How Iceberg Works with Unity Catalog
+
+When you enable Iceberg reads on Delta tables (via UniForm), Unity Catalog adds metadata fields to track metadata generation status, but these appear in table properties rather than as new system tables. You can view these via:
+- `DESCRIBE EXTENDED table_name` (shows Delta Uniform Iceberg section)
+- Catalog Explorer in the UI
+- REST API calls
+
+## Lineage and Governance Remain Unified
+
+Unity Catalog provides fine-grained access controls, lineage, and auditing on all data, across catalogs and regardless of format. This means:
+
+- **Iceberg tables managed by Unity Catalog** use the same system tables for lineage and audit tracking as Delta tables
+- **Foreign Iceberg tables** (from external catalogs like AWS Glue) can be federated into Unity Catalog and will appear in the same system tables
+- Lineage is captured down to the column level and stored in the existing lineage system tables
+
+## Key Takeaway
+
+Unity Catalog's system table architecture is **format-agnostic**. Whether you're using Delta Lake, Iceberg (via UniForm), or native Iceberg tables, they all use the same underlying system tables for governance, lineage, and auditing. Unity Catalog breaks format silos through open standards while maintaining a unified metadata layer.
+
+The power comes from Unity Catalog's ability to provide consistent governance across multiple table formats without requiring separate system tables for each format.
