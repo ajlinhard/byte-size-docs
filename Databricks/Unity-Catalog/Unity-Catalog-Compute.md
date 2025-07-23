@@ -4,6 +4,7 @@ One of the powerful difference between Spark, Databricks, Snowflake, Redshift an
 
 <img width="1300" height="465" alt="image" src="https://github.com/user-attachments/assets/68bb1580-53a3-45ee-9820-ea8d0e26baf6" />
 
+Note: The cluster types have a limit on the number of session ids per compute instance. Its over 100+, but you may hit limits if not careful.
 
 ---
 ## Example Compute UI Settings
