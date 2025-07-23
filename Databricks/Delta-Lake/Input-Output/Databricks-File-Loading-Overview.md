@@ -43,6 +43,8 @@ Databricks auto loader is an extension of the Spark Core streaming functionality
 
 #### Links
 - [Databricks Auto Loader - Home Page](https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/auto-loader/)
+  - [Databricks Auto Loader - Schema Evolution](https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/auto-loader/schema#schema-hints)
+- [Databricks Streaming - Docs](https://docs.databricks.com/aws/en/dlt/dbsql/streaming)
 - [Spark Streaming Cheatsheet](https://github.com/ajlinhard/byte-size-docs/blob/main/Spark/Input-Output/spark-streaming-cheatsheet.md)
 
 ---
