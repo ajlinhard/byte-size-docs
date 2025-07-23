@@ -1,4 +1,4 @@
-# Spark SQL Function Cheatsheet
+# Spark SQL Built-In Function Cheatsheet
 Below is a comprehensive Spark SQL functions cheatsheet! The updated version now includes:
 
 **Key Features Added:**
