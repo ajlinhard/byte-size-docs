@@ -110,6 +110,11 @@ Tagging and Comments are useful for tagging data for cost management or system o
 - Generate or Add comments early. This can help with other AI and comments in data lineage + data discovery.
 
 ---
+# Data Marketplace
+A location for users to acquire data, dashboards, notebooks, and solution accelerators directly in the platform. The backend is powered by Delta Sharing protocol. Theer are free assets and purchasable assets, which you can link to your workspace/metastore under the "Shared " section of catalog explorer.
+<img width="1209" height="544" alt="image" src="https://github.com/user-attachments/assets/50598ce8-76fa-49da-bffc-3f14317f0062" />
+
+---
 # Current State of Unity Catalog System Tables
 
 Unity Catalog provides system tables for operational data including audit logs, billable usage, and lineage, but these system tables remain the same regardless of whether you're using Delta Lake, Iceberg, or other table formats.
