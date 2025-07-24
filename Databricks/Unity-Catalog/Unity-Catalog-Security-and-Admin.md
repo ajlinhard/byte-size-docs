@@ -27,3 +27,20 @@ There are 3 ways to manage the access control list
 2. Catalog Explore + UI
 3. Programatically with tools like Databricks CLI, Terraform, and REST APIs.
 <img width="1220" height="560" alt="image" src="https://github.com/user-attachments/assets/3606a4e0-5044-4d4f-b288-00c3fe67afa8" />
+
+## Fine-grained (Row/Column) Access Control
+When it comes to fine grain access controls in a traditional database engine the normal approach is through views, but Databricks Unity Catalog takes it one step further with Row and Column security.
+<img width="1221" height="564" alt="image" src="https://github.com/user-attachments/assets/17b3d6e5-c5b2-4dc9-b3ab-0a7fdb7a44ca" />
+
+**Dynamic Views**
+- Allows you to mask data columns fully or partially.
+- Cherry-pick columns and rows via select-statement and where-clauses.
+- Faster to implement for multi-table joins, or in scenarios where columns should not be known.
+
+**Row and Column Security**
+This is the perferred method now a days on Databricks.
+- Use row filtering functions
+- Use column masking functions for columns
+
+<img width="1305" height="485" alt="image" src="https://github.com/user-attachments/assets/2ca06a0b-f3f9-4361-bf16-8287d424af28" />
+
