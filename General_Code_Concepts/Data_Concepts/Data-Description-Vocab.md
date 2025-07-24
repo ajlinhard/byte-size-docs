@@ -37,3 +37,17 @@ When you want to talk about the different behaviors, properties, and details of 
 - **Uniqueness** - The quality of being one-of-a-kind or having no duplicates
 - **Variability** - The extent to which data points differ from each other
 - **Heterogeneity** - The quality of being diverse or composed of dissimilar elements
+
+### Attributes vs Features vs Dimensions
+In data science and analytics, these terms are often used interchangeably but have subtle distinctions depending on context:
+
+**Attributes** are the most general term - they refer to any characteristic or property that describes an entity in your dataset. Every column in a database table or spreadsheet represents an attribute. For example, in a customer dataset, attributes might include name, age, income, and purchase history.
+
+**Features** are attributes that are specifically used as input variables for machine learning models or statistical analysis. They're the measurable properties you use to make predictions or classifications. Features are often derived or engineered from raw attributes - you might combine "height" and "weight" attributes to create a "BMI" feature, or transform a "date of birth" attribute into an "age" feature.
+
+**Dimensions** typically refer to attributes in the context of data modeling and analysis, particularly in:
+- **Database design**: Dimensions are categorical attributes used for grouping and filtering (like time, geography, product category)
+- **Data visualization**: Dimensions are variables you can slice and dice your data by
+- **Mathematical/statistical contexts**: Dimensions refer to the number of variables or the "dimensionality" of your data space
+
+The key distinction is that while all features are attributes, not all attributes become features. And dimensions usually emphasize the structural or categorical nature of the data rather than just any measurable property. The specific meaning often depends on whether you're doing database design, machine learning, or statistical analysis.
