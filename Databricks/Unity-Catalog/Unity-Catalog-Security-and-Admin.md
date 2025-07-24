@@ -28,6 +28,91 @@ There are 3 ways to manage the access control list
 3. Programatically with tools like Databricks CLI, Terraform, and REST APIs.
 <img width="1220" height="560" alt="image" src="https://github.com/user-attachments/assets/3606a4e0-5044-4d4f-b288-00c3fe67afa8" />
 
+---
+## Users and Groups
+Databricks has several types of permission groups that simplify identity management. Let me explain the different types and how to create them.
+- [Databricks Identity Management](https://docs.databricks.com/aws/en/admin/users-groups/)
+- [Databricks Groups](https://docs.databricks.com/aws/en/admin/users-groups/groups)
+- [Databricks Managing Groups](https://docs.databricks.com/aws/en/admin/users-groups/manage-groups)
+
+### Types of Groups in Databricks
+
+Databricks groups are classified into four categories based on their source:
+
+1. **Account Groups** - Created and managed at the account level
+2. **External Groups** - Synced from identity providers (Microsoft Entra ID, Okta, etc.)
+3. **Workspace-local Groups (Legacy)** - Created within individual workspaces
+4. **Built-in Groups** - Pre-existing groups like "admins"
+
+### How to Create Groups
+
+#### 1. Account Groups (Recommended Approach)
+
+**Via Account Console:**
+To create account groups, you must be an account admin or workspace admin (in identity-federated workspaces):
+
+1. As an account admin, log in to the account console
+2. In the sidebar, click User management
+3. On the Groups tab, click Add group
+4. Enter a name for the group
+5. Click Confirm
+6. When prompted, add users, service principals, and groups to the group
+
+**Via Workspace Admin Settings:**
+- Navigate to workspace Settings → Identity and access → Groups
+- Click "Add Group" and follow similar steps
+
+#### 2. External Groups (Enterprise Approach)
+
+Databricks recommends syncing groups from Microsoft Entra ID to your Azure Databricks account:
+
+- **Automatic Identity Management (Preview)**: Enables you to add users, service principals, and groups from Microsoft Entra ID into Azure Databricks without configuring an application
+- **SCIM Provisioning**: Configure enterprise application in your identity provider to sync groups
+
+#### 3. Workspace-local Groups (Legacy)
+
+**Via SQL Command:**
+CREATE GROUP group_principal [ WITH [ USER user_principal [, ...] ] [ GROUP subgroup_principal [, ...] ] ]
+
+Example:
+```sql
+-- Create an empty group
+CREATE GROUP data_scientists;
+
+-- Create group with members
+CREATE GROUP analysts WITH USER `john@company.com`, `jane@company.com`;
+```
+
+**Via Terraform:**
+```hcl
+resource "databricks_group" "data_science" {
+  display_name = "Data Science Team"
+}
+
+resource "databricks_permissions" "cluster_usage" {
+  cluster_id = databricks_cluster.shared.id
+  access_control {
+    group_name = databricks_group.data_science.display_name
+    permission_level = "CAN_MANAGE"
+  }
+}
+```
+
+### Group Management Permissions
+
+To manage groups, you must have the group manager role:
+- Account admins automatically have the group manager role for all groups
+- Workspace admins automatically have the group manager role on groups that they create
+
+### Best Practices
+
+1. **Use Account Groups**: They work across workspaces and with Unity Catalog
+2. **Sync from Identity Provider**: Databricks recommends syncing groups from an identity provider using a SCIM provisioning connector
+3. **Avoid Workspace-local Groups**: Workspace-local groups are not synchronized to the Databricks account and are not compatible with Unity Catalog
+
+Groups are essential for managing permissions at scale in Databricks, especially when combined with Unity Catalog's hierarchical permission model.
+
+---
 ## Fine-grained (Row/Column) Access Control
 When it comes to fine grain access controls in a traditional database engine the normal approach is through views, but Databricks Unity Catalog takes it one step further with Row and Column security.
 <img width="1221" height="564" alt="image" src="https://github.com/user-attachments/assets/17b3d6e5-c5b2-4dc9-b3ab-0a7fdb7a44ca" />
