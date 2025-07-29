@@ -1,3 +1,6 @@
+# Data Engineering Vocabulary
+
+---
 # Data Description Vocabulary
 When you want to talk about the different behaviors, properties, and details of data the following list is important to understand.
 
@@ -38,7 +41,7 @@ When you want to talk about the different behaviors, properties, and details of 
 - **Variability** - The extent to which data points differ from each other
 - **Heterogeneity** - The quality of being diverse or composed of dissimilar elements
 
-### Attributes vs Features vs Dimensions
+## Attributes vs Features vs Dimensions
 In data science and analytics, these terms are often used interchangeably but have subtle distinctions depending on context:
 
 **Attributes** are the most general term - they refer to any characteristic or property that describes an entity in your dataset. Every column in a database table or spreadsheet represents an attribute. For example, in a customer dataset, attributes might include name, age, income, and purchase history.
@@ -51,3 +54,24 @@ In data science and analytics, these terms are often used interchangeably but ha
 - **Mathematical/statistical contexts**: Dimensions refer to the number of variables or the "dimensionality" of your data space
 
 The key distinction is that while all features are attributes, not all attributes become features. And dimensions usually emphasize the structural or categorical nature of the data rather than just any measurable property. The specific meaning often depends on whether you're doing database design, machine learning, or statistical analysis.
+
+--
+## Disparate Data
+Disparate data sources refer to different, unconnected databases, systems, or repositories that store information in various formats, locations, or structures within an organization or across multiple organizations.
+
+These sources are considered "disparate" because they:
+
+**Exist in different locations** - data might be stored in separate departments, cloud services, on-premises servers, or third-party systems
+
+**Use different formats** - some data might be in relational databases, others in spreadsheets, text files, APIs, or unstructured formats like documents and images
+
+**Have different structures** - even similar data might be organized differently, use different field names, or follow different schemas
+
+**Operate independently** - these systems often weren't designed to work together and may have been developed at different times by different teams
+
+**Common examples include:**
+- Customer information in a CRM system, financial data in an ERP system, and website analytics in Google Analytics
+- Sales data in one database, inventory data in another, and customer support tickets in a third system
+- Data from IoT sensors, social media platforms, and internal operational systems
+
+The challenge with disparate data sources is that organizations often need to combine and analyze information from multiple sources to get a complete picture for decision-making. This typically requires data integration processes, ETL (Extract, Transform, Load) operations, or data warehousing solutions to bring the information together in a usable format.
