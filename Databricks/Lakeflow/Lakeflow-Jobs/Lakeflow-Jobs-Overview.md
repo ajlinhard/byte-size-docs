@@ -73,6 +73,8 @@ I'll search for the latest information about Databricks Serverless compute compa
 
 ## Cost Comparison
 **Serverless is NOT necessarily cheaper than optimized Job Clusters.** An optimized cluster by Gradient outperformed Databricks serverless jobs by roughly 60% from a cost perspective in testing by Sync Computing. However, the cost picture is nuanced:
+<img width="1521" height="693" alt="image" src="https://github.com/user-attachments/assets/3f9847e1-e71e-4f49-8020-849494b7d5b1" />
+
 
 **When Serverless costs more:**
 - For long-running workloads (1+ hours), optimized Job Clusters often provide better cost efficiency
@@ -125,3 +127,64 @@ I'll search for the latest information about Databricks Serverless compute compa
 - Require features not supported in Serverless
 
 The bottom line: Serverless prioritizes convenience and fast startup over cost optimization, while Job Clusters offer maximum flexibility and potential cost savings but require more expertise to optimize properly.
+
+---
+## Common Task Configurations
+
+#### Parameterss
+Parameters can be done at the Task or Job level depending on what are needed. 
+- If the same parameter is used at each level the Job parameter takes precedence.
+- You can set parameters via the UI or via the db_utils.jobs.taskValues.set()
+- You get the parameters with dbutils.widget.get() or dbutils.jobs.task.Values()
+
+#### Task Notifications
+You can send information to other entities based on task status throughout a job.
+- You can send notifications to: Email, Teams, Slack, Webhooks, and PageDuty.
+- The messages can be sent at the Start, Success, Failure, Duration Warning, or Streaming backlog.
+- There are also, an overall job level notifications.
+
+#### Retry Policy
+How quickly should we retry and how many times should we attempt a retry.
+
+#### Triggers
+- Scheduled
+  - Use cron expersions to decide when a job should run. Pick time zone of the job.
+  - Temporarily pause a schedule if needed.
+- Continuous
+  - runs a new job as soon as the old job finishes.
+  - Retry logic is managed underneath in the streaming table behavior by Databricks.
+- File Arrival
+  - When files arrive in cloud storage location the job kicks-off.
+  - Can set a minimum time between triggers.
+  - Can Wait for time after the last changes.
+  - Good for irregular file or job processing times.
+- Table Updates
+- Manual
+
+### Flow Controls
+- Run if Conditional Task Dependencies
+- Additional Task Flows
+- Repair and Rerun
+
+<img width="1515" height="753" alt="image" src="https://github.com/user-attachments/assets/ec620283-5f6f-4bcb-8c81-11ea933aa409" />
+
+<img width="1597" height="774" alt="image" src="https://github.com/user-attachments/assets/4562834d-9f8b-47bd-904c-f380ee0af055" />
+<img width="1544" height="695" alt="image" src="https://github.com/user-attachments/assets/fdf55a91-81f3-4ab4-9ee6-3746cc62aac9" />
+
+<img width="1597" height="680" alt="image" src="https://github.com/user-attachments/assets/7182e89a-f85b-428d-a679-ebc06b0176fa" />
+
+---
+## Job Structures
+<img width="1541" height="695" alt="image" src="https://github.com/user-attachments/assets/b3724b81-8950-45fc-9ea7-f698a14281dc" />
+
+## Using Git
+<img width="1602" height="658" alt="image" src="https://github.com/user-attachments/assets/06221a86-ddeb-4afd-bdd7-049dc828d432" />
+
+## Best Practices
+
+<img width="1508" height="622" alt="image" src="https://github.com/user-attachments/assets/e6ffebdd-46f4-42cb-bba7-4e21974911e3" />
+<img width="1519" height="624" alt="image" src="https://github.com/user-attachments/assets/859ea83e-f5b7-4484-8e94-4b7ba3955a7a" />
+<img width="1516" height="628" alt="image" src="https://github.com/user-attachments/assets/1be97032-6c68-4ac4-9e49-cb5cb0a6f847" />
+<img width="1517" height="610" alt="image" src="https://github.com/user-attachments/assets/666272dc-1862-41a6-bce6-e9bdad5b9cf2" />
+
+
