@@ -49,6 +49,38 @@ This certification assesses the ability to use the Databricks Lakehouse Platform
 - [Build Data Pipelines with Delta Live Tables](https://customer-academy.databricks.com/learn/courses/2971/build-data-pipelines-with-delta-live-tables/lessons)
 - [Data Management and Governance with Unity Catalog](https://customer-academy.databricks.com/learn/courses/3144/data-management-and-governance-with-unity-catalog)
 
+### What you should Know!
+- Data Ingestion with Lakeflow Connect
+  - Describe Lakeflow Connect as a solution for simple and scalable data ingestion
+  - Understand how Unity Catalog structures storage of data objects
+  - Explain the benefits of Delta tables and the Medallion architecture.
+  - Describe how to ingest files from cloud object storage as Delta tables using CREATE TABLE AS and COPY INTO, while adding input file metadata in Bronze layer tables.
+  - Explain how to leverage rescued columns for data ingestion
+  - Explain how to ingest and flatten semistructured data like XML and JSON files from cloud storage
+  - Describe the options available to ingest data from existing enterprise systems into Databricks
+  - Describe how MERGE INTO can be utilized during ingestion
+  - Understand how Auto Loader and other SQL TVFs can be used for ingestion
+- Workflows
+  - Understand the role of Lakeflow Jobs within the Databricks ecosystem as a unified orchestration platform for data, analytics, and AI workloads.
+  - Design and implement data workloads using Directed Acyclic Graphs (DAGs), demonstrating the relationship between jobs, tasks, and dependencies.
+  - Configure various job scheduling options including manual, scheduled, file arrival, and continuous triggers to automate workflow execution.
+  - Implement advanced workflow features such as conditional task execution, run-if dependencies, and repair runs to create robust, fault-tolerant data pipelines.
+  - Apply best practices for production workloads including selecting appropriate compute options, implementing modular orchestration, and utilizing proper error handling techniques.
+- Build Data Pipelines with Lakeflow Declarative Pipelines
+  - Understand the core concepts and components of Lakeflow Declarative Pipelines, including the function and differences between streaming tables, materialized views, and temporary views.
+  - Identify and configure Lakeflow pipeline settings, such as compute, data assets, trigger modes, and advanced options.
+  - Develop a functional Lakeflow Declarative Pipeline using the new pipeline editor and SQL-based syntax.
+  - Incorporate data quality expectations into a Lakeflow pipeline to validate and enforce data integrity.
+  - Analyze event logs and pipeline metrics to understand the full execution and lifecycle of a Lakeflow Declarative Pipeline.
+  - Design and implement a Change Data Capture (CDC) to a pipeline using APPLY CHANGES INTO to handle slowly changing dimensions (SCD).
+- Data Management and Governance with Unity Catalog
+  - Explain the importance of data governance and challenges in traditional data lake environments.
+  - Differentiate between managed and external tables, and evaluate the architecture of Unity Catalog.
+  - Utilize SQL commands to navigate and inspect metastore components, and assess data segregation strategies.
+  - Identify query lifecycle steps and Databricks roles for effective data governance and security within Unity Catalog.
+  - Implement privilege assignments and fine-grained access control strategies using SQL syntax and dynamic views in Databricks.
+  - Assess the effectiveness and implications of different privilege scenarios, inheritance models, and access control mechanisms in Unity Catalog.
+
 ## **Databricks Certified Data Engineer Professional**
 This certification assesses an individual's ability to use Databricks to perform advanced data engineering tasks, including understanding of the Databricks platform and developer tools like Apache Spark, Delta Lake, MLflow, and the Databricks CLI and REST API.
 <br>**[PDF of Certification Details](https://github.com/ajlinhard/byte-size-docs/blob/main/Databricks/docs/databricks-certified-data-engineer-professional-exam-guide-1-mar-2025.pdf)**
