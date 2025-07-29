@@ -51,8 +51,26 @@ Lakeflow Declarative Pipelines represents the natural evolution of Delta Live Ta
 - Code Assets
   - Pipelines Root Folder - automatically includes all relevant files in the folder and adds the path to sys.path in python. Can be a git folder.
   - Source Code folder - section of files and subfolders for files related to the pipeline code. (.py, .sql, notebooks)
+  - You can add additional paths outside the root folder for source, but its not recommend for organizational and permission reasons.
 - Configuration Parameters
   - A key values pair for parameters needed throughout the pipelines.
   - In code the values is replaced with ${param name}.
  
-
+  ### Other Settings
+  - Pipeline ID, Pipeline Type, Pipeline Name, Creator, Owner
+  - Enviornment which allows you to import packages, code, and files into the runtime environment.
+  - Tags for helping with logging and assigning cost.
+  - Budget - a tool for blocking the pipeline for running too much data through or warnings.
+  - Notifications - send emails to specific users based on results.
+  - Advance settings
+    - Pipeline Mode - choose continuous or triggered for executing the pipeline as near realtime or as incremental batches.
+    - Channel - the version of the databricks runtime to execute.
+    - Event Logs - publish the events in the pipeline to a metastore.
+ 
+### Run Options
+Most of the different run options are for different parts of testing, but have use cases in production as well.
+- Dry Run, checks if the setup of your pipeline has any glaring issues: bad or missing parameters, unknown data, looping dependencies etc.
+- Run Pipeline (Manual), will execute your pipeline using the incremental settings.
+- Run Pipeline with full table refresh, will re-execute all tables wiping out delta table history, edits, and data.
+  - Note: If tables are sourcing from S3 or file sources where there is cleanup data could be LOST!
+- Scheduled, allowing to run the pipeline on crontab type schedules.
