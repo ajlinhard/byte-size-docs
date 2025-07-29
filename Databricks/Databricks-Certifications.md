@@ -30,6 +30,8 @@ Each certification focuses on different aspects of the modern data stack, with D
 
 ---
 ## **Databricks Certified Data Engineer Associate**
+---
+
 This certification assesses the ability to use the Databricks Lakehouse Platform to complete introductory data engineering tasks, including understanding the platform's workspace, architecture, and capabilities. It evaluates skills in performing multi-hop architecture ETL tasks using Apache Spark SQL and Python in both batch and incrementally processed paradigms.
 <br>**[PDF of Certification Details](https://github.com/ajlinhard/byte-size-docs/blob/main/Databricks/docs/databricks-certified-data-engineer-associate-exam-guide-1-mar-2025.pdf)**
 
@@ -81,7 +83,9 @@ This certification assesses the ability to use the Databricks Lakehouse Platform
   - Implement privilege assignments and fine-grained access control strategies using SQL syntax and dynamic views in Databricks.
   - Assess the effectiveness and implications of different privilege scenarios, inheritance models, and access control mechanisms in Unity Catalog.
 
+---
 ## **Databricks Certified Data Engineer Professional**
+---
 This certification assesses an individual's ability to use Databricks to perform advanced data engineering tasks, including understanding of the Databricks platform and developer tools like Apache Spark, Delta Lake, MLflow, and the Databricks CLI and REST API.
 <br>**[PDF of Certification Details](https://github.com/ajlinhard/byte-size-docs/blob/main/Databricks/docs/databricks-certified-data-engineer-professional-exam-guide-1-mar-2025.pdf)**
 
