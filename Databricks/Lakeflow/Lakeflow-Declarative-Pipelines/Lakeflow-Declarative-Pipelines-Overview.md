@@ -74,3 +74,17 @@ Most of the different run options are for different parts of testing, but have u
 - Run Pipeline with full table refresh, will re-execute all tables wiping out delta table history, edits, and data.
   - Note: If tables are sourcing from S3 or file sources where there is cleanup data could be LOST!
 - Scheduled, allowing to run the pipeline on crontab type schedules.
+
+## Additional Features
+- Flows => add flows for the same targer creating a unioned version of data from 2+ data sources or tables.
+- Sinks => sink API enables writing to destinations outside of the pipeline like Kafka, Delta, Events hubs.
+- Full Delta Support
+  - Declarative pipelines have improved MVs/STs including Liquid Clustering, Row + Column security, and Change Data feeds (CDF) from STs.
+- Full Unity Catalog Support
+  - Publish to multiple catalogs and schemas
+  - Read STs and MVs in dedicated access mode
+  - Create a Unity Catalog pipeline by cloning a hive metastore pipeline
+- Performance adds of 2025
+  - Serverless, Incremental Processing for Mat. Views, and Photon.
+- Databricks Asset Bundles
+  - enables you to programmatically validate, deploy and run Databricks resources such as pipelines for CI/CD production workloads.
