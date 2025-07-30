@@ -23,3 +23,6 @@ Rather than a specific job title or technology, DevOps is really a mindset and m
 
 ## Sub-Categories of DevOvps
 <img width="1215" height="503" alt="image" src="https://github.com/user-attachments/assets/6c23cd17-abce-4e7a-b077-51ef34b684aa" />
+
+## High-level Testing Steps
+<img width="1288" height="599" alt="image" src="https://github.com/user-attachments/assets/51134181-c715-47d9-b686-e69db5594b07" />
