@@ -6,6 +6,9 @@ Additionally, Iceberg has metadata on its metadata overtime allowing for new fea
 1. [Apache Iceberg Official Page](https://iceberg.apache.org/)
 2. [What is Iceberg? The Evolution of Data Management](https://www.youtube.com/watch?v=6tjSVXpHrE8&t=4s)
 3. [Databricks Unity Catalog - Iceberg](https://www.databricks.com/blog/announcing-full-apache-iceberg-support-databricks)
+4. [Datacamp Tutorial](https://www.datacamp.com/tutorial/apache-iceberg)
+5. [Apache Iceberg Maintenance Docs](https://iceberg.apache.org/docs/1.5.1/maintenance/)
+6. [Iceberg for Data Ops](https://www.phdata.io/blog/how-querying-apache-iceberg-metadata-can-elevate-your-dataops-strategy/)
 
 Iceberg is a table format designed to handle massive datasets in data lakes. Think of it as a smart filing system that keeps track of where your data lives and what it looks like, even as you constantly add, modify, or delete information.
 
@@ -36,3 +39,52 @@ Imagine you're managing customer transaction data for a large e-commerce platfor
 **Compaction and Maintenance**: As your table accumulates many small files from frequent updates, Iceberg can compact them into larger, more efficient files in the background. It updates the metadata to point to the new consolidated files and marks old files for deletion, but queries continue working seamlessly throughout this process.
 
 This architecture enables reliable, scalable data management that supports both analytical workloads requiring historical consistency and operational needs for real-time updates.
+
+---
+## Iceberg As a Standalone System
+Let me break down how Apache Iceberg works as a standalone system and how its metadata/system tables function:
+
+## Apache Iceberg Can Be Standalone
+
+**Yes, Apache Iceberg can operate as a standalone table format**, but it requires a catalog service to manage metadata. Iceberg is a technical catalog or metastore that plays an important role in tracking tables and their metadata. At a minimum, a catalog is the source of truth for a table's current metadata location.
+
+### Documentation
+- [Hive and Iceberg Quickstart](https://iceberg.apache.org/hive-quickstart/)
+- [Iceberg Catalog Guide - Medium](https://medium.com/itversity/iceberg-catalogs-a-guide-for-data-engineers-a6190c7bf381)
+
+## Iceberg Architecture Components
+
+Apache Iceberg supports various catalog implementations to manage table metadata: Hive Metastore, Hadoop Catalog, AWS Glue Data Catalog, JDBC Catalog, and REST Catalog. You can even run a standalone Hive metastore service backed by MySQL to manage Iceberg tables.
+
+## Iceberg's Built-in "System Tables"
+
+**Iceberg comes with its own metadata tables** that function similarly to system tables, but they're **built into the table format itself** rather than being separate system tables in a traditional sense:
+
+### Core Metadata Tables
+
+Apache Iceberg exposes metadata as structured, queryable tables called metadata tables, including:
+
+- **`table.snapshots`** - Known versions of the table with summary metadata
+- **`table.manifests`** - Manifest files in the current snapshot tracking data and delete files  
+- **`table.files`** - All data files with details like partition values, record counts, file sizes
+- **`table.all_data_files`** - Detailed insights into every data file across all valid snapshots
+- **`table.partitions`** - Partition-level information including record counts and file statistics
+- **`table.history`** - Table metadata history and operations
+
+### How to Query Them
+
+To query a metadata table in Apache Spark, add the metadata table name as another part in the table identifier. For example: `SELECT snapshot_id, committed_at, operation FROM examples.nyc_taxi_yellow.snapshots`
+
+## Integration vs. Standalone
+
+### Standalone Deployment
+Table state is maintained in metadata files. All changes to table state create a new metadata file and replace the old metadata with an atomic swap. The table metadata file tracks the table schema, partitioning config, custom properties, and snapshots.
+
+### Integration with External Systems
+When Iceberg integrates with external systems like Unity Catalog, it doesn't create new system tables but rather the existing system tables (like lineage and audit tables) accommodate all table formats including Iceberg.
+
+## Key Takeaway
+
+**Iceberg's metadata system is self-contained and format-native**. Unlike Hive or traditional file-based formats where gaining visibility into schema, partitioning, and file layout often depends on engine-specific logic or limited tooling, Iceberg exposes this information as structured, queryable metadata tables.
+
+So while Iceberg can be standalone, it always needs some form of catalog service (even if just a simple file-based Hadoop catalog) to track the current metadata file locations. The "system tables" are actually built into each Iceberg table as queryable metadata views, making them portable across any catalog implementation.
