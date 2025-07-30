@@ -20,9 +20,17 @@ Rather than a specific job title or technology, DevOps is really a mindset and m
 ## Steps of DevOps
 <img width="1303" height="695" alt="image" src="https://github.com/user-attachments/assets/89947b24-9dac-45fe-8855-d0504b8d2994" />
 
-
 ## Sub-Categories of DevOvps
 <img width="1215" height="503" alt="image" src="https://github.com/user-attachments/assets/6c23cd17-abce-4e7a-b077-51ef34b684aa" />
 
+## Data Ops Environments
+<img width="1277" height="579" alt="image" src="https://github.com/user-attachments/assets/e38503f9-e08d-4bfd-8e42-9d86110e9e32" />
+
+### Data Ops via Pipelines
+You can create pipelines using Airflow, Databricks Workflows, or other task orchestration tools.
+
+<img width="936" height="728" alt="image" src="https://github.com/user-attachments/assets/f00341bd-1447-448d-aa0e-0df89dac2f08" />
+
 ## High-level Testing Steps
 <img width="1288" height="599" alt="image" src="https://github.com/user-attachments/assets/51134181-c715-47d9-b686-e69db5594b07" />
+
