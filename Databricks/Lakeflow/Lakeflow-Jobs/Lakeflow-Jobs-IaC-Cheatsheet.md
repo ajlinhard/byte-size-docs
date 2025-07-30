@@ -476,3 +476,158 @@ resource "databricks_job" "etl_job" {
 - Never put secrets in parameters - use Databricks secrets instead
 - Use parameter validation to prevent injection attacks
 - Limit parameter scope to minimum required permissions
+
+---
+---
+---
+---
+# Notifications In-depth
+# Lakeflow Jobs Notifications Infrastructure as Code Cheatsheet
+
+## Notification Structure Overview
+
+### Complete Notification Configuration
+```yaml
+name: "data-pipeline-with-notifications"
+
+# Job-level notifications
+email_notifications:
+  on_start: ["team-lead@company.com"]
+  on_success: ["team@company.com"] 
+  on_failure: ["team@company.com", "oncall@company.com", "manager@company.com"]
+  no_alert_for_skipped_runs: false
+
+webhook_notifications:
+  on_start:
+    - id: "slack-start"
+      url: "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX"
+  on_success:
+    - id: "slack-success"
+      url: "https://hooks.slack.com/services/T00000000/B00000000/YYYYYYYYYYYYYYYYYYYYYYYY"
+  on_failure:
+    - id: "slack-failure" 
+      url: "https://hooks.slack.com/services/T00000000/B00000000/ZZZZZZZZZZZZZZZZZZZZZZZZ"
+    - id: "pagerduty-critical"
+      url: "https://events.pagerduty.com/integration/abcdefghijklmnopqrstuvwxyz/enqueue"
+
+tasks:
+  - task_key: "critical_task"
+    # Task-level notifications override job-level
+    email_notifications:
+      on_failure: ["critical-alerts@company.com", "cto@company.com"]
+    webhook_notifications:
+      on_failure:
+        - id: "critical-slack"
+          url: "https://hooks.slack.com/services/T00000000/B00000000/CRITICAL_WEBHOOK"
+    
+    notebook_task:
+      notebook_path: "/critical/processing"
+```
+
+## Job-Level Notifications
+
+### Basic Email Notifications
+```yaml
+name: "basic-etl-job"
+
+# Simple email configuration
+email_notifications:
+  on_start: []                                    # No emails on start
+  on_success: ["data-team@company.com"]          # Success notifications
+  on_failure: ["data-team@company.com", "oncall@company.com"]  # Failure alerts
+  no_alert_for_skipped_runs: true               # Skip notifications for skipped runs
+```
+
+### Advanced Email Notifications
+```yaml
+name: "production-etl-job"
+
+email_notifications:
+  # Notify different groups for different events
+  on_start: ["job-monitor@company.com"]
+  on_success: 
+    - "data-team@company.com"
+    - "business-users@company.com"
+  on_failure:
+    - "data-team@company.com"           # Always notify data team
+    - "oncall-engineer@company.com"     # Page on-call
+    - "manager@company.com"             # Notify management
+    - "infrastructure@company.com"      # Infrastructure team for debugging
+  
+  # Don't spam for expected skipped runs
+  no_alert_for_skipped_runs: true
+```
+
+### Webhook Notifications (Slack Integration)
+```yaml
+name: "slack-integrated-job"
+
+webhook_notifications:
+  on_start:
+    - id: "slack-job-start"
+      url: "${secrets.slack_webhook_general}"  # Use secret for webhook URL
+      
+  on_success:
+    - id: "slack-job-success"
+      url: "${secrets.slack_webhook_data_team}"
+      
+  on_failure:
+    - id: "slack-job-failure"
+      url: "${secrets.slack_webhook_alerts}"
+    - id: "slack-job-failure-general"
+      url: "${secrets.slack_webhook_general}"
+```
+
+### Multi-Channel Webhook Notifications
+```yaml
+name: "multi-channel-notifications"
+
+webhook_notifications:
+  on_failure:
+    # Slack notification
+    - id: "slack-data-team"
+      url: "${secrets.slack_webhook_data}"
+      
+    # Microsoft Teams notification  
+    - id: "teams-engineering"
+      url: "${secrets.teams_webhook_engineering}"
+      
+    # PagerDuty for critical alerts
+    - id: "pagerduty-critical"
+      url: "${secrets.pagerduty_integration_url}"
+      
+    # Custom internal webhook
+    - id: "internal-monitoring"
+      url: "https://monitoring.company.com/api/alerts/databricks"
+```
+
+### Environment-Specific Notifications
+```yaml
+name: "environment-aware-notifications"
+
+parameters:
+  - name: environment
+    type: string
+    default: "dev"
+  - name: is_production
+    type: boolean
+    default: "${parameters.environment == 'prod'}"
+
+# Conditional notifications based on environment
+email_notifications:
+  on_start: "${parameters.is_production ? ['prod-monitor@company.com'] : []}"
+  on_success: 
+    # Production: notify business users, Dev: just data team
+    - "${parameters.is_production ? 'business-users@company.com' : 'dev-team@company.com'}"
+  on_failure:
+    # Production gets more aggressive alerting
+    - "data-team@company.com"
+    - "${parameters.is_production ? 'oncall@company.com' : 'dev-lead@company.com'}"
+    - "${parameters.is_production ? 'manager@company.com' : ''}"
+
+webhook_notifications:
+  on_failure:
+    # Different Slack channels per environment
+    - id: "slack-env-specific"
+      url: "${parameters.environment == 'prod' ? secrets.slack_prod_alerts : secrets.slack_dev_alerts}"
+```
