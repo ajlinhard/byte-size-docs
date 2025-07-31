@@ -1,6 +1,9 @@
 # Lakeflow Declarative Pipelines Performance
 While DLT is a powerful tool for processing data incrementally, there are approaches the run faster in the respective use cases.
 
+### Dcoumentation
+- [Databricks Materialized Views](https://docs.databricks.com/aws/en/dlt/materialized-views?language=Python)
+
 ## Materialized Views
 A materialized view is a method for storing a aggregate, ranked, or other type of computed query still as physical data. This is more effective than a view, because if multiple users injest the ended for there BI reports, or analysis, than the data is pre-computed 1-time. You can maintain the same pre-computed result set by dropping + recreating a table, but with a meterialzed view have the following advantages:
 **Incremental Refresh Capabilities**
