@@ -5,6 +5,12 @@ Lakeflow Declarative Pipelines is essentially the rebranded and enhanced version
 
 <img width="1309" height="580" alt="image" src="https://github.com/user-attachments/assets/81936041-2ed7-4b06-a45d-c6916f5c2401" />
 
+### Documentations:
+- [Databricks Lakeflow Declarative Pipelines - Docs](https://docs.databricks.com/aws/en/dlt/)
+- [Databricks Expectations - Intro](https://docs.databricks.com/aws/en/dlt/expectations#manage-data-quality-with-pipeline-expectations)
+- [Databricks Expectations - Advance Patterns](https://docs.databricks.com/aws/en/dlt/expectation-patterns#portable-and-reusable-expectations)
+- [Databricks Lakeflow Declarative Pipelines - Configure Compute](https://docs.databricks.com/aws/en/dlt/configure-compute#cluster-policy)
+
 ## Key Enhancements and Expansions
 
 **1. Unified Data Engineering Platform**
