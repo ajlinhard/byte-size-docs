@@ -5,7 +5,7 @@ involves multiple processors or cores working together on the same machine to so
 ## **Distributed computing** 
 spreads the computational work across multiple separate machines connected by a network. Each machine has its own memory, storage, and processing power, and they communicate by passing messages over the network. This is more like having workers in different buildings or cities collaborating on a project - they need to send messages back and forth to coordinate.
 
-Key differences:
+### Key differences:
 
 **Memory architecture**: Parallel systems usually share memory, while distributed systems have separate memory spaces for each node.
 
