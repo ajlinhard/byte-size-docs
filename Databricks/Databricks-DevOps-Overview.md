@@ -1,9 +1,11 @@
 # Databricks DevOps Overview
 In order to help with your data and dev ops Databricks has many features for assisting with CI/CD.
-- IaC
-- Databricks CLI
-- Python SDKs and APIs
+- [Databricks Asset Bundles(DABs) aka IaC](https://docs.databricks.com/aws/en/dev-tools/bundles/)
+- [Databricks CLI](https://docs.databricks.com/aws/en/dev-tools/cli/)
+- [Python SDKs](https://docs.databricks.com/aws/en/dev-tools/sdk-python)
+- [Databricks REST APIs](https://docs.databricks.com/api/workspace/introduction)
 - Integration with Git Repos
+- [Databricks Connect - For work in IDEs](https://docs.databricks.com/aws/en/dev-tools/databricks-connect/)
 
 ---
 ## Databricks Assets
