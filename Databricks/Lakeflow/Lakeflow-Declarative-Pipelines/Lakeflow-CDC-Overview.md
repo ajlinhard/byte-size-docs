@@ -6,6 +6,7 @@ This is the reason for Databricks attempting to simplify the CDC with the APPLY 
 ### Documentation
 - [Databricks - What is CDC?](https://docs.databricks.com/aws/en/dlt/what-is-change-data-capture)
 - [Databricks - AUTO CDC API](https://docs.databricks.com/aws/en/dlt/cdc?language=Python)
+- [Databricks - CREATE FLOW](https://docs.databricks.com/aws/en/dlt-ref/dlt-sql-ref-create-flow)
 - [Databricks - Delta Change Data Feeds (CDF)](https://docs.databricks.com/aws/en/delta/delta-change-data-feed)
 - [Databricks - Old Release Post on CDF](https://www.databricks.com/blog/2021/06/09/how-to-simplify-cdc-with-delta-lakes-change-data-feed.html)
 
