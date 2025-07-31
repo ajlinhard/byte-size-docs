@@ -1,6 +1,12 @@
 # Lakeflow Jobs Overview
 The portion of Lakeflow is responsible for the orchestration of you processing in Databricks. This is the same concept as Airflow, Step Functions, or Perfect. The system sets up DAGs for the automated data pipeline you want to run, then you set a trigger that would start the pipeline.
 
+### Documentation
+- [Databricks Lakeflow Jobs](https://docs.databricks.com/aws/en/jobs/)
+- [Databricks Lakeflw Dynamic Parameters](https://docs.databricks.com/aws/en/jobs/dynamic-value-references)
+- [Databticks Lakeflow Jobs - Monitoring](https://docs.databricks.com/aws/en/jobs/monitor)
+- [Databricks Notfications - 3rd Party Systems](https://docs.databricks.com/aws/en/jobs/notifications)
+
 ## Bolt-On Orchestration Tools
 Databricks does support the use and execution from other orchestration tools like Airflow, Perfect, DBT, and Dagster. These tools can be combine together in Lakeflow Jobs as well, to create complex data pipelines.
 <img width="1196" height="580" alt="image" src="https://github.com/user-attachments/assets/cae3af34-f75f-4b06-9226-69c7367ad94f" />
