@@ -21,6 +21,11 @@ Here's the basic structure and examples of the COPY INTO statement in Spark:Key 
 - `OPTIONS` - copy behavior settings
 - `COPY_OPTIONS` - copy behavior settings on databricks
 
+So you have three different option parameters available in Databricks COPY INTO:
+1. FORMAT_OPTIONS - for file format-specific options (like CSV headers, delimiters, etc.)
+2. COPY_OPTIONS - for copy operation-specific options (like error handling, duplicate behavior, etc.)
+3. OPTIONS - general options (though less commonly used in this context)
+
 ### **Important Features:**
 - **Idempotent by default** - won't reprocess files unless `force = true`
 - **Automatic schema inference** - can detect schema from files
