@@ -1,8 +1,23 @@
 # Pytest Backend Walkthrough
 How is PyTest processing fixtures and passing parameters to found test functions behind the scenes. When you execute pytest runs, the first step is scanning all the files in the folders pulling out conftest.py at each level, pulling in test files, parsing for "test_" functions. But then how does the actual fixtures (scope, params, etc) and passing of the fixtures + parameters work? The main thing to remmeber is pytest is an application which is executing, not just a static set of classes. We will start with fixtures and move towards the executor of pytest passing the values. This is a simplified version of how pytest works, NOT the actual code! You can look through that on your own.
 
+## Pytest Backend Walkthrough - Table of Contents
+
+- [Pytest Backend Walkthrough](#pytest-backend-walkthrough)
+- [How is PyTest caching the yield and return values of fixtures?](#how-is-pytest-caching-the-yield-and-return-values-of-fixtures)
+  - [Pytest's Internal Caching Mechanism](#pytests-internal-caching-mechanism)
+- [For cached values in fixtures how is the scope factored in?](#for-cached-values-in-fixtures-how-is-the-scope-factored-in)
+  - [Scope-Based Cache Management](#scope-based-cache-management)
+  - [Real Examples by Scope](#real-examples-by-scope)
+  - [Pytest's Internal Decision Tree](#pytests-internal-decision-tree)
+  - [Practical Example Showing All Scopes](#practical-example-showing-all-scopes)
+- [How is pytest passing the cached values to each function that calls the fixtures as a value?](#how-is-pytest-passing-the-cached-values-to-each-function-that-calls-the-fixtures-as-a-value)
+  - [The Dependency Injection Flow](#the-dependency-injection-flow)
+  - [Step-by-Step Example](#step-by-step-example)
+  - [The Key Magic Moments](#the-key-magic-moments)
+
 ---
-# How is PyTest caching the yield and return values of fixtires?
+# How is PyTest caching the yield and return values of fixtures?
 
 The caching happens in pytest's internal `FixtureManager` and `FixtureRequest` classes. Here's how it works under the hood with example code:
 
