@@ -24,18 +24,46 @@ The problem is analogous to any project in the real world! Unlike the real world
 
 The next couple sectios will go through ways research is attempting to address these challenges.
 
-## Googles Agent to Agent Protocol (A2A)
+Yes, ACP (Agent Communication Protocol) is indeed one of the competing implementations! Based on my search, there are three main protocols emerging as standards for AI agent communication:
+
+## Major A2A Communication Implementations
+The protocols serve different use cases:
+- **A2A**: Cross-platform agent collaboration over the internet
+- **MCP**: Agent-to-tool/data integration  
+- **ACP**: Local, low-latency agent coordination
+
+As one source notes: "Agentic applications needs both A2A and MCP. We recommend MCP for tools and A2A for agents."
+
+These aren't necessarily competing in the traditional sense - they're more complementary protocols addressing different layers of the agent communication stack.
+
+### ** A2A (Agent-to-Agent Protocol)**
+The goal of A2A is to establish a common "Communication Style". Use the concpets of HTTPS and STMP to create a common way agents will interact.
 [A2A Protocol Release Post](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/)
 
-The goal of A2A is to establish a common "Communication Style". Use the concpets of HTTPS and STMP to create a common way agents will interact.
+- Launched by Google with support from 50+ technology partners including Atlassian, Box, Cohere, Intuit, Langchain, MongoDB, PayPal, Salesforce, SAP, ServiceNow, UKG and Workday
+- Built on existing standards including HTTP, SSE, JSON-RPC
+- Addresses horizontal interoperability — standardizing how agents from different vendors or runtimes can exchange capabilities and coordinate workflows over the open web
+- Uses "Agent Cards" — machine-readable JSON descriptors detailing identity, capabilities, endpoints, and authentication requirements
 
-## Anthropics Model Context Protocol (MCP)
+### ** MCP (Model Context Protocol)**
+The goal of MCP is standardize how we "Convert Info to Action".
 [Anthropic MCP Home Page](https://modelcontextprotocol.io/introduction)
 
-The goal of MCP is standardize how we "Convert Info to Action".
+- Introduced by Anthropic as an open-source project, provides a standardized way for AI applications and agents to connect with "context" providers like data sources, files and tools
+- Focuses on tool integration rather than agent-to-agent communication
+- MCP is the emerging standard for connecting LLMs with data, resources, and tools
 
-## Apache Kafka
+### ** ACP (Agent Communication Protocol)**
+ACP aims to solve the fragmentation between commmunication between agents, applications, and humans. Focused on the internal system communication verse with the LLM (MCP) or other Agent Servers (A2A).
+[ACP Home Page](https://agentcommunicationprotocol.dev/introduction/welcome)
+- Developed by IBM and BeeAI, focuses on local-first agent coordination with minimal network overhead
+- Designed for local-first, real-time agent orchestration with minimal network overhead and tight integration across agents deployed within a shared runtime
+- Can be implemented over gRPC, ZeroMQ, or custom runtime buses
+
+## Other Helpful Tools
+
+### Apache Kafka
 The goal is to use Kafka's event driven architecture to allow agents to post/share info for others to use.
 
-## Apache Flink
+### Apache Flink
 The goal of Flink is to tackle the "Communication Efficency" as well as "Observability of Progress" with its real-time streaming features.
