@@ -4,6 +4,9 @@ An AI agent is a software entity that can perceive its environment, make decisio
 
 ### Documentation / Training:
 - [AI Agent Basic Tools (post)](https://www.linkedin.com/posts/shirin-khosravi-jam_i-am-a-data-scientist-and-i-built-ai-agents-activity-7331938079835848705-ADxB?utm_source=share&utm_medium=member_android&rcm=ACoAAA1u5M4Bug9k301OIryWqnTXjYpn4_R9r9k)
+- [Pydantic AI](https://ai.pydantic.dev/a2a/#installation)
+- [Google A2A Github](https://github.com/a2aproject/A2A)
+- [Google A2A Docs](https://a2aprotocol.ai/docs/guide/a2a-protocol-specification-python#usage-examples)
 
 ## Fundamental Concepts
 
