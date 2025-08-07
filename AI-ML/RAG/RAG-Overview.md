@@ -2,6 +2,10 @@
 
 Retrieval Augmented Generation (RAG) is a powerful approach that enhances large language models (LLMs) by integrating external knowledge retrieval into the generation process. Let me break this down in detail.
 
+### Documentation
+- [RAG vs MCP vs A2A](https://www.youtube.com/watch?v=u546On9iEBk)
+- [RAG 100X Faster with Knowledge Graphs](https://www.youtube.com/watch?v=5jQHGLWausQ)
+
 ## Existing Vector Databases:
 - [Pinecone](https://docs.pinecone.io/guides/get-started/overview)
 - [Milvus](https://milvus.io/)
