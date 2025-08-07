@@ -8,3 +8,6 @@ This is a new communciation methodology created for Agents interacting with Agen
 - [A2A Protocol Specification (Obj Level)](https://a2a-protocol.org/latest/specification/)
 - [A2A Github - Python Examples](https://github.com/a2aproject/A2A/blob/main/docs/tutorials/python/4-agent-executor.md)
 - [Pydantic A2A](https://ai.pydantic.dev/a2a/#storage-architecture)
+
+Vidoes:
+- [A2A Intro - Mervin Praison](https://www.youtube.com/watch?v=5jQHGLWausQ)
