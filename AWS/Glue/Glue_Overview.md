@@ -1,11 +1,15 @@
 # Glue Overview
-Glue is a AWS managed service built to assist with the ETL of your data.
+AWS Glue is a serverless data integration service, which means that you only pay for usage and don't pay for idle time. With AWS Glue, data scientists, analysts, and developers can discover, prepare, and combine data for various purposes. Examples include analytics, machine learning (ML), and application development. AWS Glue provides visual and code-based interfaces for data integration activity and transforms data using built-in transformations. 
+
+You can also quickly locate and access data through the AWS Glue Data Catalog. Data engineers and extract, transform, and load (ETL) developers can create, run, and monitor ETL workflows using AWS Glue Studio. Data analysts can use the no-code capabilities of AWS Glue DataBrew to enrich, clean, and normalize data without writing any code. Data scientists can use AWS Glue interactive notebooks to quickly start querying their data for interactive analytics, rather than spending months creating infrastructure.
 
 ## Documentation/Tutorials
 
-1. [AWS Glue Data Quaility Definition Language](https://docs.aws.amazon.com/glue/latest/dg/dqdl.html)
-2. [Beginners Video](https://www.youtube.com/watch?v=weWeaM5-EHc)
-3. [Course for Beginners](https://www.youtube.com/watch?v=ZvJSaioPYyo)
+1. [AWS Glue Documentation](https://docs.aws.amazon.com/glue/)
+2. [AWS Glue Data Quaility Definition Language](https://docs.aws.amazon.com/glue/latest/dg/dqdl.html)
+3. [Beginners Video](https://www.youtube.com/watch?v=weWeaM5-EHc)
+4. [Course for Beginners](https://www.youtube.com/watch?v=ZvJSaioPYyo)
+5. [AWS Cost Rundowm (byte-size-docs)](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/Glue/AWS-Glue-Cost.md)
 
 # AWS Glue Architecture and Technology Stack
 AWS Glue is built primarily on top of Apache Spark, which serves as its core processing engine. This foundation gives Glue its distributed data processing capabilities while adding AWS-specific integrations and abstractions.
@@ -28,6 +32,61 @@ AWS Glue is built primarily on top of Apache Spark, which serves as its core pro
 2. **Python/Scala/Java**: Supported programming languages for writing Glue jobs
 3. **AWS-managed infrastructure**: Handles resource provisioning and scaling
 4. **AWS service integrations**: Tight coupling with S3, Redshift, RDS, DynamoDB, etc.
+
+## Problems Glue Solves
+**Provisions and manages the lifecycle of resources :**
+AWS Glue provisions the requested resources like servers, storage, and runtime environment that ETL jobs need. It also manages the lifecycle of these resources and removes them when they are not being used. AWS Glue maintains the resource pool from where requested capacity is allocated.
+
+**Provides interactive tools :**
+AWS Glue has tools for each persona for performing development activities that include no-code, low-code, and interactive tools, so it reduces development time.
+
+**Auto-generates code :**
+AWS Glue auto-generates code when built-in transformations are used, which is optimized for runtime and cost-effectiveness. It also provides features to upload the scripts to make migration more straightforward.
+
+**Connects to hundreds of data stores :**
+AWS Glue connects to hundreds of data stores, including Amazon Redshift, relational databases, MongoDB, and software as a service (SaaS) providers like Salesforce. It also exposes APIs to conveniently build your own connectors.
+
+**Creates a data catalog for various data sources :**
+AWS Glue provides the opportunity to create a data catalog for various data sources that could help search metadata and classify data. AWS Glue Data Catalog is used by multiple analytics services to work on the data.
+
+**Identifies sensitive data using ML recognition patterns for PII :**
+AWS Glue helps in identifying sensitive data using ML recognition patterns for personally identifiable information (PII). After identification, you can remediate them by redacting through string or cryptographic hashing.
+
+**Manage and enforce schemas on data-streaming applications :**
+Using AWS Glue, you can also manage and enforce schemas on data-streaming applications. Integrations with Apache Kafka and Amazon Kinesis help ensure that downstream systems are not affected by semantic changes in upstream systems.
+
+**Offers data quality and automatic data scaling :**
+AWS Glue offers data quality for creating and applying built-in rule types or custom rule types to clean and normalize your data. AWS Glue automatically scales as the volume of data increases, and it is integrated with Amazon CloudWatch for monitoring.
+
+## Benefits (According to AWS)
+#### Faster data integration
+With AWS Glue, developers have the flexibility to choose their preferred tool for data preparation and processing. This makes it possible to quickly deliver data for analytics, ML, and application development. By creating repeatable and reusable workflows, developers can streamline data integration and ETL processes, making collaboration on these tasks more efficient. 
+
+Data engineers can develop and test your AWS Glue job scripts through multiple options: 
+
+1. AWS Glue Studio console
+   - Visual editor
+   - Script editor
+   - AWS Glue Studio notebook
+   - Interactive sessions
+2. Jupyter Notebook
+   - Docker image
+3. Local development
+   - Remote development
+4. AWS Glue Studio ETL library
+   - Local development
+
+#### Automate data integration at scale
+AWS Glue uses crawlers to scan data sources, identify data format and metadata, register the data's schema, and generate code for transformations. It also provides workflows that developers can use to create streamlined and advanced pipelines for ETL tasks.
+
+#### No infrastructure to manage
+AWS Glue helps you prepare and work on data without users needing to provision and maintain any infrastructure. This makes AWS Glue serverless, because AWS will manage and provision servers from a warm pool. It automatically scales resources up and down as required by AWS Glue jobs. By doing this, data engineers and developers can focus on writing business logic and creating complex workflows. AWS Glue works with continuous integration and continuous delivery (CI/CD) and also with alerting or monitoring services to make their workload self-service.
+
+#### Create, run, and monitor ETL jobs without coding
+AWS Glue Studio provides straightforward creation, running and monitoring of ETL tasks for data transformation through a user-friendly drag-and-drop interface. It automatically generates code and offers built-in transformations from AWS Glue DataBrew that can assist with data cleaning and standardization. The processed data can then be used for analytical and ML purposes.
+
+#### Pay only for what you use
+With AWS Glue, users pay only for the resources they consume. There's no upfront cost, and users are not charged for a start-up or shutdown time.
 
 ## Unique Features
 
