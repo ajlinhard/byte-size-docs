@@ -16,6 +16,19 @@ With AWS Glue, you can identify and build a technical data catalog for various d
   - Amazon Redshift is a fully managed, petabyte-scale data warehouse service in the cloud.
   - QuickSight is a scalable, serverless, embeddable, ML-powered business intelligence (BI).
 
+---
+## Common Architectures
+
+### Lambda Architecture
+Glue fits into lambda architectures by handling both batch and streaming layers. Batch jobs process historical data from S3, while streaming jobs handle real-time data from Kinesis. Results merge in a serving layer accessible through Athena or Redshift.
+
+### Data Lake Architecture
+In data lake patterns, Glue crawlers discover data in S3 and populate the catalog. ETL jobs transform raw data through bronze, silver, and gold layers. The Data Catalog enables querying through multiple engines like Athena, EMR, and Redshift Spectrum.
+
+### Data Warehouse Integration
+Glue connects traditional data warehouses with modern analytics. Jobs extract data from sources like RDS or on-premises databases, transform it according to business rules, and load it into Redshift or other targets. This supports hybrid architectures combining traditional and cloud-native approaches.
+
+---
 # Basic Technical Concepts
 These are the basic technical concepts when working with Glue and can be setup and used through Glue Studio or with in scripts:
 
