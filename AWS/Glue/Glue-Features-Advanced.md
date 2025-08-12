@@ -39,14 +39,12 @@ Experienced developers believe developing and testing ETL code for their busines
 ## Using Auto Scaling for AWS Glue
 With the AWS Glue Auto Scaling feature, ETL jobs can dynamically adjust the number of workers based on the processing demand for complex transformations. When the demand decreases, the number of workers returns to its original state. By doing this, developers don’t have to hardcode workers needed for their jobs. This feature is available in AWS Glue version 3.0 or higher.
 
-
-
 With Auto Scaling activated, AWS Glue can do the following: 
 
 AWS Glue will automatically add and remove workers from the cluster, based on the parallelism of each stage or micro-batch of the job run.
 This eliminates the need to experiment manually with different worker configurations, with AWS Glue selecting optimal resources for your workload.
 You can monitor the cluster size during the job run by viewing CloudWatch metrics on the job run details page in AWS Glue Studio.
-For more information about AWS Glue Auto Scaling, see Using Auto Scaling for AWS Glue(opens in a new tab).
+For more information about AWS Glue Auto Scaling, see [Using Auto Scaling for AWS Glue](https://docs.aws.amazon.com/glue/latest/dg/auto-scaling.html).
 
 
 ## Compression and file format
@@ -72,11 +70,11 @@ AWS CloudTrail
 AWS Glue can be integrated with Amazon Q Developer, a coding companion. With this integration, you can develop code quickly and conveniently, which can help speed up your data preparation for analytics and ML. When you use AWS Glue Studio notebooks to write code in Python, or even just type in English, Amazon Q Developer provides you with real-time recommendations. You can then either accept the top suggestion, view more suggestions, or continue writing your own code.
 
 
-For more information on using Amazon Q Developer with AWS Glue, see Amazon Q data integration in AWS Glue(opens in a new tab).
+For more information on using Amazon Q Developer with AWS Glue, see [Amazon Q data integration in AWS Glue](https://aws.amazon.com/blogs/big-data/build-data-integration-jobs-with-ai-companion-on-aws-glue-studio-notebook-powered-by-amazon-codewhisperer/).
 
 
 ## Transactional data lake
 AWS Glue for Apache Spark now supports three open-source data lake storage frameworks: Apache Hudi, Apache Iceberg, and Linux Foundation Delta Lake. These frameworks provide consistent reading and writing of data in Amazon S3. They streamline incremental data processing in data lakes built on Amazon S3. This removes the need for a separate connector and reduces configuration steps in AWS Glue for Apache Spark jobs. With these frameworks, you can do time-travel queries; atomicity, consistency, isolation, and durability (ACID) transactions; streaming ingestion; change data capture; upserts; and deletes.
 
 
-For more information, see Using Data Lake Frameworks with AWS Glue ETL Jobs(opens in a new tab).
+For more information, see [Using Data Lake Frameworks with AWS Glue ETL Jobs](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-datalake-native-frameworks.html).
