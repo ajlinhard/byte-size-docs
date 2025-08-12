@@ -38,7 +38,7 @@ With AWS Glue Data Quality, users can standardize their data by comparing it wit
 ### AWS Glue Schema Registry
 A schema defines the structure and format of a data record. With AWS Glue Schema Registry, you can manage and enforce schemas on your data streaming applications using convenient integrations. These integrations include Apache Kafka, Amazon Managed Streaming for Apache Kafka, Amazon Kinesis Data Streams, Amazon Kinesis Data Analytics for Apache Flink, and AWS Lambda.
 
-## What are DBUs?
+## What are DPUs?
 DPUs (Data Processing Units) are the compute capacity units that AWS Glue uses to measure and bill for processing power in Glue jobs.
 
 **What DPUs represent:**
