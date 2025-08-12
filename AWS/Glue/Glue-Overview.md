@@ -88,6 +88,7 @@ AWS Glue Studio provides straightforward creation, running and monitoring of ETL
 #### Pay only for what you use
 With AWS Glue, users pay only for the resources they consume. There's no upfront cost, and users are not charged for a start-up or shutdown time.
 
+---
 ## Unique Features
 
 ### 1. Serverless Architecture
@@ -140,27 +141,58 @@ An extension to Spark DataFrames optimized for ETL operations:
 - Native handling of nested data structures
 - Built-in support for schema evolution
 
-### ETL Jobs
+### 8. ETL Jobs
 Glue supports both Spark-based ETL jobs and Python shell jobs. Spark jobs can be written in Python (PySpark) or Scala, with automatic scaling capabilities. The service provides built-in transformations for common operations like joins, filters, and format conversions. Jobs can process both batch and streaming data.
 
-### Development Environment
+### 9. Development Environment
 AWS Glue Studio offers a visual interface for creating ETL jobs with drag-and-drop functionality. For code-based development, Glue provides development endpoints and notebook environments. The service includes job bookmarking to track processed data and avoid reprocessing.
 
-### Data Quality
+### 10. Data Quality
 Glue DataBrew provides visual data preparation with over 250 built-in transformations. It includes data profiling capabilities and anomaly detection. The service can generate data quality rules and monitor data pipelines for issues.
 
+[More Feature Details](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/Glue/Glue-Features-Advanced.md)
+
 ---
-## Common Architectures
+## Best Use Cases for AWS Glue
 
-### Lambda Architecture
-Glue fits into lambda architectures by handling both batch and streaming layers. Batch jobs process historical data from S3, while streaming jobs handle real-time data from Kinesis. Results merge in a serving layer accessible through Athena or Redshift.
+AWS Glue excels in scenarios where:
+- Your data ecosystem is primarily AWS-based
+- You need a managed, serverless ETL service
+- Jobs run on predictable schedules
+- Data volumes are moderate to large
+- Processing is primarily batch-oriented
+- You want to minimize infrastructure management
 
-### Data Lake Architecture
-In data lake patterns, Glue crawlers discover data in S3 and populate the catalog. ETL jobs transform raw data through bronze, silver, and gold layers. The Data Catalog enables querying through multiple engines like Athena, EMR, and Redshift Spectrum.
+### Streamlined ETL development
+AWS Glue ETL offers the benefits of data extraction, transformation, and load or store, without the need to manage infrastructure. Users can write their ETL scripts using Python or Scala, or use the auto-generate feature like auto scaling resources and workflow management. This makes AWS Glue a comprehensive data integration service.
 
-### Data Warehouse Integration
-Glue connects traditional data warehouses with modern analytics. Jobs extract data from sources like RDS or on-premises databases, transform it according to business rules, and load it into Redshift or other targets. This supports hybrid architectures combining traditional and cloud-native approaches.
+Users can use Data Catalog to quickly discover and search across multiple AWS datasets without moving the data. After the data is cataloged, it is immediately available for search and query using Athena, Amazon EMR, and Amazon Redshift Spectrum.
 
+### Technical data catalog to find data across multiple data stores
+Users can use Data Catalog to quickly discover and search across multiple AWS datasets without moving the data. After the data is cataloged, it is immediately available for search and query using Athena, Amazon EMR, and Amazon Redshift Spectrum.
+
+### Data quality, data preparation, and data profiling without coding
+AWS Glue offers flexibility by providing users the opportunity to create custom data quality rules or use a set of recommended rules for quick data quality checks. Data quality in AWS Glue is integrated with CloudWatch for monitoring and alerting, in case of messy data. Additionally, AWS Glue users can use DataBrew, a no-code service for data statistics, cleaning, normalizing, and profiling. DataBrew comes with over 250 built-in transformations, providing data analysts with the option to prepare data for ML.
+
+### Quick job orchestration and visualization with drag and drop
+AWS Glue Studio is a convenient solution for rapidly creating and running AWS Glue ETL jobs, without having to manually write code. This feature provides a visual drag-and-drop editor that facilitates the manageable design of their complex data pipeline. It automatically generates the corresponding code for initiation. The built-in monitoring and dashboarding capabilities in AWS Glue Studio are also helpful for scaling and managing a large number of jobs. AWS Glue provides workflows that can be used to create and visualize complex ETL operations that involve multiple crawlers, jobs, events, or scheduled job or workflow triggers.
+
+### Real-time data processing
+Batch processing is a good option when the processed data is used or visualized at specific times, such as an end-of-day sales summary. However, in some cases, you might want to process and use data as soon as it becomes available. Examples include user login patterns, social media data, network logs, or clickstream data. In these situations, developers can use AWS Glue Streaming ETL to process real-time data. With AWS Glue Streaming ETL, you can create jobs that run continuously and consume data from streaming sources. These jobs can process the data in real time and load the processed data into Amazon S3 or JDBC data stores.
+
+## When to Consider Alternatives
+
+You might want to look elsewhere when:
+- Real-time processing is critical
+- Cost optimization is paramount
+- You need fine-grained control over execution
+- Complex orchestration is required
+- You operate in a multi-cloud environment
+- Development agility and iteration speed are priorities
+
+**Cost optimization scenarios** include replacing expensive traditional ETL tools with pay-per-use serverless processing. **Rapid prototyping** benefits from Glue's quick setup and built-in transformations. **Hybrid cloud strategies** leverage Glue's ability to connect on-premises and cloud data sources. The choice to use AWS Glue depends on your specific requirements for scalability, cost, operational complexity, and integration needs within the AWS ecosystem.
+
+---
 ## Relationship to Apache Spark
 
 AWS Glue runs on Apache Spark under the hood, providing a serverless Spark environment. Glue abstracts away cluster management while giving access to Spark's distributed processing capabilities. The service supports standard Spark APIs and libraries, allowing existing Spark knowledge to transfer directly.
@@ -246,181 +278,4 @@ Integration with Kinesis Data Streams and Kinesis Data Firehose enables real-tim
 - **Custom connector support**: Limited compared to open-source alternatives
 - **Third-party service connections**: Often require custom implementation
 
----
-## Best Use Cases for AWS Glue
 
-AWS Glue excels in scenarios where:
-- Your data ecosystem is primarily AWS-based
-- You need a managed, serverless ETL service
-- Jobs run on predictable schedules
-- Data volumes are moderate to large
-- Processing is primarily batch-oriented
-- You want to minimize infrastructure management
-
-## When to Consider Alternatives
-
-You might want to look elsewhere when:
-- Real-time processing is critical
-- Cost optimization is paramount
-- You need fine-grained control over execution
-- Complex orchestration is required
-- You operate in a multi-cloud environment
-- Development agility and iteration speed are priorities
-
-**Cost optimization scenarios** include replacing expensive traditional ETL tools with pay-per-use serverless processing. **Rapid prototyping** benefits from Glue's quick setup and built-in transformations. **Hybrid cloud strategies** leverage Glue's ability to connect on-premises and cloud data sources. The choice to use AWS Glue depends on your specific requirements for scalability, cost, operational complexity, and integration needs within the AWS ecosystem.
----
-# AWS Glue Connection Types
-
-AWS Glue supports a variety of connection types to integrate with different data sources, including on-premises systems and other cloud services. Here's a comprehensive breakdown:
-
-## JDBC Connections
-
-1. **Amazon RDS/Aurora**
-   - MySQL, PostgreSQL, Oracle, SQL Server, MariaDB
-   - Seamless integration with AWS-managed relational databases
-
-2. **On-premises Databases**
-   - MySQL, PostgreSQL, Oracle, SQL Server, MariaDB
-   - Requires proper network connectivity (VPC, Direct Connect, or VPN)
-   - May need additional security configurations (keypairs, credentials)
-
-3. **Third-party Cloud Databases**
-   - Any accessible JDBC-compliant database (Google Cloud SQL, Azure SQL, etc.)
-   - Requires network access and proper credential management
-
-## NoSQL Connections
-
-1. **Amazon DynamoDB**
-   - Native integration using the DynamoDB connector
-   - Supports both read and write operations
-
-2. **MongoDB**
-   - Connects via MongoDB connector
-   - Works with both Atlas (cloud) and on-premises MongoDB deployments
-
-3. **Cassandra/DataStax**
-   - Supported through custom connectors
-   - Compatible with both cloud and on-premises deployments
-
-## File-Based Connections
-
-1. **Amazon S3**
-   - Native, high-performance integration
-   - Supports various file formats (Parquet, ORC, JSON, CSV, Avro)
-
-2. **HDFS**
-   - On-premises Hadoop clusters via HDFS connector
-   - Requires network connectivity to the Hadoop cluster
-
-3. **NFS and SMB shares**
-   - On-premises file systems via custom connectors
-   - Requires appropriate network setup
-
-## Data Warehouse Connections
-
-1. **Amazon Redshift**
-   - Native integration with AWS Redshift
-   - Supports both reading and writing
-
-2. **Snowflake**
-   - Connects via JDBC
-   - Works across cloud providers where Snowflake is deployed
-
-3. **Other cloud data warehouses**
-   - Google BigQuery, Azure Synapse via JDBC/ODBC connectors
-   - Requires appropriate network connectivity
-
-## Streaming Connections
-
-1. **Amazon Kinesis**
-   - Native integration for streaming data
-   - Both Kinesis Data Streams and Firehose
-
-2. **Apache Kafka**
-   - Supports both AWS MSK and self-hosted Kafka
-   - On-premises Kafka clusters (requires network connectivity)
-
-3. **Third-party streaming platforms**
-   - Confluent Cloud, Azure Event Hubs, etc.
-   - Requires appropriate connectivity and configuration
-
-## Other Cloud Services
-
-1. **AWS Services**
-   - Native integration with most AWS data services
-   - Includes S3, DynamoDB, Redshift, RDS, DocumentDB, Neptune, etc.
-
-2. **Non-AWS Cloud Services**
-   - Possible through:
-     - JDBC/ODBC for relational databases
-     - Custom connectors for specialized services
-     - API-based connectors for REST/SOAP services
-   - Examples: Google BigQuery, Azure Cosmos DB, Snowflake
-
-## Network Connectivity for On-Premises Sources
-
-To connect to on-premises data sources, AWS Glue requires one of these connectivity methods:
-
-1. **AWS Direct Connect**
-   - Dedicated private connection from on-premises to AWS
-   - Provides stable, low-latency connectivity
-   - Best for production workloads with high data volumes
-
-2. **VPN Connection**
-   - Site-to-site VPN between on-premises network and AWS VPC
-   - More affordable than Direct Connect but with less predictable performance
-   - Suitable for moderate data volumes
-
-3. **Network Load Balancer / Reverse Proxy**
-   - For scenarios where direct connectivity isn't possible
-   - Requires additional security configurations
-
-4. **AWS PrivateLink**
-   - For specific services that support it
-   - Provides private connectivity without exposure to the public internet
-
-## Connection Management Features
-
-1. **Connection Properties**
-   - Connection type specification
-   - Authentication credentials
-   - Network configuration
-   - Timeout settings
-
-2. **Security Features**
-   - AWS Secrets Manager integration for credential management
-   - SSL/TLS encryption for data in transit
-   - VPC security groups for network isolation
-   - IAM role-based access control
-
-3. **Connection Testing**
-   - Built-in connection testing to validate configuration
-   - Helps troubleshoot connectivity issues
-
-## Limitations and Considerations
-
-1. **Performance Constraints**
-   - Network latency for remote connections
-   - Bandwidth limitations affecting throughput
-   - Connection pooling limitations
-
-2. **Security Challenges**
-   - Firewall configurations for on-premises sources
-   - Credential management across environments
-   - Compliance considerations for cross-environment data movement
-
-3. **Connectivity Reliability**
-   - Dependency on network stability for on-premises connections
-   - Need for robust error handling for intermittent connectivity
-
-4. **Cross-Cloud Complexities**
-   - Different authentication mechanisms across cloud providers
-   - Potential data transfer costs
-   - Varying performance characteristics
-
-5. **Custom Connector Limitations**
-   - Not all data sources have native connectors
-   - Custom connector development may be necessary
-   - Maintenance overhead for custom solutions
-
-AWS Glue provides significant flexibility in connecting to various data sources, but successful implementation requires careful planning around network architecture, security, and performance considerations, especially for hybrid and multi-cloud scenarios.
