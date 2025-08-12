@@ -37,3 +37,52 @@ With AWS Glue Data Quality, users can standardize their data by comparing it wit
 
 ### AWS Glue Schema Registry
 A schema defines the structure and format of a data record. With AWS Glue Schema Registry, you can manage and enforce schemas on your data streaming applications using convenient integrations. These integrations include Apache Kafka, Amazon Managed Streaming for Apache Kafka, Amazon Kinesis Data Streams, Amazon Kinesis Data Analytics for Apache Flink, and AWS Lambda.
+
+## What are DBUs?
+DPUs (Data Processing Units) are the compute capacity units that AWS Glue uses to measure and bill for processing power in Glue jobs.
+
+**What DPUs represent:**
+- Each DPU provides 4 vCPUs and 16 GB of memory
+- They determine how much compute resources are allocated to your Glue job
+- You can configure the number of DPUs when creating or running a job
+
+**Key characteristics:**
+- **Minimum allocation:** Most Glue job types require a minimum of 2 DPUs
+- **Scaling:** You can allocate anywhere from 2 to 100 DPUs (or more with service limit increases)
+- **Billing:** You're charged based on DPU-hours (number of DPUs × time running)
+- **Granularity:** Billed per second with a 1-minute minimum
+
+**Job type considerations:**
+- **Glue ETL jobs:** Default is usually 10 DPUs, can be adjusted based on data volume and complexity
+- **Glue Streaming jobs:** Minimum 2 DPUs
+- **Ray jobs:** Different DPU configurations available
+- **Python Shell jobs:** Use a fraction of a DPU (0.0625 or 1 DPU options)
+
+**Performance impact:**
+- More DPUs = more parallelism and faster processing
+- But there's a point of diminishing returns - adding more DPUs won't help if your job isn't designed to scale horizontally
+- The optimal number depends on your data size, transformation complexity, and I/O patterns
+
+**Cost optimization tip:** Start with the default DPU allocation, monitor job performance, then adjust up or down based on whether you need faster processing or want to reduce costs.
+
+### The 1-minute Minimum Explained
+The 1-minute minimum is **per job run**, not per billing cycle.
+
+Here's how it works:
+
+**Per job run:**
+- Each time you start a Glue job, you're charged for a minimum of 1 minute, even if the job completes in 30 seconds
+- If your job runs for 2 minutes and 15 seconds, you're charged for exactly 2 minutes and 15 seconds (rounded to the nearest second)
+- If you run the same job 10 times in a day, and each run takes 30 seconds, you'd be billed for 10 minutes total (1 minute × 10 runs)
+
+**Example scenarios:**
+- Job runs for 45 seconds → billed for 1 minute
+- Job runs for 1 minute 30 seconds → billed for 1 minute 30 seconds  
+- Job runs for 3 minutes 47 seconds → billed for 3 minutes 47 seconds
+
+This per-job minimum can add up if you have many short-running jobs. For cost optimization with frequently executed short jobs, consider:
+- Batching multiple small transformations into a single job
+- Using Glue workflows to chain related jobs efficiently
+- For very lightweight tasks, consider Python Shell jobs which use fractional DPUs
+
+The billing is calculated as: (Number of DPUs) × (Runtime in seconds, minimum 60) × (DPU hourly rate ÷ 3600)
