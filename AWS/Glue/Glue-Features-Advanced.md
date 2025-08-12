@@ -1,4 +1,4 @@
-# AWD Glue Advnace Features
+# AWD Glue Advanced Features
 AWS Glue is a scalable data integration service that streamlines the ETL process using built-in connectors. You can design complex workflows using crawlers, jobs, and initiations, and choose to author the jobs using code or visual transformations. The jobs can be deployed using AWS CloudFormation, which acts as infrastructure as code in JSON or YAML, and can be version-controlled in Bitbucket or GitHub. AWS Glue also offers centralized monitoring through a single pane of glass. This helps you check the status of your ETL pipeline and start, stop, and rerun jobs they have created. 
 
 ### Documentation
