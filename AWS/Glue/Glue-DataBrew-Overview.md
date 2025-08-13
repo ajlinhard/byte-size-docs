@@ -53,6 +53,23 @@ DataBrew supports specific file types and formats, including comma-separated val
 #### Transform
 Transform is the set of instructions or algorithms used to transform your data into a different format.
 
+# DataBrew Backend
+Based on my research, AWS doesn't explicitly document the specific underlying technology that powers DataBrew's engine. However, I can provide what we know about DataBrew's backend:
+
+## DataBrew's Backend Engine
+**DataBrew does NOT use Apache Spark** - this is a key architectural difference from core AWS Glue. Instead, DataBrew appears to use:
+
+### Proprietary AWS Engine
+DataBrew is serverless, no matter what your technical level, you can explore and transform terabytes of raw data without needing to create clusters or manage any infrastructure, but AWS has not publicly disclosed the specific technology stack.
+
+### What We Know:
+- **Optimized for Interactive Data Preparation**: Unlike Spark which is designed for large-scale batch processing, DataBrew's engine is built for interactive, visual data exploration
+- **Built-in Data Profiling**: Evaluate the quality of your data by profiling it to understand data patterns and detect anomalies with specialized statistical analysis capabilities
+- **Recipe-based Processing**: Uses a transformation recipe system rather than distributed computing frameworks
+
+### Integration with Spark
+Interestingly, Apache Spark is the engine that runs the jobs created on AWS Glue Studio, and when DataBrew recipes are used within Glue Studio jobs, they run on the Spark engine. This suggests DataBrew recipes can be "compiled" or translated to run on Spark when needed.
+
 # Glue Core vs DataBrew
 
 ## AWS Glue (Core Service)
