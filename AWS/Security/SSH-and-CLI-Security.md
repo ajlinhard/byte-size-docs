@@ -135,3 +135,45 @@ Boto3 clients and SSH represent two fundamentally different ways of accessing AW
 - **Session logging**: Log SSH sessions for security auditing
 
 Many organizations use both methods together - Boto3 for application deployment and resource management, SSH for system administration when needed.
+
+---
+## Other SSH Use Cases
+SSH keys are used for secure authentication in many different contexts beyond AWS. Here are the main use cases:
+
+## Version Control & Code Repositories
+- **GitHub, GitLab, Bitbucket** - Push/pull code without entering passwords
+- **Self-hosted Git servers** - Access private repositories
+
+## Cloud Platforms & VPS Providers
+- **Digital Ocean, Linode, Vultr** - Access virtual private servers
+- **Google Cloud Platform, Azure** - Similar to AWS EC2
+- **Heroku** - Deploy applications
+
+## Server Administration
+- **Remote Linux/Unix servers** - Replace password authentication
+- **Jump boxes/bastion hosts** - Secure access to internal networks
+- **Web hosting providers** - cPanel, shared hosting with SSH access
+
+## Development & CI/CD
+- **GitHub Actions, GitLab CI** - Automated deployments
+- **Jenkins, Travis CI** - Build and deployment pipelines
+- **Docker registries** - Push/pull private images
+
+## Database Access
+- **Remote database servers** - MySQL, PostgreSQL with SSH tunneling
+- **MongoDB, Redis** - Secure connections to database instances
+
+## Network Equipment
+- **Routers, switches** - Configure network hardware
+- **Firewalls** - Manage security appliances remotely
+
+## Containerization & Orchestration
+- **Docker hosts** - Remote Docker daemon access
+- **Kubernetes clusters** - kubectl access to clusters
+
+## File Transfer & Sync
+- **SFTP servers** - Secure file transfers
+- **rsync over SSH** - Backup and synchronization
+- **SCP (Secure Copy)** - Copy files between systems
+
+The beauty of SSH keys is "generate once, use everywhere" - you can often use the same key pair across multiple services, though some organizations prefer separate keys for different purposes for security isolation.
