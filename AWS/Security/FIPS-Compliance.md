@@ -1,7 +1,31 @@
 # FIPS Compliance
 
-## Examples
-I'll show you how to set up a Lambda function and S3 bucket with FIPS endpoints. This involves configuring your AWS SDK to use FIPS endpoints and ensuring proper deployment.The setup I've provided ensures both HTTPS and FIPS compliance for your PDF download workflow. Here are the key points:
+**AWS Lambda FIPS endpoints are available:**
+
+AWS Lambda offers FIPS endpoints: lambda-fips.us-east-1.amazonaws.com, lambda-fips.us-east-2.amazonaws.com, lambda-fips.us-west-1.amazonaws.com, lambda-fips.us-west-2.amazonaws.com for US East/West regions, and lambda-fips.us-gov-east-1.amazonaws.com, lambda-fips.us-gov-west-1.amazonaws.com for GovCloud regions.
+
+**S3 FIPS endpoints are available:**
+
+Amazon S3 provides FIPS endpoints including s3-fips.us-east-1.amazonaws.com, s3-fips.us-east-2.amazonaws.com, s3-fips.us-west-1.amazonaws.com, s3-fips.us-west-2.amazonaws.com for standard regions and s3-fips.us-gov-east-1.amazonaws.com, s3-fips.us-gov-west-1.amazonaws.com for GovCloud.
+
+**FIPS cryptographic modules:**
+
+All AWS FIPS endpoints utilize cryptography from the AWS LibCrypto (AWS-LC) FIPS Module, Certificate #4631, and as of April 1, 2021, all AWS FIPS endpoints have been updated to only accept a minimum of Transport Layer Security (TLS) 1.2 connections.
+
+## Implementation Requirements
+
+To ensure FIPS compliance for your PDF download workflow:
+
+1. **Configure Lambda to use FIPS endpoints** by setting the AWS SDK to use FIPS endpoints when making AWS API calls
+2. **Use S3 FIPS endpoints** for uploading the PDF files
+3. **Deploy in supported regions** - FIPS endpoints are available in US East/West, GovCloud, and Canada Central/West regions
+
+**Sources:**
+- [AWS Federal Information Processing Standard (FIPS) 140-3](https://aws.amazon.com/compliance/fips/)
+- [AWS Lambda Data Protection Documentation](https://docs.aws.amazon.com/lambda/latest/dg/security-dataprotection.html)
+- [AWS TLS 1.2 Requirements](https://aws.amazon.com/blogs/security/tls-1-2-required-for-aws-endpoints/)
+
+The architecture you described (API → Lambda → S3) is inherently secure and can be made fully FIPS compliant by using the appropriate FIPS endpoints and ensuring your Lambda function is configured to use these endpoints for all AWS service communications.
 
 ## FIPS Compliance Configuration
 
