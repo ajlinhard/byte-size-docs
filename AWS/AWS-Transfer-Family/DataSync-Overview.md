@@ -3,6 +3,7 @@
 ### Documentation
 - [AWS - DataSync](https://docs.aws.amazon.com/datasync/latest/userguide/what-is-datasync.html)
 - [AWS - DataSync task transfer Mode](https://docs.aws.amazon.com/datasync/latest/userguide/choosing-task-mode.html)
+- [DataSync Filters](https://aws.amazon.com/blogs/storage/excluding-and-including-specific-data-in-transfer-tasks-using-aws-datasync-filters/)
 
 ## Method for Cross VPC Data Syncs
 There are several better approaches for S3 cross-VPC transfers depending on your specific needs. Let me break down the options from simplest to most scalable:Based on my research, here are significantly better approaches for S3 cross-VPC transfers, ranked from simplest to most scalable:
