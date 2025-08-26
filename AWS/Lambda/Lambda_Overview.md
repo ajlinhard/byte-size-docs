@@ -23,6 +23,101 @@ There are an uncountable number of things you can do with lambda functions. Here
 
 I'll research the HTTPS and FIPS compliance aspects of pulling PDFs from APIs to S3 buckets via Lambda. This involves several AWS services and security standards, so let me gather comprehensive information.Based on my research, I can confirm that pulling a PDF from an API to an S3 bucket via Lambda is **both HTTPS and FIPS compliant** when properly configured. Here's the detailed explanation with sources:
 
+## AWS Managed Service Network
+When you **don't assign a Lambda function to a VPC**, it runs in AWS's **managed service network**.
+
+**Where Lambda lives:**
+- AWS's own internal, managed infrastructure
+- Not in your VPC at all
+- AWS handles all the networking behind the scenes
+
+**Key characteristics:**
+- **Has internet access by default** - can call external APIs, download packages, etc.
+- **Gets a dynamic public IP** - changes with each execution
+- **No VPC networking costs** - no NAT Gateway fees
+- **Faster cold starts** - no ENI (Elastic Network Interface) setup time
+- **Can access AWS services** - S3, DynamoDB, SES, etc. through AWS's backbone
+
+## What It Can Access
+
+✅ **Can reach:**
+- External APIs and websites
+- AWS services (S3, DynamoDB, SQS, etc.)
+- Any publicly accessible endpoints
+
+❌ **Cannot reach:**
+- Resources inside your VPC (private RDS, EC2 instances, etc.)
+- Private subnets
+- On-premises resources connected via VPN/Direct Connect
+
+## When to Use Each Approach
+
+**No VPC (AWS managed):**
+- Simple functions that only need internet access
+- Calling external APIs
+- Processing S3 events, SQS messages
+- Most common use case
+
+**VPC-attached:**
+- Need to access private resources (RDS in private subnet)
+- Need static IP addresses (through NAT Gateway)
+- Security requirements to isolate from internet
+- Access on-premises resources
+
+So by default, Lambda functions live in AWS's managed network with built-in internet access - no NAT Gateway needed!
+
+## Lambda Security Model
+
+**Lambda functions are not web servers** - they don't have public endpoints by default. Even though they can reach the internet, the internet cannot reach them.
+**Therefore, no external people cannot directly access your Lambda function** even when it runs in AWS's managed network. Here's why:
+
+## How to Make Lambda Accessible
+
+To allow external access, you need to explicitly create an entry point:
+
+**1. API Gateway**
+```
+Internet → API Gateway → Lambda Function
+```
+- Most common approach
+- Creates REST/HTTP APIs
+- Handles authentication, rate limiting, etc.
+
+**2. Function URLs**
+```
+Internet → Function URL → Lambda Function  
+```
+- Direct HTTPS endpoint for your Lambda
+- Simpler than API Gateway but fewer features
+
+**3. Application Load Balancer**
+```
+Internet → ALB → Lambda Function
+```
+- Can route HTTP requests to Lambda as a target
+
+**4. Other AWS Services**
+- CloudFront (CDN)
+- AWS AppSync (GraphQL)
+
+## Key Point
+
+**Lambda's internet access ≠ Internet access to Lambda**
+
+- Lambda can make outbound calls (to APIs, databases, etc.)
+- But inbound access requires you to explicitly configure a trigger/endpoint
+
+## Security Benefits
+
+This design is actually a security feature:
+- Functions are private by default
+- You control exactly how they can be invoked
+- No risk of accidental exposure
+- You can add authentication, authorization, rate limiting at the gateway level
+
+So your Lambda function can call external APIs safely without being directly accessible from the internet unless you specifically set up an entry point.
+
+---
 ## HTTPS Compliance
 
 **AWS Lambda uses HTTPS-only endpoints by default:**
