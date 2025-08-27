@@ -22,7 +22,35 @@ Traditional data storage is like having files scattered across many folders with
 
 **Schema Evolution**: You can safely add, remove, or modify columns without rewriting existing data. Iceberg handles the mapping between old and new schemas automatically.
 
-**Time Travel**: Every change creates a new snapshot while preserving previous versions. You can query your data as it existed at any point in time.
+**Iceberg's Primary Use Cases:**
+- Data lakes and lakehouses (not just traditional warehouses)
+- Analytics workloads requiring ACID transactions
+- Time travel and schema evolution scenarios
+- Large-scale batch and streaming processing
+
+**Streaming Data with Iceberg:**
+You can absolutely write streaming data directly to Iceberg format. This is one of Iceberg's key strengths. Here's how it works:
+
+**Streaming Writes to Iceberg:**
+- **Apache Flink** has native Iceberg support for streaming writes
+- **Apache Spark Structured Streaming** can write to Iceberg tables
+- **Apache Kafka** can stream data that gets written to Iceberg via connectors
+- Real-time ingestion frameworks like **Apache Pulsar** also support Iceberg
+
+**Key Benefits for Streaming:**
+1. **ACID transactions** - Each streaming micro-batch becomes an atomic commit
+2. **Schema evolution** - Handle schema changes in streaming data gracefully  
+3. **Time travel** - Query historical versions of your streaming data
+4. **Compaction** - Automatically optimize small streaming files into larger ones
+5. **Concurrent reads/writes** - Analytics can run while streaming continues
+
+**Common Streaming Architecture:**
+```
+Streaming Source → Processing Engine → Iceberg Table → Analytics/BI Tools
+    (Kafka)           (Flink/Spark)      (S3/HDFS)        (Trino/Spark)
+```
+
+So Iceberg isn't just for warehousing - it's excellent for modern data lake architectures where you want to combine streaming ingestion with analytical capabilities. The format handles both batch and streaming workloads seamlessly, making it ideal for real-time analytics use cases.
 
 ## Detailed Example: E-commerce Analytics
 
