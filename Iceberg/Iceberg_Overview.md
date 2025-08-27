@@ -52,6 +52,10 @@ Streaming Source → Processing Engine → Iceberg Table → Analytics/BI Tools
 
 So Iceberg isn't just for warehousing - it's excellent for modern data lake architectures where you want to combine streaming ingestion with analytical capabilities. The format handles both batch and streaming workloads seamlessly, making it ideal for real-time analytics use cases.
 
+**Other Iceberg Features**
+- [Iceberg Stored Procedures](https://iceberg.apache.org/docs/latest/spark-procedures/)
+- [Iceberg Catalog Config](https://www.tabular.io/apache-iceberg-cookbook/getting-started-catalog-background/)
+
 ## Detailed Example: E-commerce Analytics
 
 Imagine you're managing customer transaction data for a large e-commerce platform. Your table starts with columns like customer_id, product_id, purchase_amount, and timestamp.
