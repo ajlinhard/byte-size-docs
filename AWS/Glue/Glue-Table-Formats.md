@@ -4,7 +4,9 @@ AWS Glue supports many different table formats for working with and building out
 ### Documentation
 - [AWS Ending Governed Table Support - Blog Post]()
 
-
+### Table of Contents
+- [Delta Lake Support](#Delta-Lake-Support)
+- [Governed Tables (noe deprecated)(#Governed-Tables)
 
 ---
 # Delta Lake Support
@@ -80,3 +82,52 @@ dataFrame.write \
 AWS has enhanced support for these formats across various analytics services, including Amazon Athena, Amazon EMR, AWS Glue, and Amazon Redshift, and AWS made the decision to end support for Governed Tables, effective December 31, 2024, to focus on open source transactional table formats such as Apache Iceberg, Apache Hudi, and Linux Foundation Delta Lake.
 
 So yes, AWS Glue has robust, native support for Delta Lake, making it a viable alternative to the Iceberg approach in your pipeline if you're working primarily within the AWS ecosystem!
+
+---
+# Governed Tables
+AWS Glue Governed Tables was a now-deprecated AWS service that provided ACID transaction capabilities for data lakes before open-source table formats became mature. Here's what they were:
+
+## **What Governed Tables Were**
+
+**ACID Transactions for Data Lakes**: Governed Tables were AWS's proprietary solution to bring database-like ACID (Atomicity, Consistency, Isolation, Durability) transactions to data stored in Amazon S3. They allowed you to perform reliable updates, deletes, and inserts on data lake tables.
+
+**Key Features**:
+- **Transactional consistency** - Updates either completed fully or not at all
+- **Concurrent access control** - Multiple users could safely read/write simultaneously  
+- **Time travel** - Query historical versions of data
+- **Schema evolution** - Add/modify columns without breaking existing queries
+- **Automatic compaction** - Background optimization of data files
+
+## **How They Worked**
+
+Governed Tables used AWS Lake Formation as the transaction coordinator and metadata manager. When you performed operations:
+
+1. **Transaction Management**: Lake Formation tracked all changes in a transaction log
+2. **Metadata Handling**: Schema and partition information was managed centrally
+3. **File Organization**: AWS automatically organized and optimized the underlying Parquet files
+4. **Access Control**: Fine-grained permissions through Lake Formation's security model
+
+## **Why AWS Deprecated Them**
+
+After careful consideration, we have made the decision to end support for Governed Tables, effective December 31, 2024, to focus on open source transactional table formats such as Apache Iceberg, Apache Hudi, and Linux Foundation Delta Lake. This decision stems from customer preference for these open source solutions.
+
+**Customer Preference for Open Standards**: Organizations preferred vendor-neutral, open-source solutions over AWS's proprietary format to avoid lock-in.
+
+**Feature Parity**: Open source solutions, which offer ACID-compliant transactions, compaction, time travel, and other features previously provided by Governed Tables, became mature enough to replace the proprietary solution.
+
+**Ecosystem Adoption**: The industry converged around Apache Iceberg, Delta Lake, and Apache Hudi as standard table formats.
+
+## **Migration Path**
+
+AWS now recommends using:
+- **Apache Iceberg** for vendor-neutral, multi-engine compatibility
+- **Delta Lake** for Spark-heavy workloads and Databricks integration  
+- **Apache Hudi** for streaming and incremental data processing
+
+**Enhanced AWS Support**: Amazon Web Services (AWS) has enhanced our support for these formats across various analytics services, including Amazon Athena, Amazon EMR, AWS Glue, and Amazon Redshift.
+
+## **What This Means for Your Pipeline**
+
+Since Governed Tables are now deprecated, your choice of using Apache Iceberg in your Firehose pipeline was prescient! You're already using the modern, open-source approach that AWS now officially recommends.
+
+The deprecation of Governed Tables actually validates the industry trend toward open table formats like Iceberg and Delta Lake, rather than proprietary solutions. AWS essentially admitted that customers prefer the flexibility and ecosystem compatibility of open standards over vendor-specific implementations.
