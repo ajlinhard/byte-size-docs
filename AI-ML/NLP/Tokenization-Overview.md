@@ -2,6 +2,10 @@
 
 Tokenization is the process of breaking down text into smaller units called tokens. It's a fundamental preprocessing step in natural language processing (NLP) and serves as the foundation for how AI models understand and process text.
 
+### Documentation
+- [Anthropic Embeddings](https://docs.anthropic.com/en/docs/build-with-claude/embeddings)
+- [Crash Course for RAG](https://www.dailydoseofds.com/tag/rag-crash-course/)
+
 ## What are Tokens?
 
 Tokens can be:
