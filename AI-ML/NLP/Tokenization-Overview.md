@@ -170,6 +170,7 @@ print("Embedding shape:", embeddings.shape)
 In this example, we see the complete pipeline: raw text → tokens → token IDs → embedding vectors. Each token gets mapped to a high-dimensional vector that captures its semantic and syntactic properties in the context of the sentence.
 
 The quality and characteristics of embeddings are heavily influenced by the tokenization strategy used during model training. This is why modern language models put significant effort into developing sophisticated tokenization schemes that balance vocabulary size, representation power, and computational efficiency.
+
 ---
 # Embedding Models vs. Large Language Models (LLMs)
 
