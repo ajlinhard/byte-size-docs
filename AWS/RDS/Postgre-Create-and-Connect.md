@@ -39,9 +39,25 @@ psql \
 psql \
    --host=progres-db-ext.cakhbszocobl.us-gov-east-1.rds.amazonaws.com \
    --port=5432 \
-   --username=<master username> \
+   --username=postgre \
    --password \
    --dbname=<database name> 
 ```
 
 6. Use command line PSQL to interact
+```sql
+create database test_api;
+
+CREATE TABLE claims (
+    claim_id UUID PRIMARY KEY,
+    is_complete BOOLEAN NOT NULL,
+    ingested_timestamp TIMESTAMPTZ NOT NULL,
+    completed_timestamp TIMESTAMPTZ,
+    turnaround_time_minutes INTEGER,
+    contentions JSONB NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+seled
+```
