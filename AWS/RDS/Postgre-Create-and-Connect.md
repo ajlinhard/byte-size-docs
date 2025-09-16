@@ -4,6 +4,13 @@ This document will walk through creating and connecting to a PostgreSQL database
 ### Documentation
 - [AWS RDS Postgre Guide](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ConnectToPostgreSQLInstance.html)
 
+## Notes
+- When creating a postgres database through RDS unlike local DBs the create automatically creates a KMS secret key for the password.
+- Make sure you use the correct .pem file when ssh-ing in.
+- Thea EC2 instance and RDS need to have the correct ports and traffic allowed by the security groups.
+   - At minimum this is traffic inbound from teh EC2 instances IP on port 5432.
+- When install postgres client make sure you use the correct OS command. (AMI Linux, Ubuntu, or Redshift)
+
 ## Step 1: Create RDS + Postgre
 First we need to create the Postgre database itself for storing and processing data. Then we will connect to it.0
 1. Go to the RDS portal in the AWS web UI
