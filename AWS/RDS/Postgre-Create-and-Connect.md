@@ -3,6 +3,7 @@ This document will walk through creating and connecting to a PostgreSQL database
 
 ### Documentation
 - [AWS RDS Postgre Guide](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ConnectToPostgreSQLInstance.html)
+- [Postgres Commands Guide](https://www.postgresql.org/docs/13/app-psql.html)
 
 ## Notes
 - When creating a postgres database through RDS unlike local DBs the create automatically creates a KMS secret key for the password.
