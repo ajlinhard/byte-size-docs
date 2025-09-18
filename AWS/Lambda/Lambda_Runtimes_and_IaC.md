@@ -112,3 +112,446 @@ I'll break down the three Lambda deployment methods across your key criteria:
 - Applications approaching zip file size limits
 
 The choice often depends on your specific architecture, team expertise, and performance requirements. Many organizations use a hybrid approach, choosing the method that best fits each individual function's needs.
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lambda Deployment Methods Comparison</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comparison-table th {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .comparison-table td {
+            padding: 18px 15px;
+            border-bottom: 1px solid #ecf0f1;
+            vertical-align: top;
+            line-height: 1.6;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .comparison-table tr:hover {
+            background-color: #e8f4fd;
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-category {
+            font-weight: bold;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            font-size: 1.1rem;
+        }
+        
+        .metric-subcategory {
+            font-weight: 600;
+            color: #2c3e50;
+            background-color: #ecf0f1;
+            font-style: italic;
+        }
+        
+        .rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+        
+        .rating-excellent { color: #27ae60; }
+        .rating-good { color: #2980b9; }
+        .rating-moderate { color: #f39c12; }
+        .rating-poor { color: #e74c3c; }
+        
+        .rating-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .excellent { background-color: #27ae60; }
+        .good { background-color: #2980b9; }
+        .moderate { background-color: #f39c12; }
+        .poor { background-color: #e74c3c; }
+        
+        .deployment-header {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .notes {
+            background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .notes h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .notes ul {
+            color: #34495e;
+            line-height: 1.8;
+        }
+        
+        .notes li {
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px 8px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AWS Lambda Deployment Methods Comparison</h1>
+        
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th class="deployment-header">Complete Zip Files</th>
+                    <th class="deployment-header">Lambda Layers</th>
+                    <th class="deployment-header">Container Images</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="metric-category" colspan="4">RELIABILITY</td>
+                </tr>
+                <tr>
+                    <td class="metric-subcategory">Dependency Management</td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>Self-contained, no external dependencies</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-good">
+                            <span class="rating-icon good"></span>
+                            Good
+                        </div>
+                        <br><small>Risk of layer version mismatches</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>Complete environment control</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="metric-subcategory">Version Management</td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>Atomic deployments</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-good">
+                            <span class="rating-icon good"></span>
+                            Good
+                        </div>
+                        <br><small>Layer versioning with rollback</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>Container image versioning</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="metric-subcategory">Production Stability</td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>High for small apps (&lt;50MB)</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-good">
+                            <span class="rating-icon good"></span>
+                            Good
+                        </div>
+                        <br><small>Requires layer management</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>Consistent dev-prod parity</small>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td class="metric-category" colspan="4">IMPLEMENTATION SPEED</td>
+                </tr>
+                <tr>
+                    <td class="metric-subcategory">Initial Setup</td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Fastest
+                        </div>
+                        <br><small>Simple packaging and deployment</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-moderate">
+                            <span class="rating-icon moderate"></span>
+                            Moderate
+                        </div>
+                        <br><small>Layer creation overhead</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-poor">
+                            <span class="rating-icon poor"></span>
+                            Slowest
+                        </div>
+                        <br><small>Docker expertise required</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="metric-subcategory">Subsequent Deployments</td>
+                    <td>
+                        <div class="rating rating-good">
+                            <span class="rating-icon good"></span>
+                            Good
+                        </div>
+                        <br><small>Fast for small changes</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>Only function code updates</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-moderate">
+                            <span class="rating-icon moderate"></span>
+                            Moderate
+                        </div>
+                        <br><small>Image build and push time</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="metric-subcategory">CI/CD Integration</td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>Straightforward pipelines</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-good">
+                            <span class="rating-icon good"></span>
+                            Good
+                        </div>
+                        <br><small>More orchestration needed</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-good">
+                            <span class="rating-icon good"></span>
+                            Good
+                        </div>
+                        <br><small>Complex but powerful</small>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td class="metric-category" colspan="4">LAMBDA PERFORMANCE</td>
+                </tr>
+                <tr>
+                    <td class="metric-subcategory">Cold Start Time</td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>Fast for small packages</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-good">
+                            <span class="rating-icon good"></span>
+                            Good
+                        </div>
+                        <br><small>Slight layer mounting overhead</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-moderate">
+                            <span class="rating-icon moderate"></span>
+                            Moderate
+                        </div>
+                        <br><small>1-10 seconds for large images</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="metric-subcategory">Memory Usage</td>
+                    <td>
+                        <div class="rating rating-good">
+                            <span class="rating-icon good"></span>
+                            Good
+                        </div>
+                        <br><small>Direct execution, no overhead</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>Shared layers across functions</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-good">
+                            <span class="rating-icon good"></span>
+                            Good
+                        </div>
+                        <br><small>Efficient for long-running</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="metric-subcategory">Size Limits</td>
+                    <td>
+                        <div class="rating rating-moderate">
+                            <span class="rating-icon moderate"></span>
+                            Limited
+                        </div>
+                        <br><small>250MB compressed, 50MB unzipped</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>10GB total unzipped (5 layers)</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>Up to 10GB image size</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="metric-subcategory">Runtime Flexibility</td>
+                    <td>
+                        <div class="rating rating-moderate">
+                            <span class="rating-icon moderate"></span>
+                            Limited
+                        </div>
+                        <br><small>Standard Lambda runtimes only</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-moderate">
+                            <span class="rating-icon moderate"></span>
+                            Limited
+                        </div>
+                        <br><small>Standard Lambda runtimes only</small>
+                    </td>
+                    <td>
+                        <div class="rating rating-excellent">
+                            <span class="rating-icon excellent"></span>
+                            Excellent
+                        </div>
+                        <br><small>Custom runtime environments</small>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="notes">
+            <h3>📋 Key Recommendations</h3>
+            <ul>
+                <li><strong>Use Zip Files</strong> for simple functions with minimal dependencies (&lt;50MB total)</li>
+                <li><strong>Use Lambda Layers</strong> when multiple functions share common libraries or for frequent code updates</li>
+                <li><strong>Use Container Images</strong> for complex applications, custom runtimes, or when migrating existing containerized apps</li>
+                <li><strong>Hybrid Approach:</strong> Many organizations use different methods for different functions based on specific requirements</li>
+                <li><strong>Performance Trade-off:</strong> Containers offer flexibility but have slower cold starts; Zip files are fastest for simple use cases</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
