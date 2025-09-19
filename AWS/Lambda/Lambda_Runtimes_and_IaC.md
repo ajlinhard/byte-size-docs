@@ -29,9 +29,14 @@ When working with Lambda you can build your runtime or layer off of:
 5. Upload to AWS to create a layer.
 
 ---
-##Building Your Lambda Runtime
+## Building Your Lambda Runtime
 There are 3 main options you can use when building out the runtime of you Lambda function beyond the base runtime AWS Lambda provides:
-I'll break down the three Lambda deployment methods across your key criteria:
+
+<img width="803" height="668" alt="image" src="https://github.com/user-attachments/assets/db0efa13-06ff-4c40-9342-59842f92f81f" />
+<img width="1608" height="1228" alt="image" src="https://github.com/user-attachments/assets/06b739c8-3815-4af8-8bd6-d49618c9d07c" />
+
+
+Below lets break down the three Lambda deployment methods across the key criteria:
 
 ## **Complete Zip Files**
 
