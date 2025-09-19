@@ -16,3 +16,7 @@ WSL can be started from your command line in windows with the command "wsl start
 - Similarly the Linux OS has your Windows file system attached as a mount drive. The path "/mnt/host/c" is the common mount drive location for your windows system.
 - WSL can alter, create, and delete files on you windows machine file system. So BE CAREFUL!
 
+Check your WSL distribution with:
+```bash
+cat /etc/os-release
+```
