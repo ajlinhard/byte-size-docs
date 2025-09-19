@@ -1,0 +1,18 @@
+# WSL (Windows Subsystem Linux)
+There has long been a need for some of the versatility of Linux for developers on a windows machine. This was applified by the prevalance of Linux in cloud environments and docker containers. The release of WSL has brought winodws back into the game. WSL can be installed in many different flavors on your windows machine with the command below:
+```bash
+wsl --install -d <Linux-OS-version>
+
+wsl --install -d Ubuntu-22.04
+```
+There are lightweight versions of linux that are auto installed with systems like docker desktop, but to gain access to the full suite of Linux's potential you should install a more powerful and complete Linux OS.
+
+### Documentation
+- [Microsoft Offical WSL Docs](https://learn.microsoft.com/en-us/windows/wsl/about)
+
+## WSL Basics
+WSL can be started from your command line in windows with the command "wsl start" and stopped with "wsl stop". Here are some other base info and features.
+- Linux appears like an additional drive on Windows OS.
+- Similarly the Linux OS has your Windows file system attached as a mount drive. The path "/mnt/host/c" is the common mount drive location for your windows system.
+- WSL can alter, create, and delete files on you windows machine file system. So BE CAREFUL!
+
