@@ -19,6 +19,7 @@ This is the main way we will name ALL objects created in the cloud.
 
 ### Environment
 | Naming String | Object Name | Description |
+|---------|--------|---------|
 | `prod` | Production | for objects in the production environment. |
 | `dev` | Development | for objects in the production environment. |
 
