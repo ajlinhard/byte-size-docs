@@ -25,6 +25,7 @@ This is the main way we will name ALL objects created in the cloud.
 
 ### System/Applications
 |Naming String|Object Name|Description|
+|---------|--------|---------|
 |`dash`| Dashboard | The visual dashboard for the VA to monitor metrics for the AICES program|
 
 ## Best Practices
