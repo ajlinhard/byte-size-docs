@@ -2,6 +2,7 @@
 # Cloud Object Naming Convention
 
 ## **Functional Naming**
+This is the main way we will name ALL objects created in the cloud.
 - `{environment}-{system/application}-{purpose}-{resource-type}`
 - Example: `prod-dashboard-eb-frontend-lb`, `dev-dashboard-data-processing-lambda`
 
