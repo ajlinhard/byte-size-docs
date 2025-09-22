@@ -1,7 +1,7 @@
 
 # Cloud Object Naming Convention
 
-**Functional Naming**
+## **Functional Naming**
 - `{environment}-{system/application}-{purpose}-{resource-type}`
 - Example: `prod-dashboard-eb-frontend-lb`, `dev-dashboard-data-processing-lambda`
 
