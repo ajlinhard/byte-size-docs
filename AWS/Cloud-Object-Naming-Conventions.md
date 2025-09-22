@@ -18,9 +18,9 @@ This is the main way we will name ALL objects created in the cloud.
 - Tag-based automation for grouping and management
 
 ### Environment
-|Naming String|Object Name|Description|
-|`prod`| Production | for objects in the production environment.|
-|`dev`| Development | for objects in the production environment.|
+| Naming String | Object Name | Description |
+| `prod` | Production | for objects in the production environment. |
+| `dev` | Development | for objects in the production environment. |
 
 ### System/Applications
 |Naming String|Object Name|Description|
