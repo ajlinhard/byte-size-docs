@@ -86,7 +86,6 @@ Here are the key data engineering services available on AWS, organized by domain
 **Amazon Macie** - Data privacy and security service. Discovers and protects sensitive data using machine learning.
 
 **AWS Config** - Resource configuration monitoring. Tracks changes to data infrastructure and ensures compliance.
-You're absolutely right! I missed **Amazon Textract** and several other AI/ML services that are crucial for data engineering workflows:
 
 ## Additional AI/ML for Data Engineering
 **Amazon Textract** - Extracts text and data from documents. Converts PDFs, images, and scanned documents into structured data for analysis pipelines.
@@ -109,4 +108,3 @@ You're absolutely right! I missed **Amazon Textract** and several other AI/ML se
 
 These services are particularly valuable in data engineering because they can automatically extract insights from unstructured data (documents, audio, images) and transform it into structured formats that can feed into traditional analytics pipelines. Textract, in particular, is essential for digitizing paper-based processes and extracting data from invoices, forms, and reports.
 
-Thanks for catching that omission - these AI services are becoming increasingly important in modern data engineering architectures!
