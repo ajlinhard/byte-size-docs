@@ -2,7 +2,7 @@
 **AWS Lake Formation** is a fully managed service that helps you build, secure, and manage data lakes on AWS. It simplifies the complex process of setting up a data lake by automating many of the manual tasks traditionally required.
 
 ### Documentation and Tutorials
-- [AWS Lake Formation - Home Page]()
+- [AWS Lake Formation - Home Page](https://docs.aws.amazon.com/lake-formation/latest/dg/what-is-lake-formation.html)
 - [Youtube - Lake Formation Series with Johnny Chivers](https://www.youtube.com/watch?v=Uf6Df2oEmm0&list=PL8JO6Q_xfjekJAWG_4l1X05LU2cjmIpE3)
 
 ## Core Purpose
