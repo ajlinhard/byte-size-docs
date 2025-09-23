@@ -56,4 +56,57 @@ Here are the key data engineering services available on AWS, organized by domain
 
 **AWS X-Ray** - Distributed tracing service. Analyzes performance bottlenecks in data processing applications.
 
-These services often work together in data engineering architectures, with S3 serving as the central data lake, Glue handling transformations, and services like Redshift or Athena providing analytics capabilities.
+## Additional Data Processing & Analytics
+**Amazon OpenSearch Service** - Managed search and analytics engine (formerly Elasticsearch). Powers log analytics, application monitoring, and search functionality.
+
+**Amazon FinSpace** - Purpose-built data management for financial services. Handles financial datasets with built-in compliance and analytics tools.
+
+**AWS Clean Rooms** - Secure data collaboration without sharing raw data. Enables joint analytics between organizations while maintaining privacy.
+
+## Additional Data Integration & Movement
+**Amazon EventBridge** - Serverless event bus for application integration. Routes events between AWS services and SaaS applications for real-time data flows.
+
+**Amazon MQ** - Managed message broker service. Facilitates data exchange between applications using Apache ActiveMQ and RabbitMQ.
+
+**AWS Transfer Family** - Managed file transfer (SFTP/FTPS/AS2). Securely exchanges files with trading partners and legacy systems.
+
+## Additional Streaming & Real-time
+**Amazon MSK (Managed Streaming for Apache Kafka)** - Fully managed Apache Kafka service. Handles high-throughput streaming data pipelines and event-driven architectures.
+
+**Amazon Kinesis Data Firehose** - Loads streaming data into data lakes and warehouses. Automatically scales to handle streaming data delivery.
+
+**Amazon Kinesis Video Streams** - Processes streaming video data. Captures, processes, and stores video streams for analytics and machine learning.
+
+## Additional Storage
+**Amazon EFS** - Managed NFS file system. Provides shared storage for distributed data processing workloads.
+
+**Amazon FSx** - High-performance file systems (Lustre, Windows, etc.). Optimized for compute-intensive workloads like HPC and machine learning.
+
+## Data Governance & Security
+**Amazon Macie** - Data privacy and security service. Discovers and protects sensitive data using machine learning.
+
+**AWS Config** - Resource configuration monitoring. Tracks changes to data infrastructure and ensures compliance.
+You're absolutely right! I missed **Amazon Textract** and several other AI/ML services that are crucial for data engineering workflows:
+
+## Additional AI/ML for Data Engineering
+**Amazon Textract** - Extracts text and data from documents. Converts PDFs, images, and scanned documents into structured data for analysis pipelines.
+
+**Amazon Transcribe** - Speech-to-text service. Converts audio files and real-time speech into text data for further processing and analysis.
+
+**Amazon Translate** - Neural machine translation service. Translates text data across multiple languages in data processing workflows.
+
+**Amazon Polly** - Text-to-speech service. Generates audio content from text data for accessibility and content creation pipelines.
+
+**Amazon Bedrock** - Managed foundation models service. Integrates large language models into data processing workflows for content generation and analysis.
+
+**Amazon CodeWhisperer** - AI coding assistant. Helps generate data processing code and SQL queries.
+
+**Amazon Forecast** - Time series forecasting service. Analyzes historical data to predict future trends and demand patterns.
+
+**Amazon Personalize** - Real-time recommendation engine. Processes user behavior data to generate personalized recommendations.
+
+**Amazon Fraud Detector** - Fraud detection service using ML. Analyzes transaction and user data to identify fraudulent activities.
+
+These services are particularly valuable in data engineering because they can automatically extract insights from unstructured data (documents, audio, images) and transform it into structured formats that can feed into traditional analytics pipelines. Textract, in particular, is essential for digitizing paper-based processes and extracting data from invoices, forms, and reports.
+
+Thanks for catching that omission - these AI services are becoming increasingly important in modern data engineering architectures!
