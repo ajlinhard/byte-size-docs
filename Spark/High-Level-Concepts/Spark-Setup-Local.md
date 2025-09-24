@@ -3,7 +3,7 @@ The setup below was for Spark 4.0.1, 3.5.1 or 3.4.3.
 - install complete date => 2025-09-24
 - install machine os => windows 10
 
-Requirements:
+**Requirements:**
 - Java (Version is important! Not the latest Java 8, 11 or 17)
   - https://www.oracle.com/java/technologies/downloads/#jdk17-windows
   - https://docs.oracle.com/en/java/javase/17/install/installation-jdk-microsoft-windows-platforms.html#GUID-A7E27B90-A28D-4237-9383-A58B416071CA
@@ -99,8 +99,6 @@ df_simple.printSchema()
   - Helpful for written instructions and had helpful other options at the bottom
 
 ---
-You're absolutely right! Python 3.13 is likely the culprit. This is a very common issue with PySpark and newer Python versions. Here's why this happens:
-
 ## Why Python 3.13 Causes Issues with PySpark
 
 **1. PySpark Version Lag**
@@ -186,11 +184,6 @@ Given these factors, it's unlikely that Spark currently supports JDK 23 out of t
 For the most up-to-date and stable usage, it's recommended to use Spark with the Java versions officially supported for your specific Spark version.
 
 ---
-## Learnings from Setup
----
-
-
-
 Citations:
 [1] https://community.cloudera.com/t5/Community-Articles/Spark-and-Java-versions-Supportability-Matrix/ta-p/383669
 [2] https://docs.scala-lang.org/overviews/jdk-compatibility/overview.html
