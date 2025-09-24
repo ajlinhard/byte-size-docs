@@ -37,6 +37,18 @@ Lake Formation can control access to specific S3 locations, ensuring users can o
 **Temporary Credentials**
 The service provides temporary, scoped credentials to users and applications, reducing the need for long-term access keys and improving security posture.
 
+**Hybrid Access Mode**
+In hybrid access mode, Lake Formation evaluates permissions using both IAM policies and Lake Formation permissions simultaneously. For a user to access data, they need:
+
+1. IAM permissions - Traditional S3 and Glue permissions through IAM policies
+2. Lake Formation permissions - Granular permissions granted through Lake Formation
+
+Both sets of permissions must allow the operation for it to succeed. This creates an intersection model where access is granted only when both systems permit it and is useful for:
+- Migrating from IAM-only data lake architectures
+- You have existing ETL processes that rely on IAM permissions
+- You want to add fine-grained access controls without disrupting current workflows
+- Testing Lake Formation permissions alongside existing IAM policies
+
 ## Data Lake Blueprint Templates
 
 Lake Formation provides pre-built templates for common data lake patterns such as:
