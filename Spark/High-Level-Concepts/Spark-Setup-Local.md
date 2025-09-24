@@ -99,14 +99,66 @@ df_simple.printSchema()
   - Helpful for written instructions and had helpful other options at the bottom
 
 ---
-## Learnings from Setup
----
-- With the environment variables set on the machine you can call pyspark in any anaconda environment, but the versioning of pyspark may not support all syntaxes.
-- Java versions matters for Spark since the Security Manager is being phased out after JDK17.
-  - PySpark, which uses Py4J to communicate between Python and Java, is likely using code that relies on these deprecated security APIs.
-  - More details in "Java Version Important Notes" below.
+You're absolutely right! Python 3.13 is likely the culprit. This is a very common issue with PySpark and newer Python versions. Here's why this happens:
 
-### Java Version Important Note
+## Why Python 3.13 Causes Issues with PySpark
+
+**1. PySpark Version Lag**
+- PySpark development typically lags behind the latest Python releases
+- Python 3.13 was released in October 2024, but PySpark versions need time to add official support
+- Most current PySpark versions (3.4.x and 3.5.x) were built and tested against Python 3.8-3.11
+
+**2. Binary Compatibility Issues**
+- PySpark uses native extensions and C libraries (like PyArrow, NumPy)
+- These need to be compiled for each Python version
+- Python 3.13 introduced internal changes that can break binary compatibility with older compiled extensions
+
+**3. API Changes in Python 3.13**
+- Python 3.13 made several internal API changes
+- Some deprecated features were removed that PySpark or its dependencies might still rely on
+- Changes to the Python C API can cause crashes in native code
+
+**4. Dependency Chain Problems**
+- PySpark depends on libraries like PyArrow, NumPy, pandas
+- If any of these don't fully support Python 3.13 yet, it creates a cascade of compatibility issues
+- The "Python worker exited unexpectedly" error often indicates a crash in native code
+- With the environment variables set on the machine you can call pyspark in any anaconda environment, but only if set for system wide use.
+- Be careful of versioning of pyspark, not  all syntaxes may be supported.
+
+## Recommended Python Versions for PySpark
+
+**Currently Stable:**
+- **Python 3.11**: Best choice - widely supported, stable
+- **Python 3.10**: Very stable, excellent compatibility
+- **Python 3.9**: Still well-supported
+
+**Check PySpark Documentation:**
+```python
+import pyspark
+print(pyspark.__version__)
+# Check the official docs for your PySpark version's Python support
+```
+
+## Quick Fix Verification
+You can verify this was the issue by checking your Python version:
+```python
+import sys
+print(sys.version)
+# If this shows 3.13.x, that confirms the problem
+```
+
+## General Rule for Big Data Tools
+This pattern is common with many big data tools:
+- **Spark**, **Hadoop**, **Kafka** Python clients
+- **Machine learning libraries** (TensorFlow, PyTorch)
+- **Database connectors**
+
+They typically support Python versions that are 6-12 months old, not the bleeding edge releases.
+
+**Pro Tip**: For production PySpark work, stick with Python 3.10 or 3.11 until you see official support announcements for newer versions. This saves a lot of debugging time!
+
+---
+## Java Version Important Note
 Based on the search results, Spark does not officially support JDK 23 yet. Here's a summary of the current Spark and Java version compatibility:
 
 1. The latest stable Spark version (3.5.1) officially supports Java 8, 11, and 17[1].
@@ -120,6 +172,10 @@ Based on the search results, Spark does not officially support JDK 23 yet. Here'
 
 4. As of now, there is no mention of official support for JDK 23 in Spark.
 
+5. Backend Jave Code: Java versions matters for Spark since the Security Manager is being phased out after JDK17.
+  - PySpark, which uses Py4J to communicate between Python and Java, is likely using code that relies on these deprecated security APIs.
+  - More details in "Java Version Important Notes" below.
+
 It's important to note that JDK 23 introduces changes related to the Security Manager that may affect Spark's functionality[5]. Specifically:
 
 - The `Subject.getSubject` API now requires allowing the Security Manager.
@@ -129,13 +185,17 @@ Given these factors, it's unlikely that Spark currently supports JDK 23 out of t
 
 For the most up-to-date and stable usage, it's recommended to use Spark with the Java versions officially supported for your specific Spark version.
 
+---
+## Learnings from Setup
+---
+
+
+
 Citations:
 [1] https://community.cloudera.com/t5/Community-Articles/Spark-and-Java-versions-Supportability-Matrix/ta-p/383669
 [2] https://docs.scala-lang.org/overviews/jdk-compatibility/overview.html
-[3] https://github.com/OpenLineage/OpenLineage/issues/2818
 [4] https://issues.apache.org/jira/browse/SPARK-43831
 [5] https://inside.java/2024/07/08/quality-heads-up/
-[6] https://github.com/quarkusio/quarkus/issues/39634
 [7] https://stackoverflow.com/questions/76431897/which-jdk-to-use-with-spark
 [8] https://openjdk.org/jeps/486
 
