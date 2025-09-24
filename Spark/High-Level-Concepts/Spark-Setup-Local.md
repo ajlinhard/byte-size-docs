@@ -1,18 +1,21 @@
 # Pyspark Setup
-The setup below was for Spark 3.5.1 or 3.4.3. 
-install complete date => 2024-10-12
-install machine os => windows 10
+The setup below was for Spark 4.0.1, 3.5.1 or 3.4.3. 
+- install complete date => 2025-09-24
+- install machine os => windows 10
 
 Requirements:
 - Java (Version is important! Not the latest Java 8, 11 or 17)
   - https://www.oracle.com/java/technologies/downloads/#jdk17-windows
   - https://docs.oracle.com/en/java/javase/17/install/installation-jdk-microsoft-windows-platforms.html#GUID-A7E27B90-A28D-4237-9383-A58B416071CA
 - Python
-  - Python later versions have issues interacting with Java. I installed Python3.8 to get this to work. look at the PySpark YAML I made in this folder.
+  - Python later versions have issues interacting with Java. I installed
+    - Python 3.10 ==> Spark 4.0.1. 
+    - Python 3.9  ==> Spark 3.5.1. 
+    - Python 3.8  ==> 3.4.3. 
   - https://spark.apache.org/docs/latest/api/python/getting_started/install.html#using-conda
 - WinUtils
   - https://github.com/kontext-tech/winutils
-  - Version 3.3.0 was used for this version
+  - The Version of this file should align with the Hadopp version for the spark file you download. EX: 3.3.0 was used for Spark 3.4.3 version
   - Download ALL the files!! or at least the .dll
 - Spark
   - https://spark.apache.org/downloads.html
