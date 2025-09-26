@@ -3,3 +3,4 @@ RDS is a service which assist with the hosting and maintenance of different comm
 
 ### Documentation
 - [AWS Official Guide](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html)
+- [AWS RDS Boto3](https://docs.aws.amazon.com/code-library/latest/ug/python_3_rds_code_examples.html)
