@@ -2,6 +2,9 @@
 
 AWS Secrets Manager and AWS Key Management Service (KMS) serve different but complementary purposes in AWS security:
 
+### Documentation:
+- [AWS KMS Key Rotation](https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html)
+
 **AWS Key Management Service (KMS):**
 - **Purpose**: Creates and manages cryptographic keys used for encryption/decryption
 - **What it stores**: Encryption keys themselves (symmetric and asymmetric keys)
