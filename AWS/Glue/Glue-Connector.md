@@ -1,6 +1,14 @@
 # Glue Connectors
 AWS Glue supports a variety of connection types to integrate with different data sources, including on-premises systems and other cloud services. Here's a comprehensive breakdown:
 
+## When You DO Need Custom Connectors
+You'd only need to build custom connectors for:
+- Proprietary internal systems with unique APIs
+- Legacy systems not covered by existing connectors
+- Specialized protocols or data formats
+- Custom authentication mechanisms
+- Very specific transformation logic during data extraction
+
 ## JDBC Connections
 
 1. **Amazon RDS/Aurora**
@@ -84,6 +92,23 @@ AWS Glue supports a variety of connection types to integrate with different data
      - Custom connectors for specialized services
      - API-based connectors for REST/SOAP services
    - Examples: Google BigQuery, Azure Cosmos DB, Snowflake
+  
+3. **Other Third Party Connectors**
+  - Popular Third-Party Systems:
+  - Snowflake - Direct connector available
+  - MongoDB - Multiple connector options
+  - Salesforce - CRM data connector
+  - ServiceNow - ITSM data connector
+  - Google BigQuery - Cross-cloud analytics
+  - SAP HANA - Enterprise database connector
+  - Elasticsearch - Search and analytics
+  - Apache Cassandra - NoSQL database
+  - Teradata - Data warehouse connector
+
+SaaS Applications:
+
+Marketo, HubSpot, Zendesk connectors
+Various CRM and ERP system connectors
 
 ## Network Connectivity for On-Premises Sources
 
