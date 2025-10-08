@@ -1,5 +1,5 @@
 # POLARS DATA ANALYSIS CHEATSHEET
-```
+```python
 import polars as pl
 import polars.selectors as cs
 
