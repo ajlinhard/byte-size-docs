@@ -1,6 +1,20 @@
 # Glue Reading from S3
 Below will show you how to load `.ocr` files containing JSON data into a Spark DataFrame using AWS Glue.I've provided **4 different approaches** to load `.ocr` files containing JSON data in AWS Glue. Here's when to use each:
 
+### Spark Method for Getting File List:
+```python
+files_df = (
+    spark.read.format("binaryFile")
+        .option("recursiveFileLookup", "true")
+        .load(f"s3://{META_BUCKET}/{META_PREFIX}{GLOB}")
+        .select(
+            F.col("path").alias("file_path"),
+            F.col("modificationTime").alias("last_modified"),
+            F.col("length").alias("size_bytes")
+        )
+)
+```
+
 ## **Approach 1: Direct Path Pattern (Simplest)**
 Best when all your files are in one directory without recursion needed. The `*.ocr` pattern directly filters files.
 
