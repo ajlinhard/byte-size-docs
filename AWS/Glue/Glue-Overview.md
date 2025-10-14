@@ -10,6 +10,7 @@ You can also quickly locate and access data through the AWS Glue Data Catalog. D
 3. [Beginners Video](https://www.youtube.com/watch?v=weWeaM5-EHc)
 4. [Course for Beginners](https://www.youtube.com/watch?v=ZvJSaioPYyo)
 5. [AWS Cost Rundowm (byte-size-docs)](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/Glue/AWS-Glue-Cost.md)
+6. [AWS Glue IAM Permissions](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsglue.html#awsglue-actions-as-permissions)
 
 # AWS Glue Architecture and Technology Stack
 AWS Glue is built primarily on top of Apache Spark, which serves as its core processing engine. This foundation gives Glue its distributed data processing capabilities while adding AWS-specific integrations and abstractions.
