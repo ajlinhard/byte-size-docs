@@ -149,6 +149,79 @@ class Product(BaseModel):
 # regex = regular expression validation
 ```
 
+### Common additions to Pydantic classes:
+While Pydantic classes are primarily used for data validation and parsing, they're still regular Python classes, so people commonly add various types of methods to them:
+
+**3a. Business Logic Methods**
+```python
+from pydantic import BaseModel
+
+class User(BaseModel):
+    first_name: str
+    last_name: str
+    age: int
+    
+    def get_full_name(self) -> str:
+        return f"{self.first_name} {self.last_name}"
+    
+    def is_adult(self) -> bool:
+        return self.age >= 18
+```
+
+**3b. Computed Properties**
+```python
+class Product(BaseModel):
+    name: str
+    price: float
+    tax_rate: float = 0.08
+    
+    @property
+    def total_price(self) -> float:
+        return self.price * (1 + self.tax_rate)
+```
+
+**3c. Serialization/Transformation Methods**
+```python
+class Record(BaseModel):
+    id: int
+    created_at: datetime
+    
+    def to_dict_for_api(self) -> dict:
+        return {
+            "id": str(self.id),
+            "timestamp": self.created_at.isoformat()
+        }
+```
+
+**3d. Factory/Constructor Methods**
+```python
+class Config(BaseModel):
+    host: str
+    port: int
+    
+    @classmethod
+    def from_env(cls) -> "Config":
+        return cls(
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT"))
+        )
+```
+
+**3e. Comparison/Query Methods**
+```python
+class Transaction(BaseModel):
+    amount: float
+    status: str
+    
+    def is_complete(self) -> bool:
+        return self.status == "completed"
+    
+    def is_large_transaction(self, threshold: float = 1000) -> bool:
+        return self.amount > threshold
+```
+
+This approach keeps your data validation tight while still allowing you to build rich domain models!
+
 ## 4. Custom Data Types
 
 ### Using Enums
