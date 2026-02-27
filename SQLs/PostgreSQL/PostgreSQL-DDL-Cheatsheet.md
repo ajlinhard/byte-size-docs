@@ -211,6 +211,31 @@ CREATE INDEX idx_users_created ON users USING btree(created_at);
 CREATE INDEX idx_users_id_hash ON users USING hash(id);
 ```
 
+### Recreate of Copy Tables Structure
+```sql
+-- Copy structure only
+CREATE TABLE form_name_aliases (LIKE form_name_aliases_backup_20260225);
+
+-- Copy structure + defaults, constraints, indexes, etc.
+CREATE TABLE form_name_aliases (LIKE form_name_aliases_backup_20260225 INCLUDING ALL);
+```
+
+### Or if you also want to copy the data:
+
+```sql
+-- Structure + data
+CREATE TABLE form_name_aliases AS
+SELECT * FROM form_name_aliases_backup_20260225;
+```
+
+> Note: `CREATE TABLE AS SELECT` does **not** copy constraints, indexes, or defaults — only the columns and data. Use `LIKE INCLUDING ALL` + a separate `INSERT` if you need those.
+
+**Combined approach (structure with constraints + data):**
+```sql
+CREATE TABLE form_name_aliases (LIKE form_name_aliases_backup_20260225 INCLUDING ALL);
+INSERT INTO form_name_aliases SELECT * FROM form_name_aliases_backup_20260225;
+```
+
 ### Drop Indexes
 ```sql
 DROP INDEX idx_users_email;
