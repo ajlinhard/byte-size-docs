@@ -12,5 +12,6 @@
 ## Read List
 ---
 
-1. [AI DataHub (data catalog powered by AI)](datahub-project/datahub: The Metadata Platform for your Data and AI Stack)
+1. [AI DataHub (data catalog powered by AI)](https://github.com/datahub-project/datahub)
 2. [Kinesis Vs Kafka](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/Kinesis/Kinesis-Vs-Kafka.md)
+3. [LLM Python Packages](https://www.kdnuggets.com/llmops-in-2026-the-10-tools-every-team-must-have)
