@@ -12,3 +12,4 @@
 ---
 
 1. [AI DataHub (data catalog powered by AI)](datahub-project/datahub: The Metadata Platform for your Data and AI Stack)
+2. [Kinesis Vs Kafka](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/Kinesis/Kinesis-Vs-Kafka.md)
