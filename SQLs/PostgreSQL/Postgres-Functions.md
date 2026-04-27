@@ -190,6 +190,47 @@ SECURITY DEFINER LANGUAGE plpgsql AS $$ ... $$;
 
 **Functions vs Procedures** — PostgreSQL added `PROCEDURE` in v11. The key difference is that procedures support transaction control (`COMMIT`/`ROLLBACK` inside the body) while functions do not — they always run inside the caller's transaction.
 
+## Function Execution
+The most likely issue is the use of `PERFORM` vs. the right call syntax depending on what `upsert_form` is:
+
+- **`PERFORM`** → calls a **function** inside PL/pgSQL and discards the result
+- **`CALL`** → calls a **procedure** (PL/pgSQL or plain SQL)
+- **`SELECT`** → calls a **function** in plain SQL scripts
+
+If `upsert_form` is a **procedure** (created with `CREATE PROCEDURE`), fix it to:
+
+```sql
+CALL upsert_form(
+    'DEV SMART File',                                                         -- p_form_name
+    'SMART File',                                                             -- p_form_type
+    'SteerBridge Structured Medical Analysis and Review Tool (SMART) '
+    'File for VA disability claims.  Covers veteran profile, claim '
+    'header, findings, diagnosis, evidence, and next development '
+    'actions.',                                                               -- p_form_description
+    1,                                                                        -- p_form_level
+    v_file_name,                                                              -- p_form_output_name
+    true                                                                      -- p_active_fl
+);
+```
+
+If `upsert_form` is a **function** and this is a **plain SQL script** (not inside a `DO $$ ... $$` block or stored function), use:
+
+```sql
+SELECT upsert_form(
+    'DEV SMART File',
+    'SMART File',
+    'SteerBridge Structured Medical Analysis and Review Tool (SMART) '
+    'File for VA disability claims.  Covers veteran profile, claim '
+    'header, findings, diagnosis, evidence, and next development '
+    'actions.',
+    1,
+    v_file_name,
+    true
+);
+```
+
+**`PERFORM` is valid only inside a PL/pgSQL block** (e.g., inside a `DO $$...$$`, trigger, or stored function body). If you're seeing an error like `syntax error at or near "PERFORM"`, that's your cause — you're running it as a plain script.
+
 ---
 
 ### Compared to Other Databases
