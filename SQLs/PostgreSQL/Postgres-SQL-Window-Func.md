@@ -1,4 +1,4 @@
-# Postgres SQL Window Functions
+
 # PostgreSQL Window Functions Cheatsheet
 
 Window functions perform calculations across a set of rows **related to the current row** — without collapsing rows like `GROUP BY` does.
