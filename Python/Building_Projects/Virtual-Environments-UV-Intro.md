@@ -101,7 +101,30 @@ uv sync
 This approach is cleaner for projects since uv manages the venv for you and generates a `uv.lock` lockfile for reproducible installs.
 
 ---
+## Starting The UV venv from Powweshell, Command Prompt, and bash
+```powershell
+.venv\Scripts\Activate.ps1
+```
 
+That's it! Your prompt will change to show `(.venv)` when it's active. If you get a permissions error, run this first:
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+That allows locally-created scripts to run in PowerShell.
+```cmd
+.venv\Scripts\activate.bat
+```
+
+Same result — your prompt will change to show `(.venv)` when active.
+```bash
+source .venv/bin/activate
+```
+
+Same result — your prompt will show `(.venv)` when active.
+
+---
 ### Key Advantages of uv
 
 - **Speed** — 10–100x faster than pip for installs
