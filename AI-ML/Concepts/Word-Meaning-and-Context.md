@@ -1,3 +1,62 @@
+# Wording, Meaning, and Context in AI
+
+## Lexicon, Lexical & Semantic Meaning
+
+### 📖 Lexicon
+A **lexicon** is the complete **vocabulary or word inventory** of a language, a person, or a field of study. Think of it as a mental dictionary — the total stock of words a speaker knows or that exists in a language.
+
+- **Language lexicon** → all words in English, French, etc.
+- **Personal lexicon** → all words *you* personally know
+- **Domain lexicon** → specialized vocabulary (e.g., medical lexicon, legal lexicon)
+
+---
+
+### 🔤 Lexical Meaning
+**Lexical meaning** is the **dictionary meaning** of a word — its core, standalone definition independent of grammar or sentence context.
+
+It refers to the meaning a word carries **on its own**, as a unit of the lexicon.
+
+| Word | Lexical Meaning |
+|------|----------------|
+| *run* | to move quickly on foot |
+| *cold* | low in temperature |
+| *bank* | a financial institution / edge of a river |
+
+> Lexical meaning is concerned with **what a word refers to** in the real world (its referent or concept).
+
+---
+
+### 💡 Semantic Meaning
+**Semantic meaning** is **broader** — it's the study of meaning in language at every level: words, phrases, sentences, and context.
+
+It includes:
+
+- **Denotation** — the literal, objective meaning (*snake* = a reptile)
+- **Connotation** — the emotional/cultural associations (*snake* = treachery, danger)
+- **Sense relations** — how words relate to each other:
+  - *Synonyms* (big / large)
+  - *Antonyms* (hot / cold)
+  - *Hyponyms* (rose is a hyponym of flower)
+
+---
+
+### 🔍 Key Difference
+
+| | Lexical Meaning | Semantic Meaning |
+|--|----------------|-----------------|
+| **Scope** | Word-level | Word, phrase & sentence level |
+| **Focus** | Core dictionary definition | Full interpretation of meaning |
+| **Context** | Context-independent | Context-sensitive |
+| **Example** | *"bank"* = financial institution | *"I went to the bank"* — which bank? Determined by context |
+
+---
+
+### In Summary
+- **Lexicon** = the *inventory* of words in a language
+- **Lexical meaning** = the *inherent meaning* of a word as a dictionary entry
+- **Semantic meaning** = the *full, interpreted meaning* of language in use, including context, connotation, and relationships between words
+
+These three concepts are central to **linguistics** and **natural language processing (NLP)**.
 ## Types of Meaning in AI/NLP
 
 Beyond the original three, here are the key meaning types used in AI:
