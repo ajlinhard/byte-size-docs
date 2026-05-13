@@ -142,6 +142,8 @@ aws sso login --profile govcloud
 
 ```
 export AWS_PROFILE=<profile-name>
+
+echo %AWS_PROFILE%
 ```
 
 **What this does:** This tells your terminal "for all AWS commands I run from now on, use the `govcloud` credentials." Think of it like selecting which account to use. This only lasts for your current terminal session — you'll need to run it again if you open a new terminal window.
