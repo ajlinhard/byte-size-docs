@@ -1,6 +1,9 @@
 # Postgres Indexes
 Here's a comprehensive breakdown of PostgreSQL's index types, how they work under the hood, and how they map to SQL Server equivalents.
 
+**Links:**
+- [CodeCamp - Practical Guide](https://www.freecodecamp.org/news/how-database-indexes-work-a-practical-guide-with-postgresql-examples/)
+
 ---
 
 ## The index types at a glance---
