@@ -90,13 +90,15 @@ terraform -v
 For AWS credentials, the simplest approach locally is the AWS CLI:
 
 **Make Sure SSO is Setup:** [AAWS SSO User/Group Setup](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/CLI/AWS-SSO-User-Group-Setup.md)
+```bash
+aws configure sso
+```
 
+### Step 1b: Get Access Keys for terraform-deployer-user
 ```bash
 aws configure
 # Enter your Access Key ID, Secret Access Key, region (e.g. us-east-1), output format (json)
 ```
-
-### Step 1b: Get Access Keys for terraform-deployer-user
 Since the user has no console access, an admin needs to generate access keys:
 
 1. AWS Console → IAM → Users → terraform-deployer-user
