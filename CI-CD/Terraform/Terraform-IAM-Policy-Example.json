@@ -1,0 +1,89 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "S3FullAccess",
+      "Effect": "Allow",
+      "Action": ["s3:*"],
+      "Resource": ["arn:aws:s3:::*", "arn:aws:s3:::*/*"]
+    },
+    {
+      "Sid": "ECSFullAccess",
+      "Effect": "Allow",
+      "Action": ["ecs:*", "ecr:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SQSFullAccess",
+      "Effect": "Allow",
+      "Action": ["sqs:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SNSFullAccess",
+      "Effect": "Allow",
+      "Action": ["sns:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "RDSFullAccess",
+      "Effect": "Allow",
+      "Action": ["rds:*", "rds-db:*", "rds-data:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "IAMFullAccess",
+      "Effect": "Allow",
+      "Action": ["iam:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "KinesisFullAccess",
+      "Effect": "Allow",
+      "Action": ["kinesis:*", "firehose:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "EventBridgeFullAccess",
+      "Effect": "Allow",
+      "Action": ["events:*", "scheduler:*", "pipes:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CloudWatchFullAccess",
+      "Effect": "Allow",
+      "Action": ["cloudwatch:*", "logs:*", "xray:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "QuickSightFullAccess",
+      "Effect": "Allow",
+      "Action": ["quicksight:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "LambdaFullAccess",
+      "Effect": "Allow",
+      "Action": ["lambda:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SageMakerFullAccess",
+      "Effect": "Allow",
+      "Action": ["sagemaker:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VPCFullAccess",
+      "Effect": "Allow",
+      "Action": ["ec2:*"],
+      "Resource": "*"
+    },
+    {
+    "Sid": "StepFunctionsFullAccess",
+    "Effect": "Allow",
+    "Action": ["states:*"],
+    "Resource": "*"
+    }
+  ]
+}
