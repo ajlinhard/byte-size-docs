@@ -86,7 +86,10 @@ winget install Hashicorp.Terraform
 terraform -v
 ```
 
+### Step 1a: Access Via SSO
 For AWS credentials, the simplest approach locally is the AWS CLI:
+
+**Make Sure SSO is Setup:** [AAWS SSO User/Group Setup](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/CLI/AWS-SSO-User-Group-Setup.md)
 
 ```bash
 aws configure
