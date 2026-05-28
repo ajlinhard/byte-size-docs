@@ -72,7 +72,7 @@ Since you're using SSO, **AWS Account** is your answer. Want help setting up the
 
 ---
 # You Don't Always Need a Separate IAM Role 
-(Repeat of SSO User/Group Setup)
+[Repeat of SSO User/Group Setup](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/CLI/AWS-SSO-User-Group-Setup.md)
 
 If you attach the policy **directly to the Permission Set** in IAM Identity Center, it works fine for Terraform. The separate IAM role step is optional. Here's the distinction:
 
