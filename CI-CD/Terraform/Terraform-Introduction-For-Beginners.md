@@ -64,10 +64,17 @@ Look at the steps and figure out the point you are at with your AWS account:
 2. Make a Admin Users using the AWS default: arn:aws:iam::aws:policy/AdministratorAccess
 3. Next look to create a Terraform User called ==> terraform-deployer-user
 	a. Start by going to IAM to create an IAM Policy called terraform-deployer-policy (since it commonly uses over the 10 max policies)
+
 	b. The go to IAM user to create the user and attach the policy.
 	Example: [Terraform-Policy-Example](https://github.com/ajlinhard/byte-size-docs/blob/main/CI-CD/Terraform/Terraform-IAM-Policy-Example.json)
-    c. Mkae suure to setup with no AWS Console Access to manage access by Least Privelage.
 
+     c. Make suure to setup with no AWS Console Access to manage access by Least Privelage.
+
+**A few things to note:**
+VPC access is via ec2:* — VPC is part of the EC2 API surface
+IAM full access is powerful — if you want to lock it down, you can restrict it to iam:PassRole + specific actions Terraform actually needs
+This counts as 1 policy, solving your quota problem entirely
+AWS has a 6,144 character limit on inline policies — this JSON is well within that limit as a managed policy (which has a 6,144 character limit too, but managed policies can request a quota increase if needed)
 ## Step 1: Install AWS CLI and Terraform
 
 ```powershell
