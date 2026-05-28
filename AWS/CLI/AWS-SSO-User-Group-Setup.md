@@ -37,6 +37,9 @@ This is the critical step that grants access:
 7. Click **Next** → **Submit**
 8. Go back to your AWS Account in IAM Identity Center to confirm group or user is attached.
 9. If NO, click add user/group then add the account you just made.
+10. The make sure the permission set is associated with the user within the account
+<img width="2848" height="1564" alt="image" src="https://github.com/user-attachments/assets/59bfa429-9252-4bf4-8726-5b64676e35d2" />
+
 
 ---
 
