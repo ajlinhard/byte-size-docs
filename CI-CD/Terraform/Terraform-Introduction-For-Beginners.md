@@ -93,6 +93,14 @@ aws configure
 # Enter your Access Key ID, Secret Access Key, region (e.g. us-east-1), output format (json)
 ```
 
+### Step 1b: Get Access Keys for terraform-deployer-user
+Since the user has no console access, an admin needs to generate access keys:
+
+1. AWS Console → IAM → Users → terraform-deployer-user
+2. Security credentials → Access keys → Create access key
+3. Choose "Command Line Interface (CLI)"
+4. Save the Access Key ID and Secret Access Key — you only see the secret once
+
 Terraform automatically picks up credentials from `~/.aws/credentials`. In CI/CD pipelines you'd use environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`) or IAM roles.
 
 ---
