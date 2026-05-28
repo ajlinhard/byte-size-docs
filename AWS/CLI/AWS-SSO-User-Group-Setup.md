@@ -66,3 +66,67 @@ You should now see the account listed and can complete the profile setup.
 | Correct region | Identity Center region matches `aws configure sso` region |
 
 > **Tip:** If you're using an external IdP (Okta, Azure AD), you may need to assign access via a **Group** rather than directly to the user — ask your IdP admin to add the user to the appropriate group.
+
+---
+# You Don't Always Need a Separate IAM Role (When Do I?)
+
+If you attach the policy **directly to the Permission Set** in IAM Identity Center, it works fine for Terraform. The separate IAM role step is optional. Here's the distinction:
+
+---
+
+### How It Works Without a Separate Role
+
+When a user logs in via SSO, IAM Identity Center **automatically creates a temporary role** behind the scenes tied to the Permission Set. So you're still using a role — AWS just manages it for you.
+
+```
+You (SSO login) → Permission Set (with TerraformExecutionPolicy attached)
+                        ↓
+         AWS auto-generates a temporary session role
+                        ↓
+              Terraform uses those credentials
+```
+
+Your Terraform provider config stays the same:
+
+```hcl
+provider "aws" {
+  region  = "us-east-1"
+  profile = "terraform-dev"   # the SSO profile you configured
+}
+```
+
+**This is completely valid and works.**
+
+---
+
+### So When Would You Create a Separate IAM Role?
+
+The manual role setup is useful in specific situations:
+
+| Scenario | Separate Role Needed? |
+|---|---|
+| Human dev running Terraform locally via SSO | ❌ No — Permission Set policy is enough |
+| CI/CD pipeline (GitHub Actions, Jenkins, etc.) | ✅ Yes — needs a role to assume |
+| Terraform managing **multiple AWS accounts** | ✅ Yes — needs cross-account role assumption |
+| You want stricter separation / auditing per tool | ✅ Yes — gives more control |
+| Team sharing one SSO group for Terraform | ❌ No — Permission Set handles it |
+
+---
+
+### The Simpler Setup (No Manual Role)
+
+If you're a developer running Terraform locally, just do this:
+
+1. **Create a Permission Set** in IAM Identity Center
+2. **Attach your Terraform policy** directly to the Permission Set
+3. **Assign it** to your user or group for the target account
+4. Run `aws configure sso` → `aws sso login` → done
+
+No manual IAM role creation needed. The SSO-managed temporary role handles everything transparently.
+
+---
+
+### The Key Tradeoff
+
+- **Permission Set only** → simpler, great for individuals/small teams running Terraform locally
+- **Separate IAM Role** → more flexibility, required for automation, cross-account setups, or when non-SSO identities (like CI bots) need the same access
