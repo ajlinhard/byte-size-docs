@@ -88,6 +88,61 @@ Without a reranker, a RAG system might pass mediocre or off-topic chunks to the 
 - **RankLLaMA / RankGPT** — LLM-based reranking approaches
 
 ---
+## How Reranker Scores Work
+
+Rerankers (also called cross-encoders) score how relevant a document is to a query. The raw score is a **logit** — an unbounded real number output from the model's final linear layer, before any activation function is applied.
+
+### Why Scores Can Be Negative
+
+The raw logit can be any real number: positive, negative, or zero. A negative score **doesn't mean the document is irrelevant** — it just means the model's confidence in relevance is below a certain threshold on its internal scale. What matters is **relative ordering**, not the absolute value.
+
+Think of it like a temperature scale — the zero point is arbitrary. What counts is that a score of `-1.2` is more relevant than `-3.8`.
+
+### The Scale Depends on the Model
+
+Different rerankers output scores on different ranges:
+
+| Model/Type | Typical Range | Notes |
+|---|---|---|
+| Cross-encoder (raw logits) | `-∞` to `+∞` | Commonly `-10` to `+10` |
+| After sigmoid | `0` to `1` | Probability-like |
+| After softmax (multi-class) | `0` to `1` | Sums to 1 across docs |
+| Cohere Rerank | `0` to `1` | Already normalized |
+| BGE / Jina (raw) | Often negative | Logits, not probabilities |
+
+### How to Interpret Them
+
+1. **Rank by score descending** — highest score = most relevant, regardless of sign.
+2. **Don't use a fixed threshold like `> 0`** — this is model-dependent and unreliable.
+3. **If you need a threshold**, calibrate it empirically on your data, or apply a sigmoid to convert to a 0–1 probability:
+
+```python
+import math
+
+def sigmoid(x):
+    return 1 / (1 + math.exp(-x))
+
+probability = sigmoid(raw_score)  # e.g., sigmoid(-2.1) → 0.109
+```
+
+4. **Normalize scores** if you need to combine them with other signals (e.g., BM25 + reranker):
+
+```python
+def min_max_normalize(scores):
+    mn, mx = min(scores), max(scores)
+    return [(s - mn) / (mx - mn) for s in scores]
+```
+
+### Practical Rule of Thumb
+
+For most cross-encoder rerankers:
+- **Score > 0** → model leans toward relevant
+- **Score < 0** → model leans toward not relevant
+- **Score near 0** → uncertain / borderline
+
+But again — if you're reranking 10 documents, just take the **top-K by score** and don't worry about the sign. The negative scores are doing their job by sinking less relevant docs to the bottom.
+
+Which reranker are you using? (e.g., BGE, Jina, a Hugging Face cross-encoder?) I can give more specific guidance on its score range.
 
 ### In Summary
 
