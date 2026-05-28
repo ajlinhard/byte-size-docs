@@ -58,13 +58,21 @@ my-project/
 Each environment folder is completely independent — running `terraform apply` in `dev/` touches only dev infrastructure. The `modules/` folder contains the shared blueprints each environment uses.
 
 ---
+## Step 0: Setup AWS Account with Terraform
+Look at the steps and figure out the point you are at with your AWS account:
+1. Setup account in AWS
+2. Make a Admin Users using the AWS default: arn:aws:iam::aws:policy/AdministratorAccess
+3. Next look to create a Terraform User called ==> terraform-deployer-user
+	a. Start by going to IAM to create an IAM Policy called terraform-deployer-policy (since it commonly uses over the 10 max policies)
+	b. The go to IAM user to create the user and attach the policy.
+	Example: [Terraform-Policy-Example](https://github.com/ajlinhard/byte-size-docs/blob/main/CI-CD/Terraform/Terraform-IAM-Policy-Example.json)
+    c. Mkae suure to setup with no AWS Console Access to manage access by Least Privelage.
 
-## Step 1: Install Terraform & Authenticate with AWS
+## Step 1: Install AWS CLI and Terraform
 
-```bash
-# On macOS with Homebrew
-brew tap hashicorp/tap
-brew install hashicorp/tap/terraform
+```powershell
+winget install Amazon.AWSCLI
+winget install Hashicorp.Terraform
 
 # Verify
 terraform -v
