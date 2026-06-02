@@ -54,3 +54,183 @@ resource "aws_s3_bucket" "myTestTerraform" {
     acl = "private"
 }
 ```
+
+---
+## Teeraform States Across Dev, Test, Prod
+No — each environment gets its own isolated state file. The `key` parameter is what separates them:
+
+```
+dev/terraform.tfstate        ← dev state
+staging/terraform.tfstate    ← staging state  
+production/terraform.tfstate ← production state
+```
+
+All three live in the **same S3 bucket** and use the **same DynamoDB lock table**, but because the `key` paths differ, Terraform treats them as completely independent state files. Changes to dev have zero effect on the production state, and vice versa.
+
+## How you'd typically manage this
+
+Since the `backend` block doesn't allow variables, there are two common patterns:
+
+**Option 1 — Separate directories per environment (most explicit)**
+```
+infra/
+├── dev/
+│   └── main.tf        # backend key = "dev/terraform.tfstate"
+├── staging/
+│   └── main.tf        # backend key = "staging/terraform.tfstate"
+└── production/
+    └── main.tf        # backend key = "production/terraform.tfstate"
+```
+
+**Option 2 — `-backend-config` flag at init time (one codebase)**
+```bash
+# Same .tf files, different state per init
+terraform init -backend-config="key=dev/terraform.tfstate"
+terraform init -backend-config="key=staging/terraform.tfstate"
+terraform init -backend-config="key=production/terraform.tfstate"
+```
+This lets you use a partial backend block in code and inject the key at runtime — common in CI/CD pipelines.
+
+## What's shared vs. isolated
+
+| Resource | Shared across envs? |
+|---|---|
+| S3 bucket | ✅ Yes (just a container) |
+| DynamoDB lock table | ✅ Yes (locks are keyed by state path) |
+| State file | ❌ No — isolated per `key` |
+| Actual AWS resources | ❌ No — each env deploys its own |
+
+The single-account setup means your IAM permissions, VPCs, and resource names need to be carefully namespaced (e.g. `dev-my-bucket`, `prod-my-bucket`) to avoid collisions — but the Terraform state isolation itself is solid with this approach.
+
+---
+## Terraform Backend (AWS)
+Great question. Here's how Terraform uses both services under the hood:
+
+## S3 — Stores the State File
+
+The state file (`terraform.tfstate`) is a JSON snapshot of every resource Terraform manages. S3 is just an object store for this file.
+
+**The read/write cycle on every Terraform operation:**
+```
+terraform plan/apply
+       │
+       ▼
+1. Download state    → GET s3://ajlinhard-acct-terraform-state/dev/terraform.tfstate
+2. Compare vs real   → API calls to AWS to inspect actual resources
+3. Calculate diff    → What needs to change?
+4. Apply changes     → Create/update/destroy resources
+5. Upload new state  → PUT s3://ajlinhard-acct-terraform-state/dev/terraform.tfstate
+```
+
+The state file itself looks like this internally:
+```json
+{
+  "version": 4,
+  "terraform_version": "1.6.0",
+  "serial": 42,          // increments every save — prevents overwriting newer state
+  "lineage": "abc-123",  // unique ID for this state's lifetime
+  "resources": [
+    {
+      "type": "aws_instance",
+      "name": "web",
+      "instances": [{ "attributes": { "id": "i-1234567890" } }]
+    }
+  ]
+}
+```
+
+---
+
+## DynamoDB — Handles the State Lock
+
+The lock prevents two people (or two CI jobs) from running `terraform apply` at the same time, which would corrupt the state file.
+
+**The lock lifecycle:**
+```
+terraform apply starts
+       │
+       ▼
+1. LOCK   → PutItem to DynamoDB  { LockID: "dev/terraform.tfstate", who: "user@machine", time: "..." }
+       │
+       ▼
+2. WORK   → Download state, make changes, upload new state
+       │
+       ▼
+3. UNLOCK → DeleteItem from DynamoDB
+
+# If someone else runs apply while locked:
+→ ConditionalCheckFailedException → Terraform exits with:
+  "Error: state file already locked: ID=abc123, Who=other-user"
+```
+
+**The DynamoDB table only needs one column:**
+```hcl
+resource "aws_dynamodb_table" "terraform_lock" {
+  name         = "terraform-state-lock"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "LockID"          # ← Terraform hardcodes this key name
+
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+}
+```
+
+Terraform hardcodes `LockID` as the partition key — that's the only schema requirement.
+
+---
+
+## How They Work Together — Full Flow
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  terraform apply                     │
+└─────────────────────────────────────────────────────┘
+          │
+          ▼
+┌─────────────────────┐     Already locked?
+│  DynamoDB: PutItem  │ ──────────────────────► STOP, show error
+│  LockID = "dev/..."  │
+└─────────────────────┘
+          │ Lock acquired
+          ▼
+┌─────────────────────┐
+│   S3: GetObject     │  ← pull current state
+│   dev/tfstate       │
+└─────────────────────┘
+          │
+          ▼
+┌─────────────────────┐
+│  AWS API calls      │  ← compare state vs reality
+│  (plan/diff)        │
+└─────────────────────┘
+          │
+          ▼
+┌─────────────────────┐
+│  Make AWS changes   │  ← create/update/destroy resources
+└─────────────────────┘
+          │
+          ▼
+┌─────────────────────┐
+│   S3: PutObject     │  ← save updated state
+│   dev/tfstate       │
+└─────────────────────┘
+          │
+          ▼
+┌─────────────────────┐
+│ DynamoDB: DeleteItem│  ← release lock
+└─────────────────────┘
+```
+
+---
+
+## What Happens if Terraform Crashes Mid-Apply?
+
+The lock is **not automatically released** — which is intentional. You'd see:
+
+```bash
+terraform force-unlock <LOCK_ID>
+```
+
+This is a safety net so you manually verify the state is clean before anyone else runs apply. The `LockID` value is shown in the error message when a lock is detected.
