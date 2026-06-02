@@ -63,9 +63,29 @@
       "Resource": "*"
     },
     {
-      "Sid": "IAMFullAccess",
+      "Sid": "RestrictedPassRole",
       "Effect": "Allow",
-      "Action": ["iam:*"],
+      "Action": "iam:PassRole",
+      "Resource": "arn:aws:iam::619071338293:role/terraform-*"
+      // Only pass roles that start with "terraform-"
+    },
+    {
+      "Sid": "STSCallerIdentityAndServiceLinkedRoles",
+      "Effect": "Allow",
+      "Action": [
+        "sts:GetCallerIdentity",
+        "iam:CreateServiceLinkedRole",
+        "iam:DeleteServiceLinkedRole",
+        "iam:GetServiceLinkedRoleDeletionStatus"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SecretsManagerAccess",
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:*"
+      ],
       "Resource": "*"
     },
     {
