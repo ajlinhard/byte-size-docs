@@ -92,6 +92,14 @@ For AWS credentials, the simplest approach locally is the AWS CLI:
 **Make Sure SSO is Setup:** [AAWS SSO User/Group Setup](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/CLI/AWS-SSO-User-Group-Setup.md)
 ```bash
 aws configure sso
+
+PS C:\Users\Your-User> aws configure sso
+SSO session name (Recommended): terraform-deployer-sso
+SSO start URL [None]: https://ssoins-722367bb7a389dc3.portal.us-east-1.app.aws
+	==> Find Via IAM Identity Center -> Settings
+SSO region [None]: us-east-1
+SSO registration scopes [sso:account:access]: sso:account:access
+Attempting to open your default browser. If the browser does not open, open the following URL.
 ```
 
 ### Step 1b: Get Access Keys for terraform-deployer-user
