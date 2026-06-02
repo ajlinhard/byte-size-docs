@@ -117,21 +117,23 @@ By default, Terraform saves state to a local file. This breaks the moment two pe
 Create this once manually (it's a chicken-and-egg situation — you can't use Terraform to create the bucket that Terraform state lives in):
 
 ```bash
+$env:AWS_PROFILE = "terraform-deployer"
+
 # Create the S3 bucket for state
-aws s3api create-bucket \
-  --bucket my-project-terraform-state \
+aws s3api create-bucket `
+  --bucket ajlinhard-acct-terraform-state `
   --region us-east-1
 
 # Enable versioning so you can recover from bad state
-aws s3api put-bucket-versioning \
-  --bucket my-project-terraform-state \
+aws s3api put-bucket-versioning `
+  --bucket ajlinhard-acct-terraform-state `
   --versioning-configuration Status=Enabled
 
 # Create DynamoDB table for state locking
-aws dynamodb create-table \
-  --table-name terraform-state-lock \
-  --attribute-definitions AttributeName=LockID,AttributeType=S \
-  --key-schema AttributeName=LockID,KeyType=HASH \
+aws dynamodb create-table `
+  --table-name terraform-state-lock `
+  --attribute-definitions AttributeName=LockID,AttributeType=S `
+  --key-schema AttributeName=LockID,KeyType=HASH `
   --billing-mode PAY_PER_REQUEST
 ```
 
@@ -543,7 +545,7 @@ terraform {
 
   # Remote state — each environment gets its own state file
   backend "s3" {
-    bucket         = "my-project-terraform-state"
+    bucket         = "ajlinhard-acct-terraform-state"
     key            = "dev/terraform.tfstate"   # <-- changes per environment
     region         = "us-east-1"
     dynamodb_table = "terraform-state-lock"
