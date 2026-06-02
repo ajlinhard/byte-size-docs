@@ -1,6 +1,7 @@
 # AWS SSO User or Group Setup
 Here's a step-by-step guide to assigning a permission set to a user in IAM Identity Center:
 
+During Steps 2 and 3 a IAM policy and IAM User /Group will need to be made. Info in links below.
 ---
 
 ## Step 1: Open IAM Identity Center
@@ -18,7 +19,8 @@ If a permission set doesn't exist yet:
 3. Choose a type:
    - **Predefined** — use an AWS managed policy (e.g., `AdministratorAccess`, `ReadOnlyAccess`, `PowerUserAccess`)
    - **Custom** — define your own inline/managed policies
-   - Example: Terraform Policy
+   - [Example: Terraform Policy](https://github.com/ajlinhard/byte-size-docs/blob/main/CI-CD/Terraform/Terraform-IAM-Policy-Example.json)
+   - [Permission Warnings!](https://github.com/ajlinhard/byte-size-docs/blob/main/CI-CD/Terraform/Terraform-Deploy-IAM-Permissions.md)
 4. Give it a name (e.g., `TerraformDeployer`)
 5. Set a **session duration** (how long credentials last, e.g., 8 hours)
 6. Click through and **Create**
