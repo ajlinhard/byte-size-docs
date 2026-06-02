@@ -2,6 +2,37 @@
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "TerraformDynamoDBAdmin",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:CreateTable",
+        "dynamodb:DeleteTable",
+        "dynamodb:DescribeTable",
+        "dynamodb:UpdateTable",
+        "dynamodb:ListTables",
+        "dynamodb:TagResource",
+        "dynamodb:UntagResource",
+        "dynamodb:ListTagsOfResource"
+      ],
+      "Resource": "arn:aws:dynamodb:us-east-1:YOUR_ACCOUNT_ID:table/terraform-state-lock"
+    },
+    {
+      "Sid": "TerraformDynamoDBListAll",
+      "Effect": "Allow",
+      "Action": "dynamodb:ListTables",
+      "Resource": "*"        
+    },
+    {
+      "Sid": "TerraformStateLockDynamoDB",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:DeleteItem"
+      ],
+      "Resource": "arn:aws:dynamodb:us-east-1:YOUR_ACCOUNT_ID:table/terraform-state-lock"
+    }
+    {
       "Sid": "S3FullAccess",
       "Effect": "Allow",
       "Action": ["s3:*"],
