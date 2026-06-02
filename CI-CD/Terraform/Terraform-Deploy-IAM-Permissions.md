@@ -1,6 +1,121 @@
+## ELI5: The PassRole Warning 🧸
+
+### Simple Analogy
+
+Imagine your office building has a **master keycard system**. You're a contractor and the building manager gives you:
+
+> *"You can give YOUR keycard access level to ANY door in the building, for ANY reason, to ANY person."*
+
+That's really dangerous! You could give someone access to the vault, the server room, the CEO's office — anything. The warning is saying: **"You shouldn't be able to hand out keys so freely."**
+
+---
+
+### What is `iam:PassRole`?
+
+In AWS, **PassRole** is how you "hand a permission badge" to an AWS service. For example:
+
+```
+"Hey Lambda, here's an IAM Role — use it to access S3 and RDS"
+```
+
+Without PassRole, you can't assign roles to services. It's an important and powerful action.
+
+---
+
+### Why is this dangerous in your policy?
+
+Look at this statement in your policy:
+
+```json
+{
+  "Sid": "IAMFullAccess",
+  "Effect": "Allow",
+  "Action": ["iam:*"],   // ⬅ wildcard action (includes PassRole!)
+  "Resource": "*"        // ⬅ wildcard resource (every role!)
+}
+```
+
+`iam:*` includes `iam:PassRole`, and `Resource: *` means **every IAM role in your account**. So this principal can:
+
+```
+Pass ANY role → to ANY service → for ANY purpose
+```
+
+### The Privilege Escalation Risk 🚨
+
+Here's the scary part — this is how an attacker (or accidental misuse) escalates privileges:
+
+```
+You only have Terraform access
+        │
+        ▼
+But you can PassRole any role to Lambda...
+        │
+        ▼
+You create a Lambda and attach the AdminRole to it
+        │
+        ▼
+You invoke the Lambda → it now runs as Admin
+        │
+        ▼
+🎉 You just gave yourself Admin access!
+```
+
+---
+
+### How to Fix It
+
+AWS recommends two approaches:
+
+**Option 1 — Restrict to specific roles (ARNs):**
+```json
+{
+  "Sid": "RestrictedPassRole",
+  "Effect": "Allow",
+  "Action": "iam:PassRole",
+  "Resource": "arn:aws:iam::619071338293:role/terraform-*"
+  // Only pass roles that start with "terraform-"
+}
+```
+
+**Option 2 — Restrict to specific services (condition key):**
+```json
+{
+  "Sid": "RestrictedPassRole",
+  "Effect": "Allow",
+  "Action": "iam:PassRole",
+  "Resource": "*",
+  "Condition": {
+    "StringEquals": {
+      "iam:PassedToService": [
+        "ecs-tasks.amazonaws.com",
+        "lambda.amazonaws.com"
+      ]
+    }
+  }
+  // Can only pass roles TO these specific services
+}
+```
+
+---
+
+### Your Bigger Issue ⚠️
+
+Honestly, the PassRole warning is just the **tip of the iceberg** in this policy. You have full `*` access on:
+
+| Service | Risk Level |
+|---|---|
+| `iam:*` | 🔴 Critical — can create/modify any role or user |
+| `s3:*` on `*` | 🔴 Critical — can read/delete any bucket |
+| `ec2:*` | 🟠 High — can spin up/destroy infrastructure |
+| `rds:*` | 🟠 High — can delete databases |
+| `lambda:*` | 🟠 High — can create/run arbitrary code |
+
+This policy essentially gives **near-Admin access**. It's fine for a dev sandbox, but should never be used in production. The PassRole warning is AWS's way of waving a red flag at the most dangerous part.
+---
 # Additional IAM Permissions for Terraform
 
-Yes! Beyond `iam:*`, there are some **related services and permissions** that Terraform commonly needs when managing IAM and the services that depend on it.
+Beyond `iam:*`, there are some **related services and permissions** that Terraform commonly needs when managing IAM and the services that depend on it.
 
 ---
 
