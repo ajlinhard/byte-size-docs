@@ -1,16 +1,16 @@
-# Python Virtual Environments (Venv, Anaconda, Poetry, Virtualenv, Pipenv)
+# Python Virtual Environments (Venv, Anaconda, UV)
 Virutal Environments are how you handle different python package dependency builds for your projects. They can help you manage different versioning required for projects, services, or dev/test comparisons.
 
 ## FIRST! How do python scripts execute?
 When you execute or import a python module/script, the code runs from the path it is at. However, the python execution runs from where the environment/interpreter (aka python.exe) lives. All libraries must be installed in the under the location of the interpreters location, or the sys.path of your project must be added at runtime (in the script).
 
-Option 2: Manual Execution
+### Option 1: Manual Execution
 You can also have the path added to execution by calling the module from the project folder with the following command:
 ```bash
 cd /Full/Project/Path/
 python -m package_folder.subfolder.script
 ```
-Option 3: Install Project Quickly to Environment
+### Option 2: Install Project Quickly to Environment
 You can run this command from your project directory to quickly install the project
 ** Note: If you make changed you need to re-install **
 ```bash
@@ -20,7 +20,7 @@ pip install -e
 pip install -e /path/to/your/project
 ```
 
-Option 4: Adhoc scripts and Notebooks
+### Option 3: Adhoc scripts and Notebooks
 If you need to test a script quickly adhocly or if using notebooks, which cannot be run conviently be run on the command line. Then use the following techniques:
 ```python
 import os
@@ -57,10 +57,11 @@ Import errors can be difficult to figure out and usually have to do with where y
 
 - [Helpful Import Error Debug Example](https://www.youtube.com/watch?v=pm1IK0fBuhw)
 
+# Creating a Python Virtual Environment
+Now lets talk through settig up virtual environments for testing and running things locally.
+
 ## Good Documentation
 - [Basics of Each Virtual Env](https://www.pythoncheatsheet.org/cheatsheet/virtual-environments)
-
-# Creating a Python Virtual Environment
 
 ---
 
