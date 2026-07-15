@@ -2,7 +2,7 @@
 
 Python generators are a powerful feature that allow you to create iterators in a simple, elegant way. They are memory-efficient for handling large datasets and are perfect for situations where you need to work with data that doesn't need to be fully loaded into memory at once. Let me explain them from simple to complex concepts.
 
-When to use Vs List Comprenhension:
+**When to use Vs List Comprenhension:**
 
 List comprehension — When you need the entire list immediately and plan to access it multiple times
 Generator expression — When you iterate only once and want to save memory
