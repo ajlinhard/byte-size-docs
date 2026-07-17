@@ -39,7 +39,13 @@ This is the critical step that grants access:
 7. Click **Next** → **Submit**
 8. Go back to your AWS Account in IAM Identity Center to confirm group or user is attached.
 9. If NO, click add user/group then add the account you just made.
-10. The make sure the permission set is associated with the user within the account
+10. If YES, create a group by completing these sub-steps:
+   a. create group with the use-case name exaple: terraform-deployer
+   b. Attached the Identity Center user(s)
+   c. Click "Create Group" button
+   d. Go to the new Group "terraform-deployer" the assign an AWS Account under: IAM Identity Center => AWS Organizations: AWS accounts => <your account name> => Assign users and groups
+   e Make sure to be under "Groups" not "Users" then select your new group and the permission set from "Step 2"
+12. The make sure the permission set is associated with the user within the account
 <img width="2848" height="1564" alt="image" src="https://github.com/user-attachments/assets/59bfa429-9252-4bf4-8726-5b64676e35d2" />
 
 
