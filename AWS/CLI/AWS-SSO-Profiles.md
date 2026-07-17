@@ -31,8 +31,8 @@ This is your **company's SSO login portal URL**. You won't know this off the top
 - `https://d-xxxxxxxxxx.awsapps.com/start`
 <br>
 **NOTE: Find this in the AWS Idenity Center => Dashboard by looking for "AWS access portal URLs" on the dashboard page.**
+  
 ---
-
 ```
 SSO region [None]: us-gov-east-1
 ```
