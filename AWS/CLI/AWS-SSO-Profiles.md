@@ -29,7 +29,7 @@ SSO start URL [None]: https://your-company.awsapps.com/start
 This is your **company's SSO login portal URL**. You won't know this off the top of your head — you need to **ask your IT/DevOps team** for it. It usually looks something like:
 - `https://your-company.awsapps.com/start`
 - `https://d-xxxxxxxxxx.awsapps.com/start`
-
+**Find this in the AWS Idenity Center => Dashboard by looking for "AWS access portal URLs" on the dashboard page.**
 ---
 
 ```
