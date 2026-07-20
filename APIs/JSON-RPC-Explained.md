@@ -121,3 +121,49 @@ JSON-RPC is widely used in practice. Blockchain nodes (Bitcoin, Ethereum) expose
 JSON is *how you write data down*. JSON-RPC is *a specific set of rules, written in JSON, for one program to ask another program to run a function and send back the result*—created to give the world a lightweight, standardized, transport-agnostic way to do remote function calls without everyone inventing their own incompatible conventions.
 
 If it helps, think of it like this: JSON is the alphabet and grammar of a language. JSON-RPC is a *standardized business letter format* written in that language—with an agreed-upon place for the sender, the request, and the reply—so any two offices can correspond without confusion.
+
+
+---
+## Python Pacakges
+---
+There are several. This is exactly the use case those libraries exist for—you write an ordinary Python function, register it (usually with a decorator), and the library handles all the JSON-RPC parsing, dispatching, and response formatting for you. You never manually build or read the `{"jsonrpc": "2.0", ...}` envelopes yourself.
+
+Here are the main ones people actually use, roughly from "most common" to "specialized":
+
+**jsonrpcserver** (paired with **jsonrpcclient**) is probably the most widely used and the closest to what you're describing. You just decorate a function and it becomes remotely callable. Use the @method decorator to register functions that can be called remotely, then the dispatch function processes a JSON-RPC request and calls the appropriate method. A minimal server looks like:
+
+```python
+from jsonrpcserver import method, dispatch, serve
+
+@method
+def add(x, y):
+    return x + y
+
+serve()  # or plug dispatch() into Flask/Django/etc.
+```
+
+Then the client side:
+
+```python
+from jsonrpcclient import request
+import requests
+
+response = requests.post("http://localhost:5000/", json=request("add", params=(2, 3)))
+print(response.json())  # {"jsonrpc": "2.0", "result": 5, "id": 1}
+```
+
+Notice you never wrote the JSON-RPC envelope by hand—the decorator and `request()` helper did it. It's transport-agnostic and also supports async via async_dispatch, so the same registered functions work over HTTP, WebSockets, or stdio depending on how you wire it up.
+
+**json-rpc** is another popular one, but it's deliberately *protocol-only*. It implements the JSON-RPC 2.0 (and 1.0) specification but has no transport functionality—any client or server is easy to build on top, but requires transport libraries such as requests or gevent. It's vanilla Python with no dependencies and has optional Django and Flask backend support. Good if you want tight control over the transport layer.
+
+**pjrpc** is a more modern, batteries-included option with framework integrations. It's an extensible JSON-RPC client/server library designed to integrate into your project without much boilerplate, and notably it has built-in parameter validation based on pydantic, which uses Python type annotations for validation. It ships with integrations for aiohttp, Flask, and others, and can even auto-generate Swagger/OpenAPI docs. Worth a look if you want type validation and web-framework glue out of the box.
+
+**typedjsonrpc** (from Palantir) leans on type annotations. It's a decorator-based JSON-RPC library that exposes parameter and return types, influenced by Flask JSON-RPC, and it allows return type checking. You declare types in the decorator and it validates for you.
+
+One worth knowing about for context: **python-jsonrpc-server**, also from Palantir. It's a Python 3.4+ server implementation of JSON-RPC 2.0 that was pulled out of the Python Language Server project. This is the lineage behind editor tooling (LSP), which ties back to the JSON-RPC-in-the-wild examples I mentioned earlier.
+
+---
+
+A quick note on the mental model, since it's the interesting part: these libraries make a remote call *look* like a local function, but they can't make the function magically discoverable on its own. Someone still has to (a) run a server that registers the functions and (b) have the client know the method name to call. What the library automates is everything in between—serializing arguments into the JSON-RPC request, matching the `method` name to the right Python function, running it, catching exceptions and turning them into standard JSON-RPC error objects, and serializing the return value back. That "no boilerplate" convenience is the whole selling point.
+
+If you tell me your setup—whether you want plain HTTP, async, a specific web framework (Flask/FastAPI/Django), or something over stdio/sockets—I can point you to the best fit and sketch a working example for it.
