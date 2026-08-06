@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS Bedrock Guide</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --accent: #f78166;
+    --accent2: #79c0ff;
+    --accent3: #56d364;
+    --accent4: #d2a8ff;
+    --accent5: #ffa657;
+    --sidebar-w: 260px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.7; }
+
+  /* Layout */
+  .app { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    padding: 1.5rem 0;
+  }
+  .main { margin-left: var(--sidebar-w); flex: 1; max-width: 900px; padding: 2.5rem 3rem; }
+
+  /* Sidebar */
+  .sidebar-logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #f78166, #d2a8ff);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .logo-text { font-size: 14px; font-weight: 600; color: var(--text); }
+  .logo-sub { font-size: 11px; color: var(--text2); }
+
+  .nav-group { margin-bottom: 0.25rem; }
+  .nav-group-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text2);
+    padding: 0.75rem 1.25rem 0.35rem;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0.4rem 1.25rem;
+    font-size: 13.5px; color: var(--text2);
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: var(--text); background: var(--bg3); }
+  .nav-item.active { color: var(--accent2); border-left-color: var(--accent2); background: rgba(121,192,255,0.08); }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Badge levels */
+  .badge {
+    font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px;
+    letter-spacing: 0.04em; text-transform: uppercase; flex-shrink: 0;
+  }
+  .badge-beginner { background: rgba(86,211,100,0.15); color: var(--accent3); }
+  .badge-intermediate { background: rgba(255,166,87,0.15); color: var(--accent5); }
+  .badge-advanced { background: rgba(247,129,102,0.15); color: var(--accent); }
+  .badge-core { background: rgba(210,168,255,0.15); color: var(--accent4); }
+
+  /* Sections */
+  .section { margin-bottom: 4rem; scroll-margin-top: 2rem; }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+  h1 { font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+  h2 { font-size: 21px; font-weight: 600; color: var(--text); }
+  h3 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; }
+  p { color: #b0bec5; margin-bottom: 1rem; }
+
+  /* Hero */
+  .hero {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .hero-title { font-size: 32px; font-weight: 800; margin-bottom: 0.5rem; }
+  .hero-title span { background: linear-gradient(90deg, #f78166, #d2a8ff, #79c0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero-sub { color: var(--text2); font-size: 16px; margin-bottom: 1.5rem; }
+  .hero-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .hero-stat { text-align: center; }
+  .hero-stat-num { font-size: 22px; font-weight: 700; color: var(--accent2); }
+  .hero-stat-label { font-size: 12px; color: var(--text2); }
+
+  /* Architecture diagram */
+  .arch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.5rem 0; }
+  .arch-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1rem;
+  }
+  .arch-card-icon { font-size: 22px; margin-bottom: 0.5rem; }
+  .arch-card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
+  .arch-card-desc { font-size: 12px; color: var(--text2); }
+
+  /* Code blocks */
+  .code-wrapper {
+    background: #161b22;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1rem 0;
+  }
+  .code-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.5rem 1rem;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px; color: var(--text2);
+  }
+  .code-header span { display: flex; align-items: center; gap: 6px; }
+  .lang-dot { width: 8px; height: 8px; border-radius: 50%; background: #3572A5; }
+  .copy-btn {
+    background: none; border: 1px solid var(--border);
+    color: var(--text2); cursor: pointer; padding: 3px 10px;
+    border-radius: 5px; font-size: 11px; transition: all 0.15s;
+  }
+  .copy-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  pre { margin: 0 !important; }
+  pre code { font-size: 13px !important; line-height: 1.6 !important; }
+  .hljs { background: #161b22 !important; padding: 1.25rem !important; }
+
+  /* Info boxes */
+  .info-box {
+    border-radius: 8px; padding: 1rem 1.25rem;
+    margin: 1rem 0; border-left: 3px solid;
+    font-size: 14px;
+  }
+  .info-box.note { background: rgba(121,192,255,0.07); border-color: var(--accent2); color: #79c0ff; }
+  .info-box.tip { background: rgba(86,211,100,0.07); border-color: var(--accent3); color: #56d364; }
+  .info-box.warning { background: rgba(255,166,87,0.07); border-color: var(--accent5); color: #ffa657; }
+  .info-box.danger { background: rgba(247,129,102,0.07); border-color: var(--accent); color: #f78166; }
+  .info-box strong { font-weight: 600; }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; margin: 1rem 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { background: var(--bg3); text-align: left; padding: 0.6rem 1rem; color: var(--text2); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+  td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); color: #b0bec5; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg3); }
+  .model-id { font-family: monospace; font-size: 12px; color: var(--accent4); }
+
+  /* Step list */
+  .steps { list-style: none; counter-reset: steps; }
+  .steps li {
+    counter-increment: steps;
+    display: flex; gap: 1rem; margin-bottom: 1rem;
+    padding: 1rem; background: var(--bg2);
+    border: 1px solid var(--border); border-radius: 8px;
+  }
+  .step-num {
+    width: 28px; height: 28px; flex-shrink: 0;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--accent2);
+  }
+  .step-content h4 { font-size: 14px; font-weight: 600; margin-bottom: 0.25rem; }
+  .step-content p { font-size: 13px; color: var(--text2); margin: 0; }
+
+  /* Feature grid */
+  .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1.5rem 0; }
+  .feature-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.25rem;
+  }
+  .feature-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; }
+  .feature-icon {
+    width: 34px; height: 34px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+  .feature-card h4 { font-size: 14px; font-weight: 600; }
+  .feature-card p { font-size: 13px; color: var(--text2); margin: 0; }
+
+  /* Dividers */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 3rem 0; }
+
+  /* Top nav progress */
+  .progress-bar {
+    position: fixed; top: 0; left: var(--sidebar-w); right: 0; height: 2px;
+    background: linear-gradient(90deg, #f78166, #d2a8ff, #79c0ff);
+    z-index: 100; transform-origin: left; transform: scaleX(0);
+    transition: transform 0.1s;
+  }
+
+  /* Params table */
+  .param-table { width: 100%; font-size: 13px; }
+  .param-name { font-family: monospace; color: var(--accent4); }
+  .param-type { font-family: monospace; color: var(--accent3); font-size: 12px; }
+
+  @media (max-width: 800px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 1.5rem; }
+    .arch-grid { grid-template-columns: 1fr 1fr; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .progress-bar { left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<nav class="sidebar" aria-label="Guide navigation">
+  <div class="sidebar-logo">
+    <div class="logo-icon">☁️</div>
+    <div>
+      <div class="logo-text">AWS Bedrock</div>
+      <div class="logo-sub">Python Guide</div>
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Introduction</div>
+    <a class="nav-item active" href="#overview" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#d2a8ff"></div> Overview
+    </a>
+    <a class="nav-item" href="#setup" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#d2a8ff"></div> Setup & Authentication
+    </a>
+    <a class="nav-item" href="#models" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#d2a8ff"></div> Foundation Models
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">🟢 Beginner</div>
+    <a class="nav-item" href="#invoke" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#56d364"></div> InvokeModel API
+    </a>
+    <a class="nav-item" href="#converse" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#56d364"></div> Converse API (Chat)
+    </a>
+    <a class="nav-item" href="#streaming" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#56d364"></div> Streaming Responses
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">🟠 Intermediate</div>
+    <a class="nav-item" href="#embeddings" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#ffa657"></div> Embeddings
+    </a>
+    <a class="nav-item" href="#knowledge-bases" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#ffa657"></div> Knowledge Bases (RAG)
+    </a>
+    <a class="nav-item" href="#image-gen" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#ffa657"></div> Image Generation
+    </a>
+    <a class="nav-item" href="#guardrails" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#ffa657"></div> Guardrails
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">🔴 Advanced</div>
+    <a class="nav-item" href="#agents" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#f78166"></div> Agents
+    </a>
+    <a class="nav-item" href="#fine-tuning" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#f78166"></div> Fine-Tuning
+    </a>
+    <a class="nav-item" href="#evaluation" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#f78166"></div> Model Evaluation
+    </a>
+    <a class="nav-item" href="#batch" onclick="setActive(this)">
+      <div class="nav-dot" style="background:#f78166"></div> Batch Inference
+    </a>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- HERO -->
+<section id="overview" class="section">
+  <div class="hero">
+    <div class="hero-title"><span>AWS Bedrock</span></div>
+    <div class="hero-sub">A complete guide to building with foundation models on AWS — from your first API call to production-grade agents and RAG pipelines.</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">30+</div><div class="hero-stat-label">Foundation Models</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">8</div><div class="hero-stat-label">Model Providers</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">15</div><div class="hero-stat-label">Code Examples</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">4</div><div class="hero-stat-label">Skill Levels</div></div>
+    </div>
+  </div>
+
+  <h2 style="margin-bottom:1rem">What is AWS Bedrock?</h2>
+  <p>Amazon Bedrock is a fully managed service that gives you access to a wide selection of foundation models (FMs) from Amazon and leading AI providers through a single API. You don't need to manage infrastructure, train models, or handle scaling — Bedrock handles it all.</p>
+  <p>It integrates deeply with the AWS ecosystem (IAM, S3, VPC, CloudWatch), making it the natural choice for teams already on AWS who want to add generative AI to their applications.</p>
+
+  <div class="arch-grid">
+    <div class="arch-card">
+      <div class="arch-card-icon">🧠</div>
+      <div class="arch-card-title">Foundation Models</div>
+      <div class="arch-card-desc">Access Claude, Titan, Llama, Mistral, Cohere, Stability AI and more via one unified API.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🗃️</div>
+      <div class="arch-card-title">Knowledge Bases</div>
+      <div class="arch-card-desc">Managed RAG pipeline — connect S3 data sources, auto-sync, and query with semantic search.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🤖</div>
+      <div class="arch-card-title">Agents</div>
+      <div class="arch-card-desc">Build autonomous multi-step agents that reason, plan, call tools, and take actions.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🛡️</div>
+      <div class="arch-card-title">Guardrails</div>
+      <div class="arch-card-desc">Content filtering, PII redaction, topic denial, and grounding checks for safe deployments.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🎨</div>
+      <div class="arch-card-title">Image Generation</div>
+      <div class="arch-card-desc">Generate, edit, and transform images with Stability AI, Amazon Nova Canvas, and more.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">📊</div>
+      <div class="arch-card-title">Model Evaluation</div>
+      <div class="arch-card-desc">Benchmark models on your datasets for accuracy, robustness, and safety metrics.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section id="setup" class="section">
+  <div class="section-header">
+    <h2>Setup & Authentication</h2>
+    <span class="badge badge-core">Core</span>
+  </div>
+  <p>Before making any API calls, you need an AWS account with Bedrock access enabled. Model access must be explicitly requested in the Bedrock console for each model you want to use.</p>
+
+  <ol class="steps">
+    <li>
+      <div class="step-num">1</div>
+      <div class="step-content"><h4>Enable Bedrock Model Access</h4><p>Go to AWS Console → Amazon Bedrock → Model Access → Request access for each model.</p></div>
+    </li>
+    <li>
+      <div class="step-num">2</div>
+      <div class="step-content"><h4>Install the AWS SDK</h4><p>Install boto3 and configure your AWS credentials (via CLI, env vars, or IAM role).</p></div>
+    </li>
+    <li>
+      <div class="step-num">3</div>
+      <div class="step-content"><h4>Create a Bedrock client</h4><p>Use <code>bedrock-runtime</code> for model inference and <code>bedrock</code> for management operations.</p></div>
+    </li>
+  </ol>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> setup.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python"># Install dependencies
+# pip install boto3
+
+import boto3
+import json
+
+# --- Option 1: Use default credentials (AWS CLI configured) ---
+# Run: aws configure
+# Credentials stored in ~/.aws/credentials
+
+# --- Option 2: Explicit credentials (dev/testing only) ---
+bedrock_runtime = boto3.client(
+    service_name="bedrock-runtime",
+    region_name="us-east-1",
+    aws_access_key_id="YOUR_ACCESS_KEY",       # or use env var
+    aws_secret_access_key="YOUR_SECRET_KEY",   # or use env var
+)
+
+# --- Option 3: IAM Role (recommended for production) ---
+# Attach an IAM role with AmazonBedrockFullAccess
+# boto3 auto-detects the role when running on EC2/Lambda/ECS
+
+# Two clients you'll use:
+bedrock = boto3.client("bedrock", region_name="us-east-1")              # management
+bedrock_runtime = boto3.client("bedrock-runtime", region_name="us-east-1")  # inference
+
+print("Clients created successfully!")</code></pre>
+  </div>
+
+  <div class="info-box note">
+    <strong>IAM Permissions:</strong> Your role/user needs <code>bedrock:InvokeModel</code> for inference and <code>bedrock:ListFoundationModels</code> to discover models. Use the managed policy <code>AmazonBedrockFullAccess</code> for full access.
+  </div>
+</section>
+
+<!-- MODELS -->
+<section id="models" class="section">
+  <div class="section-header">
+    <h2>Foundation Models</h2>
+    <span class="badge badge-core">Core</span>
+  </div>
+  <p>Bedrock provides access to models across multiple providers. Each model has a unique <strong>model ID</strong> you'll reference in API calls.</p>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> list_models.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+
+bedrock = boto3.client("bedrock", region_name="us-east-1")
+
+# List all available foundation models
+response = bedrock.list_foundation_models(
+    byOutputModality="TEXT",   # TEXT | IMAGE | EMBEDDING
+    byInferenceType="ON_DEMAND"
+)
+
+for model in response["modelSummaries"]:
+    print(f"{model['modelName']:<40} {model['modelId']}")
+
+# Filter by provider
+anthropic_models = bedrock.list_foundation_models(
+    byProvider="Anthropic"
+)
+for m in anthropic_models["modelSummaries"]:
+    print(f"  → {m['modelId']}")</code></pre>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Provider</th><th>Model</th><th>Model ID</th><th>Best For</th></tr></thead>
+      <tbody>
+        <tr><td>Anthropic</td><td>Claude 3.5 Sonnet</td><td class="model-id">anthropic.claude-3-5-sonnet-20241022-v2:0</td><td>General, Coding</td></tr>
+        <tr><td>Anthropic</td><td>Claude 3 Haiku</td><td class="model-id">anthropic.claude-3-haiku-20240307-v1:0</td><td>Fast, Cheap</td></tr>
+        <tr><td>Amazon</td><td>Nova Pro</td><td class="model-id">amazon.nova-pro-v1:0</td><td>Multimodal</td></tr>
+        <tr><td>Amazon</td><td>Titan Text Premier</td><td class="model-id">amazon.titan-text-premier-v1:0</td><td>General text</td></tr>
+        <tr><td>Meta</td><td>Llama 3.1 70B</td><td class="model-id">meta.llama3-1-70b-instruct-v1:0</td><td>Open source</td></tr>
+        <tr><td>Mistral</td><td>Mistral Large 2</td><td class="model-id">mistral.mistral-large-2407-v1:0</td><td>EU data residency</td></tr>
+        <tr><td>Cohere</td><td>Command R+</td><td class="model-id">cohere.command-r-plus-v1:0</td><td>RAG, Enterprise</td></tr>
+        <tr><td>Stability AI</td><td>SDXL 1.0</td><td class="model-id">stability.stable-diffusion-xl-v1</td><td>Image generation</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- INVOKE MODEL -->
+<section id="invoke" class="section">
+  <div class="section-header">
+    <h2>InvokeModel API</h2>
+    <span class="badge badge-beginner">Beginner</span>
+  </div>
+  <p>The most direct way to call a model. You send a raw JSON body (model-specific format) and get a response back. Each model provider has its own request/response schema.</p>
+
+  <h3>Claude (Anthropic Messages Format)</h3>
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> invoke_claude.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+import json
+
+bedrock_runtime = boto3.client("bedrock-runtime", region_name="us-east-1")
+
+MODEL_ID = "anthropic.claude-3-5-sonnet-20241022-v2:0"
+
+# Build the request body (Anthropic Messages API format)
+body = {
+    "anthropic_version": "bedrock-2023-05-31",
+    "max_tokens": 1024,
+    "messages": [
+        {
+            "role": "user",
+            "content": "Explain the difference between supervised and unsupervised learning."
+        }
+    ],
+    "system": "You are a helpful AI tutor. Keep responses concise."
+}
+
+response = bedrock_runtime.invoke_model(
+    modelId=MODEL_ID,
+    body=json.dumps(body),
+    contentType="application/json",
+    accept="application/json"
+)
+
+# Parse the response
+result = json.loads(response["body"].read())
+print(result["content"][0]["text"])
+print(f"\n--- Usage ---")
+print(f"Input tokens:  {result['usage']['input_tokens']}")
+print(f"Output tokens: {result['usage']['output_tokens']}")</code></pre>
+  </div>
+
+  <h3 style="margin-top:1.5rem">Amazon Titan Format</h3>
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> invoke_titan.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+import json
+
+bedrock_runtime = boto3.client("bedrock-runtime", region_name="us-east-1")
+
+# Amazon Titan has its own request format
+body = {
+    "inputText": "What is machine learning? Explain in 2 sentences.",
+    "textGenerationConfig": {
+        "maxTokenCount": 512,
+        "temperature": 0.7,
+        "topP": 0.9,
+        "stopSequences": []
+    }
+}
+
+response = bedrock_runtime.invoke_model(
+    modelId="amazon.titan-text-premier-v1:0",
+    body=json.dumps(body)
+)
+
+result = json.loads(response["body"].read())
+print(result["results"][0]["outputText"])</code></pre>
+  </div>
+
+  <div class="info-box tip">
+    <strong>Tip:</strong> The <code>converse</code> API (next section) abstracts away provider-specific formats and is recommended for most use cases.
+  </div>
+</section>
+
+<!-- CONVERSE API -->
+<section id="converse" class="section">
+  <div class="section-header">
+    <h2>Converse API</h2>
+    <span class="badge badge-beginner">Beginner</span>
+  </div>
+  <p>The Converse API provides a unified, provider-agnostic interface for chat. It handles the message format differences between models, so you can swap models without changing your code.</p>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> converse_basic.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+
+bedrock_runtime = boto3.client("bedrock-runtime", region_name="us-east-1")
+
+# --- Single turn ---
+response = bedrock_runtime.converse(
+    modelId="anthropic.claude-3-5-sonnet-20241022-v2:0",
+    messages=[
+        {"role": "user", "content": [{"text": "What is AWS Bedrock?"}]}
+    ],
+    system=[{"text": "You are a concise AWS expert."}],
+    inferenceConfig={
+        "maxTokens": 512,
+        "temperature": 0.5,
+        "topP": 0.9
+    }
+)
+
+print(response["output"]["message"]["content"][0]["text"])
+
+# --- Multi-turn conversation ---
+conversation_history = []
+
+def chat(user_message: str) -> str:
+    conversation_history.append({
+        "role": "user",
+        "content": [{"text": user_message}]
+    })
+
+    response = bedrock_runtime.converse(
+        modelId="anthropic.claude-3-5-sonnet-20241022-v2:0",
+        messages=conversation_history,
+        system=[{"text": "You are a helpful coding assistant."}],
+        inferenceConfig={"maxTokens": 1024}
+    )
+
+    assistant_msg = response["output"]["message"]
+    conversation_history.append(assistant_msg)
+
+    return assistant_msg["content"][0]["text"]
+
+# Have a multi-turn conversation
+print(chat("Write a Python function to reverse a string."))
+print(chat("Now add error handling for non-string inputs."))
+print(chat("Add type hints and docstring.")</code></pre>
+  </div>
+
+  <h3 style="margin-top:1.5rem">Multimodal — Vision</h3>
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> converse_vision.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+import base64
+
+bedrock_runtime = boto3.client("bedrock-runtime", region_name="us-east-1")
+
+# Load an image from disk
+with open("architecture_diagram.png", "rb") as f:
+    image_bytes = f.read()
+
+response = bedrock_runtime.converse(
+    modelId="anthropic.claude-3-5-sonnet-20241022-v2:0",
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {
+                    "image": {
+                        "format": "png",    # png | jpeg | gif | webp
+                        "source": {"bytes": image_bytes}
+                    }
+                },
+                {"text": "Analyze this architecture diagram. Identify components and describe data flow."}
+            ]
+        }
+    ]
+)
+
+print(response["output"]["message"]["content"][0]["text"])</code></pre>
+  </div>
+</section>
+
+<!-- STREAMING -->
+<section id="streaming" class="section">
+  <div class="section-header">
+    <h2>Streaming Responses</h2>
+    <span class="badge badge-beginner">Beginner</span>
+  </div>
+  <p>Streaming lets you receive tokens as they're generated rather than waiting for the full response. This dramatically improves perceived latency for end users.</p>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> streaming.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+import json
+import sys
+
+bedrock_runtime = boto3.client("bedrock-runtime", region_name="us-east-1")
+
+# --- Stream with converse_stream ---
+response = bedrock_runtime.converse_stream(
+    modelId="anthropic.claude-3-5-sonnet-20241022-v2:0",
+    messages=[
+        {"role": "user", "content": [{"text": "Write a haiku about AWS cloud computing."}]}
+    ]
+)
+
+# Process the event stream
+full_text = ""
+for event in response["stream"]:
+    if "contentBlockDelta" in event:
+        delta = event["contentBlockDelta"]["delta"]
+        if "text" in delta:
+            token = delta["text"]
+            full_text += token
+            print(token, end="", flush=True)  # Print without newline for streaming effect
+
+    elif "messageStop" in event:
+        stop_reason = event["messageStop"]["stopReason"]
+        print(f"\n\n[Stop reason: {stop_reason}]")
+
+    elif "metadata" in event:
+        usage = event["metadata"].get("usage", {})
+        print(f"[Tokens - Input: {usage.get('inputTokens', 0)}, Output: {usage.get('outputTokens', 0)}]")
+
+
+# --- Stream with invoke_model_with_response_stream ---
+body = json.dumps({
+    "anthropic_version": "bedrock-2023-05-31",
+    "max_tokens": 1024,
+    "messages": [{"role": "user", "content": "Tell me a short story about a robot."}]
+})
+
+response = bedrock_runtime.invoke_model_with_response_stream(
+    modelId="anthropic.claude-3-5-sonnet-20241022-v2:0",
+    body=body
+)
+
+for event in response["body"]:
+    chunk = json.loads(event["chunk"]["bytes"])
+    if chunk["type"] == "content_block_delta":
+        print(chunk["delta"]["text"], end="", flush=True)</code></pre>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- EMBEDDINGS -->
+<section id="embeddings" class="section">
+  <div class="section-header">
+    <h2>Embeddings</h2>
+    <span class="badge badge-intermediate">Intermediate</span>
+  </div>
+  <p>Embeddings convert text into dense numeric vectors that capture semantic meaning. Use them for semantic search, clustering, similarity comparison, and as input to RAG pipelines.</p>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> embeddings.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+import json
+import numpy as np
+
+bedrock_runtime = boto3.client("bedrock-runtime", region_name="us-east-1")
+
+EMBED_MODEL = "amazon.titan-embed-text-v2:0"
+
+def get_embedding(text: str, dimensions: int = 1024) -> list[float]:
+    """Get a text embedding from Amazon Titan."""
+    response = bedrock_runtime.invoke_model(
+        modelId=EMBED_MODEL,
+        body=json.dumps({
+            "inputText": text,
+            "dimensions": dimensions,      # 256, 512, or 1024
+            "normalize": True              # L2-normalize the vector
+        })
+    )
+    result = json.loads(response["body"].read())
+    return result["embedding"]
+
+
+def cosine_similarity(a: list[float], b: list[float]) -> float:
+    """Compute cosine similarity between two vectors."""
+    a, b = np.array(a), np.array(b)
+    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
+
+
+# --- Semantic similarity example ---
+texts = [
+    "How do I reset my password?",
+    "I forgot my login credentials",
+    "What is the refund policy?",
+    "Can I get my money back?",
+    "How to change account password"
+]
+
+query = "I can't log in to my account"
+query_embedding = get_embedding(query)
+
+results = []
+for text in texts:
+    embedding = get_embedding(text)
+    score = cosine_similarity(query_embedding, embedding)
+    results.append((score, text))
+
+results.sort(reverse=True)
+print(f"Query: '{query}'\n")
+for score, text in results:
+    print(f"  {score:.3f}  {text}")
+
+# Output:
+# Query: 'I can't log in to my account'
+#   0.921  How do I reset my password?
+#   0.907  I forgot my login credentials
+#   0.898  How to change account password
+#   0.612  What is the refund policy?
+#   0.601  Can I get my money back?</code></pre>
+  </div>
+
+  <div class="info-box tip">
+    <strong>Cohere Embed:</strong> For multilingual embeddings, use <code>cohere.embed-multilingual-v3</code> which supports 100+ languages and is excellent for global applications.
+  </div>
+</section>
+
+<!-- KNOWLEDGE BASES -->
+<section id="knowledge-bases" class="section">
+  <div class="section-header">
+    <h2>Knowledge Bases (RAG)</h2>
+    <span class="badge badge-intermediate">Intermediate</span>
+  </div>
+  <p>Bedrock Knowledge Bases is a fully managed Retrieval-Augmented Generation (RAG) pipeline. You connect S3 data sources, Bedrock auto-chunks and embeds the content, and you query it with natural language. No vector database to manage.</p>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-card-header">
+        <div class="feature-icon" style="background:rgba(86,211,100,0.1)">📥</div>
+        <h4>Data Sources</h4>
+      </div>
+      <p>S3, Confluence, Salesforce, SharePoint, Web Crawler — all supported as ingestion sources.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-header">
+        <div class="feature-icon" style="background:rgba(121,192,255,0.1)">🗄️</div>
+        <h4>Vector Stores</h4>
+      </div>
+      <p>OpenSearch Serverless, Aurora PostgreSQL (pgvector), Pinecone, Mongo Atlas, Redis Enterprise.</p>
+    </div>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> knowledge_base_rag.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+import json
+
+bedrock_agent_runtime = boto3.client("bedrock-agent-runtime", region_name="us-east-1")
+
+KNOWLEDGE_BASE_ID = "XXXXXXXXXX"   # From Bedrock console
+MODEL_ID = "anthropic.claude-3-5-sonnet-20241022-v2:0"
+
+# --- Option 1: retrieve_and_generate (fully managed RAG) ---
+response = bedrock_agent_runtime.retrieve_and_generate(
+    input={"text": "What is the company's remote work policy?"},
+    retrieveAndGenerateConfiguration={
+        "type": "KNOWLEDGE_BASE",
+        "knowledgeBaseConfiguration": {
+            "knowledgeBaseId": KNOWLEDGE_BASE_ID,
+            "modelArn": f"arn:aws:bedrock:us-east-1::foundation-model/{MODEL_ID}",
+            "retrievalConfiguration": {
+                "vectorSearchConfiguration": {
+                    "numberOfResults": 5,   # How many chunks to retrieve
+                    "overrideSearchType": "SEMANTIC"  # or HYBRID
+                }
+            },
+            "generationConfiguration": {
+                "promptTemplate": {
+                    "textPromptTemplate": """
+You are a helpful HR assistant. Answer based only on the provided context.
+If you cannot find the answer, say "I don't have that information."
+
+$search_results$
+
+Question: $query$
+"""
+                }
+            }
+        }
+    }
+)
+
+print("Answer:", response["output"]["text"])
+print("\nSources:")
+for citation in response.get("citations", []):
+    for ref in citation.get("retrievedReferences", []):
+        loc = ref["location"].get("s3Location", {})
+        print(f"  - {loc.get('uri', 'unknown')}")
+
+
+# --- Option 2: retrieve only (bring your own generation) ---
+retrieve_response = bedrock_agent_runtime.retrieve(
+    knowledgeBaseId=KNOWLEDGE_BASE_ID,
+    retrievalQuery={"text": "vacation days policy"},
+    retrievalConfiguration={
+        "vectorSearchConfiguration": {"numberOfResults": 3}
+    }
+)
+
+# You get raw chunks — use them however you want
+for result in retrieve_response["retrievalResults"]:
+    score = result["score"]
+    content = result["content"]["text"]
+    source = result["location"].get("s3Location", {}).get("uri", "unknown")
+    print(f"Score: {score:.3f} | Source: {source}")
+    print(f"  {content[:200]}...")</code></pre>
+  </div>
+</section>
+
+<!-- IMAGE GENERATION -->
+<section id="image-gen" class="section">
+  <div class="section-header">
+    <h2>Image Generation</h2>
+    <span class="badge badge-intermediate">Intermediate</span>
+  </div>
+  <p>Bedrock supports text-to-image, image-to-image, and inpainting via Stability AI SDXL and Amazon Nova Canvas models.</p>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> image_generation.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+import json
+import base64
+from pathlib import Path
+
+bedrock_runtime = boto3.client("bedrock-runtime", region_name="us-east-1")
+
+# --- Text-to-Image with Stability AI SDXL ---
+def generate_image_sdxl(prompt: str, output_path: str = "output.png"):
+    body = {
+        "text_prompts": [
+            {"text": prompt, "weight": 1.0},
+            {"text": "blurry, low quality, distorted", "weight": -1.0}  # negative prompt
+        ],
+        "cfg_scale": 7,          # How closely to follow the prompt (1-35)
+        "steps": 50,             # Inference steps
+        "seed": 42,              # For reproducibility
+        "width": 1024,
+        "height": 1024,
+        "style_preset": "photographic"  # photographic | anime | digital-art | etc.
+    }
+
+    response = bedrock_runtime.invoke_model(
+        modelId="stability.stable-diffusion-xl-v1",
+        body=json.dumps(body)
+    )
+
+    result = json.loads(response["body"].read())
+    image_data = base64.b64decode(result["artifacts"][0]["base64"])
+
+    Path(output_path).write_bytes(image_data)
+    print(f"Image saved to {output_path}")
+    return image_data
+
+
+# --- Text-to-Image with Amazon Nova Canvas ---
+def generate_image_nova(prompt: str, output_path: str = "nova_output.png"):
+    body = {
+        "taskType": "TEXT_IMAGE",
+        "textToImageParams": {
+            "text": prompt,
+            "negativeText": "blurry, watermark, text"
+        },
+        "imageGenerationConfig": {
+            "numberOfImages": 1,
+            "width": 1024,
+            "height": 1024,
+            "quality": "premium",   # standard | premium
+            "cfgScale": 8.0,
+            "seed": 42
+        }
+    }
+
+    response = bedrock_runtime.invoke_model(
+        modelId="amazon.nova-canvas-v1:0",
+        body=json.dumps(body)
+    )
+
+    result = json.loads(response["body"].read())
+    image_data = base64.b64decode(result["images"][0])
+    Path(output_path).write_bytes(image_data)
+    return image_data
+
+
+# --- Image variation / editing with Nova Canvas ---
+def edit_image_nova(source_image_path: str, prompt: str, mask_prompt: str):
+    with open(source_image_path, "rb") as f:
+        image_b64 = base64.b64encode(f.read()).decode("utf-8")
+
+    body = {
+        "taskType": "TEXT_IMAGE",
+        "inPaintingParams": {
+            "text": prompt,
+            "maskPrompt": mask_prompt,  # Describe what area to replace
+            "image": image_b64
+        },
+        "imageGenerationConfig": {"numberOfImages": 1, "quality": "premium"}
+    }
+
+    response = bedrock_runtime.invoke_model(
+        modelId="amazon.nova-canvas-v1:0",
+        body=json.dumps(body)
+    )
+    return json.loads(response["body"].read())
+
+
+# Usage
+generate_image_sdxl(
+    "A futuristic data center in the clouds, cyberpunk aesthetic, detailed, 8k"
+)</code></pre>
+  </div>
+</section>
+
+<!-- GUARDRAILS -->
+<section id="guardrails" class="section">
+  <div class="section-header">
+    <h2>Guardrails</h2>
+    <span class="badge badge-intermediate">Intermediate</span>
+  </div>
+  <p>Guardrails let you apply content policies, PII redaction, topic restrictions, and grounding checks to any model on Bedrock — independent of the model itself.</p>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> guardrails.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+import json
+
+bedrock = boto3.client("bedrock", region_name="us-east-1")
+bedrock_runtime = boto3.client("bedrock-runtime", region_name="us-east-1")
+
+# --- Step 1: Create a Guardrail ---
+guardrail = bedrock.create_guardrail(
+    name="production-guardrail",
+    description="Safety guardrail for customer-facing chatbot",
+
+    # Block harmful content categories
+    contentPolicyConfig={
+        "filtersConfig": [
+            {"type": "SEXUAL",     "inputStrength": "HIGH",   "outputStrength": "HIGH"},
+            {"type": "VIOLENCE",   "inputStrength": "MEDIUM", "outputStrength": "MEDIUM"},
+            {"type": "HATE",       "inputStrength": "HIGH",   "outputStrength": "HIGH"},
+            {"type": "INSULTS",    "inputStrength": "MEDIUM", "outputStrength": "MEDIUM"},
+            {"type": "MISCONDUCT", "inputStrength": "MEDIUM", "outputStrength": "MEDIUM"},
+        ]
+    },
+
+    # Redact PII from both inputs and outputs
+    sensitiveInformationPolicyConfig={
+        "piiEntitiesConfig": [
+            {"type": "EMAIL",         "action": "ANONYMIZE"},
+            {"type": "PHONE",         "action": "ANONYMIZE"},
+            {"type": "CREDIT_DEBIT_CARD_NUMBER", "action": "BLOCK"},
+            {"type": "US_SOCIAL_SECURITY_NUMBER", "action": "BLOCK"},
+            {"type": "NAME",          "action": "ANONYMIZE"},
+        ]
+    },
+
+    # Restrict off-topic discussions
+    topicPolicyConfig={
+        "topicsConfig": [
+            {
+                "name": "competitor-products",
+                "definition": "Questions about competing products or services",
+                "examples": ["How does this compare to Salesforce?", "Is Azure better?"],
+                "type": "DENY"
+            }
+        ]
+    },
+
+    blockedInputMessaging="I cannot process this request.",
+    blockedOutputsMessaging="I cannot provide that information."
+)
+
+guardrail_id = guardrail["guardrailId"]
+guardrail_version = "DRAFT"
+
+# --- Step 2: Use guardrail in inference ---
+response = bedrock_runtime.converse(
+    modelId="anthropic.claude-3-5-sonnet-20241022-v2:0",
+    messages=[
+        {"role": "user", "content": [{"text": "My email is john@example.com. Help me with billing."}]}
+    ],
+    guardrailConfig={
+        "guardrailIdentifier": guardrail_id,
+        "guardrailVersion": guardrail_version,
+        "trace": "enabled"   # Returns trace showing what was filtered
+    }
+)
+
+output = response["output"]["message"]["content"][0]["text"]
+print("Response:", output)
+# PII will be redacted: "My email is {EMAIL}. Help me with billing."
+
+# Check trace for filter actions
+if "trace" in response:
+    trace = response["trace"]["guardrail"]
+    print("\nGuardrail trace:", json.dumps(trace, indent=2))</code></pre>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- AGENTS -->
+<section id="agents" class="section">
+  <div class="section-header">
+    <h2>Agents</h2>
+    <span class="badge badge-advanced">Advanced</span>
+  </div>
+  <p>Bedrock Agents enable autonomous, multi-step workflows. An agent can reason over a task, decide which tools to call, execute actions (via Lambda), query knowledge bases, and synthesize a final response — all without you orchestrating each step.</p>
+
+  <div class="info-box note">
+    <strong>Architecture:</strong> You define <em>Action Groups</em> (with OpenAPI schemas or Lambda ARNs), optionally attach Knowledge Bases, and the agent uses ReAct-style reasoning to determine what to do at each step.
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> create_agent.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+import json
+
+bedrock_agent = boto3.client("bedrock-agent", region_name="us-east-1")
+
+AGENT_ROLE_ARN = "arn:aws:iam::123456789:role/BedrockAgentRole"
+
+# --- Step 1: Create the agent ---
+agent = bedrock_agent.create_agent(
+    agentName="customer-support-agent",
+    agentResourceRoleArn=AGENT_ROLE_ARN,
+    foundationModel="anthropic.claude-3-5-sonnet-20241022-v2:0",
+    description="Handles customer queries, checks order status, processes refunds.",
+    instruction="""
+You are a customer support agent for TechShop.
+You have access to tools to:
+- Look up order status by order ID
+- Process refund requests
+- Search the product knowledge base
+
+Always be polite and professional. Verify customer identity before sharing order details.
+If you cannot resolve an issue, escalate to a human agent.
+""",
+    idleSessionTTLInSeconds=600
+)
+
+agent_id = agent["agent"]["agentId"]
+
+# --- Step 2: Add an Action Group (connects to Lambda) ---
+action_group = bedrock_agent.create_agent_action_group(
+    agentId=agent_id,
+    agentVersion="DRAFT",
+    actionGroupName="order-management",
+    description="Actions for managing customer orders",
+    actionGroupExecutor={
+        "lambda": "arn:aws:lambda:us-east-1:123456789:function:order-management"
+    },
+    # OpenAPI schema defines available functions
+    apiSchema={
+        "payload": json.dumps({
+            "openapi": "3.0.0",
+            "info": {"title": "Order API", "version": "1.0.0"},
+            "paths": {
+                "/getOrderStatus": {
+                    "get": {
+                        "operationId": "getOrderStatus",
+                        "description": "Get the status of a customer order",
+                        "parameters": [
+                            {"name": "orderId", "in": "query", "required": True,
+                             "schema": {"type": "string"},
+                             "description": "The order ID to look up"}
+                        ],
+                        "responses": {"200": {"description": "Order status"}}
+                    }
+                },
+                "/processRefund": {
+                    "post": {
+                        "operationId": "processRefund",
+                        "description": "Process a refund for an order",
+                        "requestBody": {
+                            "content": {"application/json": {"schema": {
+                                "type": "object",
+                                "properties": {
+                                    "orderId": {"type": "string"},
+                                    "reason": {"type": "string"}
+                                }
+                            }}}
+                        },
+                        "responses": {"200": {"description": "Refund status"}}
+                    }
+                }
+            }
+        })
+    }
+)
+
+# --- Step 3: Prepare and deploy the agent ---
+bedrock_agent.prepare_agent(agentId=agent_id)
+</code></pre>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> invoke_agent.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+import uuid
+
+bedrock_agent_runtime = boto3.client("bedrock-agent-runtime", region_name="us-east-1")
+
+AGENT_ID = "XXXXXXXXXX"
+AGENT_ALIAS_ID = "TSTALIASID"  # or your deployed alias
+
+def invoke_agent(user_message: str, session_id: str = None) -> str:
+    """Invoke a Bedrock Agent and stream the response."""
+    if not session_id:
+        session_id = str(uuid.uuid4())
+
+    response = bedrock_agent_runtime.invoke_agent(
+        agentId=AGENT_ID,
+        agentAliasId=AGENT_ALIAS_ID,
+        sessionId=session_id,           # Maintain conversation context
+        inputText=user_message,
+        enableTrace=True                # See agent's reasoning steps
+    )
+
+    full_response = ""
+    trace_events = []
+
+    for event in response["completion"]:
+        # Final answer chunks
+        if "chunk" in event:
+            text = event["chunk"]["bytes"].decode("utf-8")
+            full_response += text
+            print(text, end="", flush=True)
+
+        # Agent reasoning trace
+        elif "trace" in event:
+            trace = event["trace"]["trace"]
+            if "orchestrationTrace" in trace:
+                orch = trace["orchestrationTrace"]
+
+                # Model's reasoning
+                if "rationale" in orch:
+                    print(f"\n[Reasoning] {orch['rationale']['text'][:100]}...")
+
+                # Tool calls
+                if "invocationInput" in orch:
+                    inv = orch["invocationInput"]
+                    if "actionGroupInvocationInput" in inv:
+                        action = inv["actionGroupInvocationInput"]
+                        print(f"\n[Tool call] {action['actionGroupName']}/{action['function']}")
+
+                # Tool results
+                if "observation" in orch:
+                    obs = orch["observation"]
+                    if "actionGroupInvocationOutput" in obs:
+                        result = obs["actionGroupInvocationOutput"]["text"]
+                        print(f"\n[Tool result] {result[:100]}...")
+
+    return full_response
+
+
+# Usage — the agent handles multi-step reasoning automatically
+session = str(uuid.uuid4())
+print(invoke_agent("What's the status of order ORD-12345?", session))
+print(invoke_agent("Actually, I'd like to request a refund for that.", session))</code></pre>
+  </div>
+</section>
+
+<!-- FINE TUNING -->
+<section id="fine-tuning" class="section">
+  <div class="section-header">
+    <h2>Fine-Tuning (Model Customization)</h2>
+    <span class="badge badge-advanced">Advanced</span>
+  </div>
+  <p>Fine-tune models on your own data to improve accuracy on domain-specific tasks. Bedrock supports fine-tuning for select models including Amazon Titan and Cohere Command.</p>
+
+  <div class="info-box warning">
+    <strong>Note:</strong> Fine-tuning Claude models via Bedrock is not available through the standard console as of 2024. For Claude fine-tuning, use Anthropic's platform directly. For open models like Llama, use AWS SageMaker.
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> fine_tuning.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+import json
+
+bedrock = boto3.client("bedrock", region_name="us-east-1")
+
+# --- Step 1: Prepare your training data in S3 ---
+# Training data format for Titan (JSONL):
+# {"prompt": "Classify: 'I love this product!'", "completion": "positive"}
+# {"prompt": "Classify: 'Worst purchase ever'", "completion": "negative"}
+
+# --- Step 2: Create a fine-tuning job ---
+job = bedrock.create_model_customization_job(
+    jobName="sentiment-classifier-v1",
+    customModelName="my-sentiment-classifier",
+    roleArn="arn:aws:iam::123456789:role/BedrockFineTuningRole",
+    baseModelIdentifier="amazon.titan-text-lite-v1",
+    customizationType="FINE_TUNING",
+
+    trainingDataConfig={
+        "s3Uri": "s3://my-bucket/training-data/sentiment_train.jsonl"
+    },
+    validationDataConfig={
+        "validators": [{
+            "s3Uri": "s3://my-bucket/training-data/sentiment_val.jsonl"
+        }]
+    },
+    outputDataConfig={
+        "s3Uri": "s3://my-bucket/fine-tuning-output/"
+    },
+
+    hyperParameters={
+        "epochCount": "3",
+        "batchSize": "8",
+        "learningRate": "0.00001",
+        "learningRateWarmupSteps": "100"
+    }
+)
+
+job_arn = job["jobArn"]
+print(f"Fine-tuning job started: {job_arn}")
+
+# --- Step 3: Monitor job progress ---
+import time
+
+while True:
+    status_response = bedrock.get_model_customization_job(jobIdentifier=job_arn)
+    status = status_response["status"]
+    print(f"Status: {status}")
+
+    if status in ["Completed", "Failed", "Stopped"]:
+        break
+    time.sleep(60)
+
+if status == "Completed":
+    custom_model_arn = status_response["outputModelArn"]
+    print(f"Custom model ARN: {custom_model_arn}")
+
+    # --- Step 4: Deploy the fine-tuned model ---
+    # You need Provisioned Throughput to use custom models
+    throughput = bedrock.create_provisioned_model_throughput(
+        modelUnits=1,
+        provisionedModelName="my-sentiment-model",
+        modelId=custom_model_arn
+    )
+    provisioned_arn = throughput["provisionedModelArn"]
+
+    # --- Step 5: Use the fine-tuned model ---
+    bedrock_runtime = boto3.client("bedrock-runtime", region_name="us-east-1")
+    response = bedrock_runtime.invoke_model(
+        modelId=provisioned_arn,
+        body=json.dumps({
+            "inputText": "Classify: 'This app crashes constantly!'",
+            "textGenerationConfig": {"maxTokenCount": 10}
+        })
+    )
+    result = json.loads(response["body"].read())
+    print(result["results"][0]["outputText"])  # → "negative"</code></pre>
+  </div>
+</section>
+
+<!-- MODEL EVALUATION -->
+<section id="evaluation" class="section">
+  <div class="section-header">
+    <h2>Model Evaluation</h2>
+    <span class="badge badge-advanced">Advanced</span>
+  </div>
+  <p>Bedrock Model Evaluation lets you benchmark models on built-in tasks (summarization, Q&A, classification) or custom datasets with human review or automated scoring.</p>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> model_evaluation.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+
+bedrock = boto3.client("bedrock", region_name="us-east-1")
+
+# --- Create an automated evaluation job ---
+eval_job = bedrock.create_evaluation_job(
+    jobName="compare-claude-vs-titan",
+    jobDescription="Compare models on customer support Q&A task",
+    roleArn="arn:aws:iam::123456789:role/BedrockEvalRole",
+
+    # Models to evaluate (you can compare multiple)
+    inferenceConfig={
+        "models": [
+            {
+                "bedrockModel": {
+                    "modelIdentifier": "anthropic.claude-3-haiku-20240307-v1:0",
+                    "inferenceParams": '{"max_tokens": 512, "temperature": 0}'
+                }
+            },
+            {
+                "bedrockModel": {
+                    "modelIdentifier": "amazon.titan-text-premier-v1:0",
+                    "inferenceParams": '{"maxTokenCount": 512, "temperature": 0}'
+                }
+            }
+        ]
+    },
+
+    # Evaluation tasks and metrics
+    evaluationConfig={
+        "automated": {
+            "datasetMetricConfigs": [
+                {
+                    "taskType": "QuestionAndAnswer",
+                    "dataset": {
+                        "name": "customer-support-eval",
+                        "datasetLocation": {
+                            "s3Uri": "s3://my-bucket/eval-data/qa_dataset.jsonl"
+                        }
+                    },
+                    "metricNames": [
+                        "Accuracy",         # Exact match
+                        "BertScore",        # Semantic similarity
+                        "F1Score",          # Token overlap
+                        "Meteor",           # Translation quality metric
+                        "RougeL"            # Longest common subsequence recall
+                    ]
+                }
+            ]
+        }
+    },
+
+    outputDataConfig={
+        "s3Uri": "s3://my-bucket/eval-results/"
+    }
+)
+
+print(f"Evaluation job ARN: {eval_job['jobArn']}")
+
+# --- Monitor and retrieve results ---
+import time
+
+while True:
+    job_status = bedrock.get_evaluation_job(jobIdentifier=eval_job["jobArn"])
+    if job_status["status"] in ["Completed", "Failed"]:
+        break
+    print(f"Status: {job_status['status']}... waiting")
+    time.sleep(30)
+
+# Results are saved to S3 in JSON format
+# Use boto3 to read them:
+s3 = boto3.client("s3")
+# s3.get_object(Bucket="my-bucket", Key="eval-results/...")
+print("Evaluation complete! Check S3 for detailed results.")</code></pre>
+  </div>
+</section>
+
+<!-- BATCH INFERENCE -->
+<section id="batch" class="section">
+  <div class="section-header">
+    <h2>Batch Inference</h2>
+    <span class="badge badge-advanced">Advanced</span>
+  </div>
+  <p>Batch inference processes large datasets asynchronously at significantly lower cost (up to 50% discount). Ideal for offline processing jobs — embeddings, classifications, summarization at scale.</p>
+
+  <div class="code-wrapper">
+    <div class="code-header">
+      <span><div class="lang-dot"></div> batch_inference.py</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><code class="language-python">import boto3
+import json
+
+bedrock = boto3.client("bedrock", region_name="us-east-1")
+s3 = boto3.client("s3")
+
+BUCKET = "my-batch-bucket"
+ROLE_ARN = "arn:aws:iam::123456789:role/BedrockBatchRole"
+
+# --- Step 1: Prepare input JSONL file ---
+# Each line: {"recordId": "...", "modelInput": {...}}
+
+def prepare_batch_input(records: list[dict], output_key: str = "batch_input.jsonl"):
+    """Write records to S3 in the required JSONL format."""
+    lines = []
+    for i, record in enumerate(records):
+        lines.append(json.dumps({
+            "recordId": str(i),
+            "modelInput": {
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 256,
+                "messages": [{"role": "user", "content": record["text"]}]
+            }
+        }))
+
+    s3.put_object(
+        Bucket=BUCKET,
+        Key=output_key,
+        Body="\n".join(lines).encode("utf-8")
+    )
+    return f"s3://{BUCKET}/{output_key}"
+
+
+# Example: Batch-classify 10,000 support tickets
+records = [
+    {"text": "Classify this support ticket as Bug/Feature/Question: 'App crashes on login'"},
+    {"text": "Classify this support ticket as Bug/Feature/Question: 'Can you add dark mode?'"},
+    # ... thousands more
+]
+
+input_s3_uri = prepare_batch_input(records)
+
+# --- Step 2: Submit the batch job ---
+batch_job = bedrock.create_model_invocation_job(
+    jobName="ticket-classification-batch",
+    modelId="anthropic.claude-3-haiku-20240307-v1:0",   # Haiku is cost-effective for batch
+    roleArn=ROLE_ARN,
+    inputDataConfig={
+        "s3InputDataConfig": {
+            "s3Uri": input_s3_uri,
+            "s3InputFormat": "JSONL"
+        }
+    },
+    outputDataConfig={
+        "s3OutputDataConfig": {
+            "s3Uri": f"s3://{BUCKET}/batch-results/",
+            "s3EncryptionKeyId": None  # Optional: KMS key for encryption
+        }
+    },
+    timeoutDurationInHours=24  # Max time to complete
+)
+
+job_arn = batch_job["jobArn"]
+print(f"Batch job submitted: {job_arn}")
+
+# --- Step 3: Monitor and collect results ---
+import time
+
+while True:
+    status = bedrock.get_model_invocation_job(jobIdentifier=job_arn)
+    print(f"Status: {status['status']} | "
+          f"Input: {status.get('inputTokenCount', 0)} tokens")
+
+    if status["status"] in ["Completed", "Failed", "Stopped", "PartiallyCompleted"]:
+        break
+    time.sleep(60)
+
+# --- Step 4: Parse output JSONL ---
+# Output file: s3://my-batch-bucket/batch-results/{job_id}/output.jsonl
+# Each line: {"recordId": "0", "modelOutput": {...}}
+
+def parse_batch_results(s3_output_uri: str):
+    bucket, key = s3_output_uri.replace("s3://", "").split("/", 1)
+    obj = s3.get_object(Bucket=bucket, Key=key)
+    results = []
+    for line in obj["Body"].read().decode("utf-8").strip().split("\n"):
+        record = json.loads(line)
+        record_id = record["recordId"]
+        output = record["modelOutput"]["content"][0]["text"]
+        results.append({"id": record_id, "classification": output.strip()})
+    return results</code></pre>
+  </div>
+
+  <div class="info-box tip">
+    <strong>Cost savings:</strong> Batch inference typically costs 50% less than on-demand. For 1M tokens with Claude Haiku, you'd pay ~$0.125 for batch vs ~$0.25 on-demand.
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FOOTER -->
+<div style="text-align:center; padding: 2rem 0; color: var(--text2); font-size: 13px;">
+  <p>AWS Bedrock Python Guide · All examples use boto3 · Verify model IDs in your region</p>
+  <p style="margin-top:0.5rem">
+    <a href="https://docs.aws.amazon.com/bedrock/" style="color: var(--accent2); text-decoration: none;">AWS Bedrock Docs</a> &nbsp;·&nbsp;
+    <a href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-runtime.html" style="color: var(--accent2); text-decoration: none;">boto3 Reference</a>
+  </p>
+</div>
+
+</main>
+</div>
+
+<script>
+hljs.highlightAll();
+
+function copyCode(btn) {
+  const code = btn.closest(".code-wrapper").querySelector("code").innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = "Copied!";
+    setTimeout(() => btn.textContent = "Copy", 2000);
+  });
+}
+
+function setActive(el) {
+  document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
+  el.classList.add("active");
+}
+
+// Scroll progress bar
+window.addEventListener("scroll", () => {
+  const scrolled = window.scrollY;
+  const total = document.body.scrollHeight - window.innerHeight;
+  document.getElementById("progress").style.transform = `scaleX(${scrolled / total})`;
+});
+
+// Active nav on scroll
+const sections = document.querySelectorAll(".section");
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      const link = document.querySelector(`.nav-item[href="#${id}"]`);
+      if (link) {
+        document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
+        link.classList.add("active");
+      }
+    }
+  });
+}, { rootMargin: "-20% 0px -60% 0px" });
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
