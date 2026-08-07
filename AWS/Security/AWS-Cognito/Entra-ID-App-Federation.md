@@ -167,8 +167,6 @@ const credentials = fromWebToken({
 ```
    *Common mistake:* leaving the `aud` condition off entirely — any app in that Entra tenant could then assume the role, not just yours.
 
-Yes — the **Cognito route** here is exactly the Identity Pool federation pattern I described. The **Direct STS route** is an alternative that skips Cognito Identity Pools entirely and talks to STS directly. They accomplish the same end goal (temporary AWS credentials from an Entra ID token) via two different mechanisms. Let me break down both.
-
 ## Cognito route: Identity Pool federation
 
 1. **Create an Identity Pool** (Cognito → Identity pools → Create identity pool). This is a distinct resource from a User Pool — it exists specifically to hand out temporary AWS credentials, not to manage user accounts or sign-in UI.
@@ -185,45 +183,10 @@ Yes — the **Cognito route** here is exactly the Identity Pool federation patte
 ## 5. **Scope the role tightly.** 
 These permissions are effectively public to every logged-in app user — least-privilege it (specific S3 prefixes, specific tables), never a broad managed policy. You need to pair certain users to certain roles in IAM. 
 
-**1. Push role info into the token itself (Entra-side), so no DB lookup is needed at all**
+The trust relationship is: anyone holding a valid Entra ID token for your app can exchange it for credentials from this role. There's no per-user distinction baked in by default — User A and User B, after logging in, both get the exact same role, with the exact same permissions. Two concrete consequences:
 
-In your Entra ID app registration, you can define **App Roles** (App registrations → your app → App roles → Create app role, e.g. `Admin`, `Editor`, `Viewer`). Then in Entra ID → Enterprise applications → your app → Users and groups, you assign specific users or Entra ID groups to those roles. Once that's set up, Entra ID adds a `roles` claim to the ID token:
-
-```json
-"roles": ["Admin"]
-```
-
-This pushes access control up into Entra ID, which is often exactly what an IT/security team wants — role assignment lives where the org already manages identity, and you avoid maintaining a shadow permissions table. The tradeoff: your app has less flexibility, and every role change requires an Entra admin action.
-
-**2. Look up permissions in your own database, keyed on `oid`**
-
-If your permission model is more granular than Entra ID's app roles support, or you want app-level control over it, decode the token, pull `oid`, and query your own table:
-
-```
-SELECT role FROM user_permissions WHERE entra_oid = '<oid-from-token>'
-```
-
-This is the more common pattern once permissions get complex (resource-level, multi-tenant, frequently changing).
-
-## Wiring that decision into role selection
-
-How you actually route to an IAM role differs by which route you're on:
-
-**Cognito Identity Pool route** — this is a first-class feature, no custom code needed. Under Identity Pool → Authentication providers → your OIDC provider, you set **Role mapping type = Rules**, and define rules like "if claim `roles` equals `Admin`, use role X; if `roles` equals `Viewer`, use role Y." Up to 25 rules, evaluated in order, first match wins. This works cleanly with strategy #1 (Entra App Roles) since the claim is right there in the token. It's *not* built to do a database lookup — the matching only sees token claims, so if you need strategy #2, you'd need a Lambda-backed pre-token-generation step or handle role selection before you ever call Cognito.
-
-### Entra ID gives you identity claims, but pick the right one
-
-The ID token from Entra ID (a JWT) carries several identity-related claims. Not all are equally suited to a database lookup:
-
-| Claim | What it is | Stable for lookups? |
-|---|---|---|
-| `oid` | Object ID — a GUID unique to the user within the tenant | **Yes — use this as your primary key** |
-| `sub` | Subject identifier, scoped per-app | Yes, but changes if you reconfigure the app registration's identifier URI, and isn't shared across apps |
-| `preferred_username` | Usually the UPN/email-like string | No — can change if the user is renamed/re-emailed |
-| `email` | Email address, only present if requested/configured | No — same caveat, and not always populated |
-| `name` | Display name | No — cosmetic only |
-
-The common mistake is keying your permissions database on email or `preferred_username` because it's human-readable. Don't — Entra admins can and do change UPNs (marriage, department transfers, tenant renames). Use **`oid`** as your stable foreign key, and store email/name alongside it just for display purposes.
+- The app's UI is not a security boundary. Your React app might only ever call GetObject on the user's own folder — but the credentials sitting in that browser tab can call anything the role allows. Anyone can open devtools, pull the access key/secret/session token out of memory, and run aws s3 ls s3://your-bucket/ from the CLI with another user's data fully in scope, if the role permits it.
+- One compromised session = every user's blast radius. If the app has an XSS bug, or a browser extension harvests the tab's memory, the attacker doesn't just get that user's access — they get whatever the shared role can touch, full stop.
 
 ### A scaling note
 
@@ -303,6 +266,47 @@ Never treat credentials as a one-time value you fetch and stash — treat creden
 
 ---
 ## 7. **For per-user permission differences**, map Entra group/role claims to Cognito role-mapping rules or separate roles — don't default everyone into one broad "authenticated" role for convenience.
+
+
+**1. Push role info into the token itself (Entra-side), so no DB lookup is needed at all**
+
+In your Entra ID app registration, you can define **App Roles** (App registrations → your app → App roles → Create app role, e.g. `Admin`, `Editor`, `Viewer`). Then in Entra ID → Enterprise applications → your app → Users and groups, you assign specific users or Entra ID groups to those roles. Once that's set up, Entra ID adds a `roles` claim to the ID token:
+
+```json
+"roles": ["Admin"]
+```
+
+This pushes access control up into Entra ID, which is often exactly what an IT/security team wants — role assignment lives where the org already manages identity, and you avoid maintaining a shadow permissions table. The tradeoff: your app has less flexibility, and every role change requires an Entra admin action.
+
+**2. Look up permissions in your own database, keyed on `oid`**
+
+If your permission model is more granular than Entra ID's app roles support, or you want app-level control over it, decode the token, pull `oid`, and query your own table:
+
+```
+SELECT role FROM user_permissions WHERE entra_oid = '<oid-from-token>'
+```
+
+This is the more common pattern once permissions get complex (resource-level, multi-tenant, frequently changing).
+
+## Wiring that decision into role selection
+
+How you actually route to an IAM role differs by which route you're on:
+
+**Cognito Identity Pool route** — this is a first-class feature, no custom code needed. Under Identity Pool → Authentication providers → your OIDC provider, you set **Role mapping type = Rules**, and define rules like "if claim `roles` equals `Admin`, use role X; if `roles` equals `Viewer`, use role Y." Up to 25 rules, evaluated in order, first match wins. This works cleanly with strategy #1 (Entra App Roles) since the claim is right there in the token. It's *not* built to do a database lookup — the matching only sees token claims, so if you need strategy #2, you'd need a Lambda-backed pre-token-generation step or handle role selection before you ever call Cognito.
+
+### Entra ID gives you identity claims, but pick the right one
+
+The ID token from Entra ID (a JWT) carries several identity-related claims. Not all are equally suited to a database lookup:
+
+| Claim | What it is | Stable for lookups? |
+|---|---|---|
+| `oid` | Object ID — a GUID unique to the user within the tenant | **Yes — use this as your primary key** |
+| `sub` | Subject identifier, scoped per-app | Yes, but changes if you reconfigure the app registration's identifier URI, and isn't shared across apps |
+| `preferred_username` | Usually the UPN/email-like string | No — can change if the user is renamed/re-emailed |
+| `email` | Email address, only present if requested/configured | No — same caveat, and not always populated |
+| `name` | Display name | No — cosmetic only |
+
+The common mistake is keying your permissions database on email or `preferred_username` because it's human-readable. Don't — Entra admins can and do change UPNs (marriage, department transfers, tenant renames). Use **`oid`** as your stable foreign key, and store email/name alongside it just for display purposes.
 
 **Direct STS route** — there's no built-in mapping mechanism; your app owns the decision. Since the trust policy grants `AssumeRoleWithWebIdentity` to a *specific* role, "routing" just means your backend decodes the token, decides which role ARN applies (from a claim, a DB lookup, or both), and calls `fromWebToken` with that ARN:
 
