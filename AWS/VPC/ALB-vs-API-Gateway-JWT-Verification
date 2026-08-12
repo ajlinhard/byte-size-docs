@@ -1,0 +1,45 @@
+# ALB vs API Gateway: JWT Verification
+Your instinct is directionally right about what happens *by default*, but the framing "ALB doesn't verify / API Gateway automatically verifies" isn't quite accurate. Neither service verifies anything automatically. Both require you to opt in, and ALB gained native JWT verification in late 2025.
+
+## Where you're right
+
+If you stand up a plain ALB with a listener rule that forwards to a target group, it will not look at the `Authorization` header at all. It's an L7 proxy — it routes on host/path/header *matching*, not on cryptographic validation. The bearer token rides through untouched, and your backend is the only thing standing between an attacker and your data. So for the classic setup you're describing, yes: the backend must do full JWKS-based verification.
+
+## Where you're wrong (two places)
+
+**1. API Gateway isn't automatic either.** A route with `authorizationType: NONE` forwards the request just as blindly as ALB does. What you're thinking of is an *authorizer*, which you configure:
+
+- **HTTP API (v2) — JWT authorizer.** You give it an issuer URL and an audience list. It fetches OIDC discovery + JWKS and validates signature, `exp`, `iss`, and audience. Cognito access tokens carry `client_id` rather than `aud`, and API Gateway validates `client_id` only if `aud` is absent; when both are present, `aud` wins. You can also attach per-route scopes, which produce a 403 rather than a 401 when the token is valid but under-privileged.
+- **REST API (v1) — Cognito User Pool authorizer.** Points at a user pool directly rather than a generic issuer. REST API's Cognito authorizer validates the token and passes decoded claims into the request context; if you want scope checks you must send the access token, since only it carries the `scope` claim. REST APIs have *no* generic OIDC JWT authorizer — for a non-Cognito issuer you need a Lambda authorizer.
+
+**2. ALB can verify JWTs now.** AWS shipped this in November 2025. It's aimed at machine-to-machine and service-to-service traffic, validating token signatures, expiration, and claims without application code changes. You add a **"Validate token" pre-routing action** on an HTTPS listener. ALB validates the signature and requires `iss` and `exp`; it also checks `nbf` and `iat` when present, and you can configure up to 10 additional claims. Valid tokens are forwarded to the target unchanged; everything else is rejected. Only RS256 is supported, and the JWKS endpoint has size limits — if your IdP's JWKS response exceeds them, ALB won't forward to your targets at all.
+
+Two caveats worth knowing before you rely on it: the feature is young and there are field reports of intermittent `JWTValidationInternalError` and `JWKSRequestFailed` responses tied to JWKS fetch instability, with the common workaround being to front the IdP's JWKS with a cached endpoint you control, and at least one report that the presence of a standard `Accept-Encoding` header triggers an internal 500 in the validation logic — which matters a lot if browsers are calling this endpoint directly.
+
+## The third ALB mode people conflate with this
+
+ALB's older `authenticate-oidc` / `authenticate-cognito` actions are a completely different thing, and this is probably the source of the confusion. Those run the *login flow* at the edge: unauthenticated request → 302 to the IdP → callback at `/oauth2/idpresponse` → ALB exchanges the code → ALB sets an encrypted `AWSELBAuthSessionCookie` → forwards to the target with `x-amzn-oidc-accesstoken`, `x-amzn-oidc-identity`, and `x-amzn-oidc-data` headers.
+
+That's session-cookie based and designed for human browser traffic. **It does nothing with a bearer token your SPA already holds.** And even there, AWS tells you the backend must verify the `x-amzn-oidc-data` JWT signature (ES256, key fetched from `public-keys.auth.elb.<region>.amazonaws.com/<kid>`) and check that the `signer` field matches your ALB ARN — because ALB can't stop anyone who can reach your targets directly from forging those headers.
+
+## Your specific Cognito-federated-to-Entra case
+
+The important detail: when Entra is a SAML/OIDC IdP *inside* a Cognito user pool, Cognito is the token issuer to your app. Entra's assertion is consumed and discarded at the Cognito boundary; your SPA never holds an Entra token. So whatever validates the token — ALB, API Gateway, or your code — must be pointed at:
+
+- `iss` = `https://cognito-idp.<region>.amazonaws.com/<userPoolId>`
+- JWKS = that issuer + `/.well-known/jwks.json`
+- audience = your app client ID (as `aud` on the ID token, `client_id` on the access token)
+
+Entra-sourced identity arrives as mapped attributes plus the `identities` claim. Also check `token_use` yourself — `access` vs `id` — because sending the wrong token type is the single most common failure in this setup, and generic OIDC validators won't catch it. Cognito's own guidance is that when access tokens authorize external APIs, the authorizer must always verify the signature against the advertised JWKS key.
+
+If instead your app is talking to Entra directly with Cognito only providing AWS credentials via an identity pool, then the issuer is `https://login.microsoftonline.com/<tenantId>/v2.0` and you additionally want to pin `tid`.
+
+## What I'd actually recommend
+
+Treat edge validation as a filter, not as authorization. Even with an API Gateway JWT authorizer or the new ALB pre-routing action doing signature and expiry checks, keep a lightweight claim check in the backend, because:
+
+- **Reachability.** Neither offload prevents a request that bypasses the edge. If your ECS tasks or ALB sit in a VPC with permissive security groups, "the gateway checked it" is a false comfort. Lock ingress to the gateway/LB source and still verify.
+- **Claims aren't automatically handed to you.** ALB forwards the token as-is; HTTP API with a non-Lambda integration does too unless you explicitly map `$context.authorizer.claims.*` into headers. Your service is parsing the JWT regardless — verifying it at that point costs almost nothing with a cached JWKS.
+- **Neither does revocation or fine-grained authz.** Signature + `exp` is authentication. Tenant scoping, object ownership, and group checks are yours.
+
+So the corrected version of your thought: *ALB traditionally forced backend verification and its OIDC action is a browser-session mechanism rather than a token validator; API Gateway has had first-class token validation for years but only when an authorizer is configured; and as of Nov 2025 ALB has a comparable, less mature pre-routing JWT check.* The difference was never intrinsic to load balancer vs. gateway — it was about which product had shipped the feature.
