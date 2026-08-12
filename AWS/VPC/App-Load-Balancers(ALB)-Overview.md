@@ -1,5 +1,13 @@
 # Application Load Balancers (ALB) Overview
+## An ALB is a reverse proxy, not a network device
 
+This is the thing that makes the rest click. A Network Load Balancer operates at layer 4 — it shovels TCP packets toward a target and mostly doesn't know or care what's inside them. An **Application** Load Balancer operates at layer 7 and behaves like nginx or Envoy:
+
+- It terminates the TLS connection itself (that's why the cert lives on the listener).
+- It parses the full HTTP request — method, path, headers, cookies, host.
+- It then **decides** what to do, and one entirely legitimate decision is *"answer this myself and never contact a backend at all."*
+
+So the ALB was never obligated to forward your request. Forwarding is just one of several action types it can take. Others include `redirect`, `fixed-response`, and — the one that matters here — `authenticate-cognito`.
 
 ## Rules, Target Groups, and Targets
 They're a chain, each layer answering a different question:
@@ -37,6 +45,145 @@ Only targets passing health checks receive traffic. If every target in a group i
 - Rule priority gaps matter. Leave space (10, 20, 30) so you can insert later without renumbering.
 - Path patterns are case-sensitive and don't match the query string. `/images/*` won't match `/images` exactly — you need both patterns if you want the bare path.
 - The `source-ip` condition sees the immediate client IP. Behind CloudFront or another proxy, that's the proxy's address; you'd match on the `X-Forwarded-For` header instead.
+
+---
+## ALB Authentication
+How initial request get routed to authentication can be entirely the ALB, and specifically one **listener rule**. Nothing else in your stack was involved. Let me unpack exactly what "the ALB" means here, because the word hides a lot of machinery.
+
+## The structure that made the decision
+
+```
+Load Balancer
+ └── Listener (port 443, HTTPS, ACM cert attached)
+      ├── Rule priority 10  ── conditions ──► actions
+      ├── Rule priority 20  ── conditions ──► actions
+      └── Default rule      ── (no conditions) ──► actions
+```
+
+Every request that arrives on the listener is evaluated against the rules **in ascending priority order**, and the **first rule whose conditions all match wins**. Evaluation stops there. If nothing matches, the default rule handles it.
+
+Your `GET /dashboard` hit this rule:
+
+```yaml
+Priority: 10
+Conditions:
+  - Field: path-pattern
+    Values: ["/*"]              # matches everything, including /dashboard
+Actions:
+  - Type: authenticate-cognito
+    Order: 1                    # ◄── runs FIRST
+    AuthenticateCognitoConfig:
+      UserPoolArn:      arn:aws:cognito-idp:us-east-1:123456789012:userpool/us-east-1_AbCdEfGhI
+      UserPoolClientId: 7a1b2c3d4e5f6g7h8i9j0k1l2m
+      UserPoolDomain:   my-app
+      Scope:            "openid email"
+      SessionCookieName: AWSELBAuthSessionCookie
+      SessionTimeout:   604800
+      OnUnauthenticatedRequest: authenticate
+  - Type: forward
+    Order: 2                    # ◄── runs only if Order 1 lets it
+    TargetGroupArn: arn:aws:elasticloadbalancing:...:targetgroup/web-tg/abc123
+```
+
+The `Order` field is the whole answer to your question. A rule holds a **chain** of actions, executed in order, and any action in the chain can terminate the request. `authenticate-cognito` must always be `Order: 1`, and the chain must always end in a terminating action (`forward`, `redirect`, or `fixed-response`).
+
+## What the authenticate action actually evaluates
+
+```
+Request arrives at Order 1 (authenticate-cognito)
+        │
+        ├─ Is the path /oauth2/idpresponse ?
+        │     └─ YES ──► This is the OIDC callback. Redeem the code (step 7),
+        │                 mint session cookies, 302 to the saved state URL.
+        │                 ✋ Order 2 never runs. Backend never contacted.
+        │
+        ├─ Is there an AWSELBAuthSessionCookie-* ?
+        │     └─ NO ───► ✋ 302 to Cognito /oauth2/authorize.  ← THIS IS YOUR STEP 2
+        │                 Order 2 never runs. Backend never contacted.
+        │
+        ├─ Does it decrypt with my key, and is the session unexpired?
+        │     └─ NO ───► ✋ Same 302. Start over.
+        │
+        ├─ Is the access token near expiry?
+        │     └─ YES ──► Silent back-channel refresh, then continue.
+        │
+        ▼
+   Inject x-amzn-oidc-identity / -accesstoken / -data
+        │
+        ▼
+   Fall through to Order 2 (forward) ──► your target group   ← STEP 9
+```
+
+Your original `GET /dashboard` fell into the second branch. No cookie → the ALB generated a `302` **itself**, as the origin server, and the response went straight back down the same connection the browser had opened. Your target group's health checks were passing the whole time and it received nothing.
+
+## Where the redirect URL came from
+
+The ALB doesn't have Cognito's authorize endpoint hardcoded. Given `UserPoolDomain: my-app` and the pool's region, it resolves the OIDC discovery document:
+
+```
+https://cognito-idp.us-east-1.amazonaws.com/us-east-1_AbCdEfGhI/.well-known/openid-configuration
+```
+
+```json
+{
+  "authorization_endpoint": "https://my-app.auth.us-east-1.amazoncognito.com/oauth2/authorize",
+  "token_endpoint":         "https://my-app.auth.us-east-1.amazoncognito.com/oauth2/token",
+  "userInfo_endpoint":      "https://my-app.auth.us-east-1.amazoncognito.com/oauth2/userInfo",
+  "jwks_uri":               "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_AbCdEfGhI/.well-known/jwks.json"
+}
+```
+
+That's where `authorization_endpoint` in step 2 and `token_endpoint` in step 7 come from. With the generic `authenticate-oidc` action you supply all four URLs by hand; the Cognito-specific action just discovers them for you.
+
+The `redirect_uri` it sends is likewise derived, not configured: **the request's own scheme and host, plus the hardcoded path `/oauth2/idpresponse`**. That's why it came out as `https://app.example.com/oauth2/idpresponse` — the ALB built it from the `Host` header of your original request. It's also why the same ALB serving two hostnames needs both callback URLs registered in the Cognito app client.
+
+## The `OnUnauthenticatedRequest` knob
+
+This single field decides what "no valid session" means:
+
+| Value | Behavior | Use for |
+|---|---|---|
+| `authenticate` | 302 to the IdP (the default) | Browser traffic — HTML pages |
+| `deny` | `401 Unauthorized`, empty body | API paths — a `fetch` gets a clean 401 instead of an HTML login page |
+| `allow` | Forward anyway, **with no identity headers** | Public pages that show extra content when signed in |
+
+This is how you'd fix the gotcha from Part 2 Scenario A: a second rule at a lower priority number for `/api/*` with `OnUnauthenticatedRequest: deny`.
+
+## Practical consequences worth knowing
+
+**Rule priority is a real footgun.** If a broad `path-pattern: ["/*"]` rule sits at priority 10 and your unauthenticated `/health` or `/public/*` rule sits at priority 50, the broad rule wins and everything gets forced through login. Public routes need *lower* priority numbers.
+
+**The default rule is separate.** It has no priority and is evaluated last. Putting `authenticate-cognito` on priority-10 rules but forgetting the default rule leaves an unauthenticated hole for any path that didn't match.
+
+**Health checks bypass all of this.** They're issued by the ALB directly to targets and never traverse listener rules, so your health endpoint won't get redirect-looped.
+
+**HTTPS listeners only.** Authenticate actions are rejected on port 80 listeners. Standard setup is a port 80 listener whose only action is `redirect` to 443.
+
+**The ALB needs IAM permissions.** Specifically `cognito-idp:DescribeUserPoolClient`. If that's missing you get a `561` error code in the access logs, which is an ALB-specific status meaning authentication failed.
+
+**Your app can't opt out.** There's no way for the backend to say "this one request doesn't need auth" — the decision was made before your code was reachable. Granularity comes from writing more listener rules, not from application logic.
+
+## The contrast that makes it concrete
+
+Had you built this without the ALB action, *your* code would own steps 2 through 8:
+
+```python
+@app.route("/login")                    # you write this
+def login(): return redirect(build_authorize_url())
+
+@app.route("/callback")                 # and this
+def callback():
+    validate_state(request.args["state"])
+    tokens = exchange_code(request.args["code"])   # you hold the client secret
+    claims = verify_jwt(tokens["id_token"])        # you fetch and cache JWKS
+    session["user"] = claims["sub"]                # you run a session store
+
+@app.before_request                     # and this
+def require_auth():
+    if "user" not in session: return redirect("/login")
+```
+
+Plus refresh-token rotation, session storage shared across instances, and secret management. The ALB action replaces all of it with a listener rule — and in exchange, your app trusts three headers and verifies one signature.
 
 ---
 # ALBs vs API Gateways
