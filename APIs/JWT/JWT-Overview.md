@@ -17,6 +17,14 @@ The security rests on a property cryptographers call a **one-way function with a
 - **Algorithm pinning matters.** A well-known attack tricks a lax verifier into trusting the `alg` field from the token itself — e.g., switching from RS256 to `none`, or from RSA to HMAC using the public key as the HMAC secret. Solid libraries hardcode the expected algorithm on the server side rather than trusting whatever the token claims.
 
 So the strength of a JWT isn't in obscurity or encoding — it's standard applied cryptography: a secret (or private key) that's expensive to guess, and a signature that's expensive to forge without it.
+
+### JWKS
+The `kid` (key ID) field in the JWT's header tells you exactly which public key to use — you don't have to guess or try them all.A couple of things worth calling out on top of that walkthrough:
+
+- **Never trust the `alg` field from the token itself to decide how to verify.** Pin your verifier to expect RS256 explicitly (that's what Cognito uses). If the header claims a different algorithm — like `none`, or HS256 using the public key as an HMAC secret — reject it outright. This is the algorithm-confusion attack we touched on earlier.
+- **A malformed or unknown `kid` is not automatically an attack** — it's usually just a sign Cognito rotated its keys since your last fetch. The right response is to refresh your JWKS cache and try again once, not to assume something malicious.
+- **In practice, you almost never write this from scratch.** AWS's own `aws-jwt-verify` library (or well-maintained equivalents in your language) handles the fetch-cache-match-verify dance for you — decoding, `kid` matching, caching, and claim checks all in one call. Hand-rolling JWT verification is one of the more common sources of real-world auth bugs, so leaning on a maintained library is the safer default.
+
 ## When JWTs need to be Verified
 Yes, in the standard pattern — every request that needs authentication gets its JWT checked, independently, on every call. That's actually the entire point of using JWTs in the first place: statelessness. The server doesn't remember who you are between requests, so each request has to prove it on its own.
 
