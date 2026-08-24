@@ -78,6 +78,8 @@ Text encoding maps characters to numbers. The most important thing to understand
 
 **UTF-8** is the modern standard. It's a variable-width encoding of Unicode — ASCII characters take 1 byte, but it can encode every character in every human language using 1–4 bytes. It's backward-compatible with ASCII, which is a big reason it won.
 
+SIDE NOTE: [UTF-8 BOM on Windows](https://github.com/ajlinhard/byte-size-docs/blob/main/AWS/Lambda/Error-File-Encodings-UTF8-B)
+
 **UTF-16** uses 2 or 4 bytes per character. It's common internally in Windows, Java, and JavaScript (which stores strings as UTF-16 internally). Files saved in UTF-16 have a BOM (Byte Order Mark) at the start to indicate endianness.
 
 ```python
