@@ -84,6 +84,50 @@ pip config debug          # confirms pip sees the file and the value
 pip install -v requests   # first lines show "Looking in indexes: ..."
 ```
 
+---
+## Per Package Info
+A few complementary ways, depending on whether you want to know *before* or *after* an install.
+
+**Quickest check — verbose install**
+
+```bash
+pip install -v somepackage
+```
+
+The first lines print `Looking in indexes: ...`, which is the definitive answer for that run.
+
+**Inspect the config that produced it**
+
+```bash
+pip config debug
+```
+
+This lists every config file pip considered (global, user, site/venv), in precedence order, plus the env-var overrides it picked up. `pip config list` gives just the effective values.
+
+Config files live at `/etc/pip.conf`, `~/.config/pip/pip.conf` (or `~/.pip/pip.conf`), and `$VIRTUAL_ENV/pip.conf` on Linux/macOS; on Windows, `%APPDATA%\pip\pip.ini`. A `pip.conf` inside an active venv is the one people most often forget about.
+
+**Environment variables**
+
+```bash
+env | grep -i '^PIP_'
+```
+
+`PIP_INDEX_URL` and `PIP_EXTRA_INDEX_URL` beat config files, so a stray export in your shell profile or a Dockerfile will silently redirect everything.
+
+**Don't forget the requirements file**
+
+`--index-url`, `--extra-index-url`, or `--find-links` lines at the top of a `requirements.txt` apply to that whole install and override nothing else visible in your config.
+
+**For something already installed**
+
+```bash
+pip inspect | grep -A2 direct_url
+```
+
+Or look directly at `site-packages/<pkg>-<ver>.dist-info/direct_url.json` — present when the package came from a VCS, local path, or direct URL. If it's absent, the package came from an index, but the specific index isn't recorded, so you'd need to re-resolve with `pip index versions somepackage -v` to see where it's being served from now.
+
+One gotcha worth knowing: with `--extra-index-url`, pip queries *all* indexes and picks the highest version, not the first index that has the package. That's the mechanism behind dependency-confusion attacks, so if you're using a private index, `--index-url` plus `--no-index`-style pinning is safer than layering an extra one on top of PyPI.
+
 If `pip config debug` doesn't list your file, you're likely on a pip version or platform expecting the other path — just create it at `~/.config/pip/pip.conf` instead.
 
 One caution given the earlier thread: use `index-url`, not `extra-index-url`. With `extra-index-url` pip queries both Artifactory and public PyPI and takes the highest version, which reopens the dependency-confusion hole that routing through Artifactory was meant to close.
