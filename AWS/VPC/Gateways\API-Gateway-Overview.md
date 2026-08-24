@@ -34,7 +34,29 @@ Important caveat: this only works with REST APIs (v1). HTTP APIs (v2) don't supp
 
 Don't confuse this with **VPC Link**, which is the opposite direction — a public-facing API reaching *into* your VPC for the backend integration. VPC Link connects API Gateway to HTTP(S) resources inside your VPC via a Network Load Balancer without exposing them to the internet.
 
-**Public but IP-restricted**
+### ""Private" API Gateways VPC Networking
+API Gateway (v1 REST) is a fully managed service that runs in AWS's own network — you never place it in a subnet, it has no ENIs you own, and no security groups or route tables attach to the API itself. There's no "deploy into VPC" option the way there is for Lambda or an ALB.
+
+What you *can* do is make both the inbound and outbound paths private, which is usually what people actually mean:
+
+**Inbound: private endpoint type**
+
+Set the endpoint configuration to `PRIVATE` instead of `REGIONAL` or `EDGE`. The API then becomes reachable only through an interface VPC endpoint for `com.amazonaws.<region>.execute-api`, whose ENIs land in whatever subnets you pick — private subnets included. Those ENIs *are* in your VPC and do take security groups; the gateway behind them isn't. Traffic from your VPC (or from on-prem over Direct Connect/VPN) reaches it without touching the internet.
+
+Two things trip people up here:
+
+- A private REST API **requires a resource policy**. Without one it's unreachable, and you'll typically scope it with a `aws:SourceVpce` condition on the specific endpoint ID, since by default any VPC endpoint in any account in the region could route to your API ID.
+- If you enable private DNS on the endpoint, `execute-api` resolves privately VPC-wide, which affects *all* API Gateway calls from that VPC. If you'd rather not do that, you can leave private DNS off and call the endpoint DNS name directly with the `x-apigw-api-id` header.
+
+**Outbound: VPC Link**
+
+For REST APIs, a VPC Link lets the gateway invoke private backends, and in v1 it targets a **Network Load Balancer** specifically (HTTP APIs in v2 are the ones that support ALB, NLB, and Cloud Map, with subnets and security groups you configure directly). So your ECS tasks, EC2 instances, or EKS services can sit in private subnets with no public exposure.
+
+Also worth knowing: private REST APIs historically couldn't use custom domain names, which pushed a lot of people toward fronting an internal ALB instead. AWS added private custom domain support relatively recently, so if that was your blocker it's worth checking the current docs for your region.
+
+If your real requirement is "nothing about this API is reachable from the internet," the private endpoint type plus a VPC Link gets you there. If it's "the API's compute must run on my ENIs, in my subnets, under my flow logs" — for compliance reasons, say — then API Gateway can't satisfy that, and an internal ALB or NLB in front of your own compute is the right shape instead.
+
+### Public but IP-restricted
 
 For a regional or edge-optimized API, use a resource policy with a `Deny` on `NotIpAddress` matching `aws:SourceIp`. Two gotchas: on edge-optimized APIs the source IP seen is CloudFront's, not the client's, so IP policies behave unexpectedly — use regional endpoints for this. And a resource policy denies *after* the request reaches API Gateway, so you're still billed for rejected calls. AWS WAF with an IP set attached to the stage is generally the better tool: it blocks earlier, supports rate limiting, and is easier to manage as the allowlist changes.
 
