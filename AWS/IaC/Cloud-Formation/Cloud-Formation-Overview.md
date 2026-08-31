@@ -139,6 +139,34 @@ aws cloudformation execute-change-set --change-set-name <arn>
 
 Test it with `aws s3 cp test.txt s3://fileproc-uploads-dev-<account>/incoming/`, then check CloudWatch Logs.
 
+## Rollback (Auto?)
+Yes there is an auto rollback — CloudFormation is declarative. You write a JSON or YAML template describing the desired end state, and the service figures out the create/update/delete actions and dependency ordering (with `DependsOn` and intrinsic functions like `Ref`/`GetAtt` for explicit ordering). The main structural difference from Terraform is that CloudFormation is AWS-only and AWS holds the state for you as a *stack* — there's no state file for you to store, lock, or corrupt.
+
+**On rollback — this is actually where CloudFormation is stronger than Terraform.** It rolls back automatically by default:
+
+- **Create failure:** the stack enters `ROLLBACK_IN_PROGRESS` and deletes everything it made. You can override with `--on-failure DO_NOTHING` (leave it for debugging) or `RETAIN`, or `--disable-rollback`.
+- **Update failure:** `UPDATE_ROLLBACK_IN_PROGRESS` reverts resources to the last known-good template. No partial-apply mess to reconcile by hand.
+- **Alarm-based rollback:** a stack's `RollbackConfiguration` can point at CloudWatch alarms with a monitoring period after the deploy completes — if an alarm fires within that window, CloudFormation reverses the update. That's a genuine deployment-health rollback, not just a failure rollback.
+
+Terraform has nothing equivalent. A failed `apply` leaves you with partial state and you fix forward.
+
+The one caveat worth knowing before you commit: rollback can itself fail (`UPDATE_ROLLBACK_FAILED`), typically when a resource can't return to its prior state — an S3 bucket that isn't empty, a security group still referenced elsewhere. You then have to call `continue-update-rollback`, sometimes with `--resources-to-skip`, and manually reconcile. When people complain about CloudFormation, this stuck-stack scenario is usually why.
+
+**Altering and spinning down:**
+
+| Task | CloudFormation | Terraform |
+|---|---|---|
+| Preview changes | Change Sets | `terraform plan` |
+| Apply changes | `update-stack` / `deploy` | `terraform apply` |
+| Tear down everything | `delete-stack` | `terraform destroy` |
+| Detect manual drift | Drift detection | `plan` shows it |
+
+`delete-stack` removes all resources in reverse dependency order. To protect things you don't want vaporized, set `DeletionPolicy: Retain` or `Snapshot` on individual resources (databases, buckets), and `UpdateReplacePolicy` for the case where an update would replace rather than modify. Enable termination protection on production stacks so an accidental delete is rejected outright.
+
+For scaling down rather than deleting, you just change the template or a parameter — desired capacity, instance type, provisioned throughput — and run an update. Same declarative loop.
+
+One practical note: if you're evaluating both, CDK is worth a look. It gives you TypeScript/Python that synthesizes CloudFormation templates, so you keep the rollback semantics while writing something less painful than raw YAML.
+
 ## Things that differ from Terraform in ways that cost time
 
 **Stack-level tags propagate automatically.** `--tags` on the stack applies to every resource that supports tagging. No `default_tags` provider block needed.
