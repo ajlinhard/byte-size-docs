@@ -48,3 +48,106 @@ or inline dynamic reference: `'{{resolve:ssm:/chat-lambda/code-s3-key:1}}'`
 **For your specific use case** — the content-hash-of-a-zip pattern — the pragmatic ranking is:
 - **Quick/simple pipeline, staying in raw CFN:** command line or parameter file, computed by a small wrapper script (what you already have).
 - **Longer-term investment, willing to adopt new tooling:** CDK, since it eliminates the whole "remember to hash and pass the key" problem structurally rather than by convention.
+
+---
+# Parameterizing Example
+## 1. Cross-stack references
+
+**Order within the YAML file doesn't matter at all.** CloudFormation templates are declarative, not executed top-to-bottom. You can put `Outputs` at the top, bottom, or middle — the parser reads the whole document and builds a dependency graph from `Ref` / `!GetAtt` / `DependsOn`. Convention is Parameters → Mappings → Conditions → Resources → Outputs, but that's just readability.
+
+What *does* matter is **stack deploy order**: the exporting stack must exist and be in a complete state before you create the importing stack.
+
+**Exporting stack** (`network-stack`):
+
+```yaml
+Resources:
+  MyVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVpc
+      CidrBlock: 10.0.1.0/24
+
+Outputs:
+  VpcId:
+    Value: !Ref MyVpc
+    Export:
+      Name: !Sub "${AWS::StackName}-VpcId"
+  PrivateSubnets:
+    Value: !Join [",", [!Ref PrivateSubnetA, !Ref PrivateSubnetB]]
+    Export:
+      Name: !Sub "${AWS::StackName}-PrivateSubnets"
+```
+
+**Importing stack:**
+
+```yaml
+Parameters:
+  NetworkStackName:
+    Type: String
+    Default: network-stack
+
+Resources:
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: App SG
+      VpcId: !ImportValue
+        "Fn::Sub": "${NetworkStackName}-VpcId"
+
+  Asg:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier: !Split
+        - ","
+        - !ImportValue
+            "Fn::Sub": "${NetworkStackName}-PrivateSubnets"
+```
+
+Parameterizing the stack name like that is worth doing — it lets you point dev/prod app stacks at different network stacks without editing the template.
+
+Rules and gotchas worth knowing up front:
+
+- Exports are **region- and account-scoped**, and export names must be globally unique within a region. Prefixing with `${AWS::StackName}` is the standard way to avoid collisions.
+- You **cannot delete or modify an exported output** while another stack imports it. This is the big one — it means you can't easily change the network stack's outputs later. To break the link you have to update the consuming stack off the import first.
+- You can't use `Fn::ImportValue` inside the `Export.Name` field, and you can't use it in `Fn::Sub` shorthand (`${...}`) — hence the slightly awkward nested `"Fn::Sub"` syntax above.
+- Lists can't be exported directly; join to a string and `!Split` on the way in, as shown.
+
+If you want the coupling without the rigidity, **nested stacks** are the other option: a parent template with `AWS::CloudFormation::Stack` resources, and children referenced via `!GetAtt NetworkStack.Outputs.VpcId`. No exports involved, so no deletion locking — but the children are then owned by the parent and not independently deployable.
+
+## 2. Parameter types take IDs, not ARNs
+
+`AWS::EC2::VPC::Id` and friends are a fixed, enumerated list of **AWS-specific parameter types** that CloudFormation understands. They're not a generic "any AWS resource" mechanism — you can't write `AWS::S3::Bucket::Arn` or invent new ones.
+
+The value you pass is the **physical ID** in its native format:
+
+| Type | Value you pass |
+|---|---|
+| `AWS::EC2::VPC::Id` | `vpc-0abc123def456` |
+| `AWS::EC2::Subnet::Id` | `subnet-0aaa111` |
+| `AWS::EC2::SecurityGroup::Id` | `sg-0bbb222` |
+| `AWS::EC2::KeyPair::KeyName` | `my-keypair` |
+| `AWS::EC2::AvailabilityZone::Name` | `us-west-2a` |
+| `AWS::EC2::Image::Id` | `ami-0abc...` |
+| `AWS::EC2::Instance::Id` | `i-0abc...` |
+| `AWS::EC2::Volume::Id` | `vol-0abc...` |
+| `AWS::Route53::HostedZone::Id` | `Z1D633PJN98FT9` |
+
+Each also has a `List<...>` variant (`List<AWS::EC2::Subnet::Id>`, etc.), which is what you'd use for multi-AZ subnets.
+
+The benefit of these over plain `String` is real: CloudFormation validates the ID exists in your account and region *before* starting the stack operation, and the console renders a dropdown instead of a free-text box. For a `List<AWS::EC2::Subnet::Id>` it renders a multi-select.
+
+For anything not on the list — an ARN, a bucket name, an SNS topic — just use `Type: String` and add your own guardrails:
+
+```yaml
+Parameters:
+  AlarmTopicArn:
+    Type: String
+    AllowedPattern: "^arn:aws:sns:[a-z0-9-]+:\\d{12}:.+$"
+    ConstraintDescription: Must be a valid SNS topic ARN
+```
+
+One caveat with the AWS-specific types: because validation happens at submit time, they don't play well with `Conditions` where the resource might not be needed. If a parameter is conditionally unused, CloudFormation will still reject an empty or invalid value — so those often have to be `String`.
