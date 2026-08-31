@@ -138,7 +138,7 @@ If that succeeds, the cross-VPC path is real and the ALB's security group admits
 
 Worth confirming the VPC ID properly rather than inferring from the CIDR, since `10.47.116.x` doesn't identify an account. `aws workspaces describe-workspace-directories` in the account hosting the directory, or asking whoever operates the WorkSpaces deployment, will settle it in one step.
 
-## How the AWS Workspace Communicates
+## How is the Example AWS Workspace Communicates
 Short Answer:  a transit gateway in your VPC jas a owner id is "shared"
 
 Look at the TGW ARN to see a TGW whose owner account isn't yours: owner IDs are always 12-digit account numbers, never the literal string "shared." What you're likely looking at is either a different account number than the one you're in, or a console indicator marking the resource as shared with you.
@@ -169,6 +169,4 @@ What you can't do is control routing. TGW route tables belong to the owner. You 
 
 Attachment creation typically requires the owner to accept it, unless they've enabled auto-accept on the share.
 
-**Practically:** this is the explanation for your earlier question. The WorkSpace in `10.47.116.x` reaches the ALB in `10.52.99.x` because a shared TGW in another account has route table entries connecting them. If reachability ever breaks, or you need a new destination added, it's a request to the networking account rather than something you can fix in your own VPC. Worth identifying that team now if you haven't.
-
-If you paste the actual output you were looking at — with account numbers redacted — I can tell you specifically what you're seeing.
+**Practically:** The WorkSpace in `10.47.116.x` reaches the ALB in `10.52.99.x` because a shared TGW in another account has route table entries connecting them. If reachability ever breaks, or you need a new destination added, it's a request to the networking account rather than something you can fix in your own VPC. Worth identifying that team now if you haven't.
