@@ -229,5 +229,29 @@ Route 53 pricing generally has separate components for: hosted zones (a monthly 
 | Observability | CloudWatch metrics/alarms, CloudTrail logging, Resolver query logging |
 
 ---
+## Bonus: Domain Creation
+In AWS, "DNS creation" generally refers to setting up domain name resolution using **Amazon Route 53**, AWS's DNS and domain registration service. Here's what that typically involves:
+
+## 1. Creating a Hosted Zone
+This is the first step — a hosted zone is a container for DNS records for a specific domain (e.g., `example.com`).
+- **Public hosted zone** — for resolving names on the public internet
+- **Private hosted zone** — for resolving names within one or more VPCs
+
+## 2. Creating DNS Records
+Within a hosted zone, you create records that map names to resources:
+- **A record** — maps a domain to an IPv4 address
+- **AAAA record** — maps a domain to an IPv6 address
+- **CNAME record** — maps a domain to another domain name
+- **Alias record** — an AWS-specific record type that maps a domain to AWS resources (like a CloudFront distribution, S3 bucket, ALB, or API Gateway) without needing a static IP, and without the CNAME restriction on the zone apex
+- **MX, TXT, NS, SOA, SRV, PTR** — for mail routing, verification/SPF, name servers, etc.
+
+## 3. Domain Registration (optional)
+If you don't already own a domain, Route 53 also lets you register one directly, which automatically creates a public hosted zone for it.
+
+## Common real-world scenarios where "DNS creation" comes up
+- **ACM certificate validation** — when requesting an SSL/TLS certificate, AWS asks you to create a specific CNAME record to prove domain ownership
+- **Connecting a custom domain** to a CloudFront distribution, S3 static site, Elastic Beanstalk app, ALB/NLB, or API Gateway — usually via an Alias record
+- **Cross-account or cross-VPC DNS** — using private hosted zones with VPC associations
+- **Infrastructure as Code** — creating these records via CloudFormation (`AWS::Route53::RecordSet`) or Terraform (`aws_route53_record`) instead of the console
 
 *This document reflects publicly available AWS documentation and announcements as of August 2026. Route 53 evolves frequently — always cross-check against the official AWS documentation links in Section 1.2 before making architectural decisions.*
