@@ -28,5 +28,16 @@ This is the broader umbrella term for anything done to keep a model performing w
 - **Residual correction**: layering a residual model on top of the existing one (tying back to the point above) instead of touching the original.
 - **Feature or architecture updates**: adding new features, removing stale ones, or changing model structure if the old assumptions no longer hold.
 
+**Is residual modeling just one type of Model Adjustment?**
+
+Yes, essentially. To be precise about the relationship:
+
+Model adjustment is the umbrella goal — "keep this model accurate as things change" — and it splits into two broad strategies:
+
+1. **Modify the model directly**: recalibration, incremental retraining, full retraining, changing features/architecture.
+2. **Leave the model alone and correct its output**: this is where residual modeling lives — you keep the original model as-is and bolt on a second model that predicts (and corrects for) its errors.
+
+So residual modeling isn't just "one item in a flat list" — it represents a whole *category* of adjustment (correction-based, rather than modification-based). But within that category, it's still just one technique; other correction-based approaches exist too, like simple bias-offset corrections or ensemble reweighting. So: residual modeling is one type of model adjustment, and specifically it's the technique of choice when you want to correct a model's mistakes without disturbing the model itself.
+
 ### **How they fit together**: 
 Model drift is the *problem* (performance eroding as the world changes), and model adjustments are the general *category of responses* to that problem. Residual modeling is one specific *technique* within that response — instead of discarding or fully retraining the original model, you patch it by learning a second model on its errors.
